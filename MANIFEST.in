@@ -1,0 +1,3 @@
+# include
+include ./QEasyWidgets/QSS/Dark/*
+include ./QEasyWidgets/QSS/Light/*
