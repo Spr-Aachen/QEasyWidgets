@@ -7,6 +7,7 @@ from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QPainter, QDe
 from PySide6.QtWidgets import *
 
 from .Utils import *
+from .Sources import *
 
 ##############################################################################################################################
 
@@ -44,10 +45,13 @@ def Function_GetStyleSheet(
     if Theme not in ('Dark', 'Light'):
         Theme = darkdetect.theme()
 
-    File = QFile(os.path.join(os.path.dirname(os.path.abspath(__file__)), f'QSS/{Theme}/{Widget}.qss'))
+    Prefix = 'QSS'
+    FilePath = f'QSS/{Theme}/{Widget}.qss'
+    File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
     File.open(QFile.ReadOnly | QFile.Text)
     QSS = str(File.readAll(), encoding = 'utf-8')
     File.close()
+
     return QSS
 
 
