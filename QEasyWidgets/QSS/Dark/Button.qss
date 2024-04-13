@@ -1,4 +1,4 @@
-ToolButtonBase {
+ButtonBase {
 	text-align: center;
 	/*color: rgb(0, 0, 0);*/
 	background-color: transparent;
@@ -7,11 +7,10 @@ ToolButtonBase {
 	padding-bottom: 3px;
 	padding-right: 6px;
 	border-width: 1.2px;
-	border-radius: 6px;
 	border-style: solid;
 	border-color: rgba(201, 210, 222, 123);
 }
-ToolButtonBase:hover {
+ButtonBase:hover {
 	border-color: rgba(201, 210, 222, 210);
 }
 

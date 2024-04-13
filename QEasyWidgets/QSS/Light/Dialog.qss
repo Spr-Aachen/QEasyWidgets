@@ -1,5 +1,5 @@
 MessageBoxBase {
-    background-color: rgba(60, 60, 60, 240);
+    background-color: rgba(234, 234, 234, 246);
     padding: 0px;
     border-width: 0px;
     border-radius: 6px;
@@ -9,26 +9,24 @@ MessageBoxBase {
 MessageBoxBase QLabel {
     text-align: center;
     font-size: 9.9pt;
-    color: rgb(210, 222, 234);
     background-color: transparent;
 }
 
 MessageBoxBase QPushButton {
     text-align: center;
     font-size: 9.9pt;
-    color: rgb(210, 222, 234);
-    background-color: rgba(90, 90, 90, 120);
+    background-color: rgba(210, 210, 210, 120);
     border-width: 0px;
     border-radius: 6px;
     border-style: solid;
 }
 MessageBoxBase QPushButton:hover {
-    background-color: rgba(120, 120, 120, 120);
+    background-color: rgba(210, 210, 210, 210);
 }
 
 
 QToolTip {
-    color: rgb(210, 222, 234);
+    color: rgb(45, 33, 21);
     background-color: transparent;
 	border-width: 0px;
 	border-style: solid;

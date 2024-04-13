@@ -320,20 +320,18 @@ def SetRichText(
     TitleWeight: float = 630.,
     TitleSpacing: float = 0.9,
     TitleLineHeight: float = 24.6,
-    TitleColor: str = "#ffffff",
     Body: Optional[str] = None,
     BodyAlign: str = "left",
     BodySize: float = 9.3,
     BodyWeight: float = 420.,
     BodySpacing: float = 0.6,
     BodyLineHeight: float = 22.2,
-    BodyColor: str = "#ffffff",
 ):
     '''
     Function to set text for widget
     '''
-    def ToHtml(Content, Align, Size, Weight, Color, LetterSpacing, LineHeight):
-        Style = f"'text-align:{Align}; font-size:{Size}pt; font-weight:{Weight}; color:{Color}; letter-spacing: {LetterSpacing}px; line-height: {LineHeight}px'"
+    def ToHtml(Content, Align, Size, Weight, LetterSpacing, LineHeight):
+        Style = f"'text-align:{Align}; font-size:{Size}pt; font-weight:{Weight}; letter-spacing: {LetterSpacing}px; line-height: {LineHeight}px'"
         Content = re.sub(
             pattern = "[\n]",
             repl = "<br>",
@@ -344,11 +342,11 @@ def SetRichText(
     RichText = (
         "<html>"
             "<head>"
-                f"<title>{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleColor, TitleSpacing, TitleLineHeight)}</title>" # Not working with QWidgets
+                f"<title>{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleSpacing, TitleLineHeight)}</title>" # Not working with QWidgets
             "</head>"
             "<body>"
-                f"{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleColor, TitleSpacing, TitleLineHeight)}"
-                f"{ToHtml(Body, BodyAlign, BodySize, BodyWeight, BodyColor, BodySpacing, BodyLineHeight)}"
+                f"{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleSpacing, TitleLineHeight)}"
+                f"{ToHtml(Body, BodyAlign, BodySize, BodyWeight, BodySpacing, BodyLineHeight)}"
             "</body>"
         "</html>"
     )

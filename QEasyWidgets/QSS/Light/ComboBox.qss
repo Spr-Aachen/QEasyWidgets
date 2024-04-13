@@ -1,0 +1,96 @@
+QComboBox {
+	/*font-size: 12px;*/
+	text-align: left;
+	background-color: transparent;
+	padding-top: 3px;
+	padding-left: 6px;
+	padding-bottom: 3px;
+	padding-right: 6px;
+	border-width: 1.2px;
+	border-style: solid;
+	border-color: rgba(54, 45, 33, 123);
+}
+QComboBox:hover {
+	border-color: rgba(54, 45, 33, 210);
+}
+
+QComboBox::drop-down {
+	/*width: 12px;
+	height: 12px;*/
+	subcontrol-origin: padding;
+	subcontrol-position: right;
+	margin-right: 6px;
+	border: none;
+}
+
+QComboBox::down-arrow {
+	border-image: url(:/ComboBox_Icon/Sources/DownArrow.png);
+}
+QComboBox::down-arrow:on {
+	border-image: url(:/ComboBox_Icon/Sources/UpArrow.png);
+}
+
+
+QComboBox QAbstractItemView {
+	outline: none;
+	background-color: transparent;
+	border-width: 1.2px;
+	border-style: solid;
+	border-color: rgba(54, 45, 33, 123);
+}
+
+QComboBox QAbstractItemView::item {
+	/* height: 30px; */
+	background-color: transparent;
+	padding-top: 3px;
+	padding-left: 6px;
+	padding-bottom: 3px;
+	padding-right: 6px;
+	border: none;
+}
+QComboBox QAbstractItemView::item:hover {
+	background-color: rgba(120, 120, 120, 120);
+}
+QComboBox QAbstractItemView::item:selected {
+	background-color: rgba(120, 120, 120, 120);
+}
+
+
+QComboBox QAbstractScrollArea QScrollBar {
+	background-color: transparent;
+	border-width: 1.2px;
+	border-radius: 6px;
+	border-style: solid;
+	border-color: transparent;
+	margin: 0px;
+}
+QComboBox QAbstractScrollArea QScrollBar:hover {
+}
+
+QComboBox QAbstractScrollArea QScrollBar::horizontal {
+	height: 9px;
+}
+QComboBox QAbstractScrollArea QScrollBar::vertical {
+	width: 9px;
+}
+
+QComboBox QAbstractScrollArea QScrollBar::sub-line, QComboBox QAbstractScrollArea QScrollBar::add-line {
+	background-color: transparent;
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+
+QComboBox QAbstractScrollArea QScrollBar::sub-page, QComboBox QAbstractScrollArea QScrollBar::add-page {
+	background-color: transparent;
+}
+
+QComboBox QAbstractScrollArea QScrollBar::handle {
+	background-color: rgba(123, 123, 123, 123);
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+QComboBox QAbstractScrollArea QScrollBar::handle:hover {
+	background-color: rgba(123, 123, 123, 210);
+}

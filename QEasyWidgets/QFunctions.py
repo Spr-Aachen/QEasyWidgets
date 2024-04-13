@@ -42,8 +42,11 @@ def Function_GetStyleSheet(
     Theme: str | None
         Type of theme
     '''
+    QApplication.processEvents()
+
     if Theme not in ('Dark', 'Light'):
-        Theme = darkdetect.theme()
+        SysTheme = darkdetect.theme()
+        Theme = SysTheme if SysTheme is not None else 'Dark'
 
     Prefix = 'QSS'
     FilePath = f'QSS/{Theme}/{Widget}.qss'

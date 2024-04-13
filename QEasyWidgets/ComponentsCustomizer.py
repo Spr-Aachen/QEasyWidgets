@@ -7,8 +7,8 @@ from .QFunctions import *
 from .Sources import *
 
 ##############################################################################################################################
-"""
-class ButtonBase(QAbstractButton):
+
+class ButtonBase(QPushButton):
     '''
     '''
     def __init__(self,
@@ -30,13 +30,94 @@ class ButtonBase(QAbstractButton):
         ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
 
 
-class Button_UnderLined(ButtonBase):
+class SpinBoxBase(QSpinBox):
     '''
-    Check its stylesheet in qss file
     '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        self.setFocusPolicy(Qt.StrongFocus)
+
+        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
+        self.InitDefaultStyleSheet('Auto')
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        event.ignore()
+
+    def InitDefaultStyleSheet(self, Theme: str) -> None:
+        super().setStyleSheet(Function_GetStyleSheet('SpinBox', Theme))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+
+
+class DoubleSpinBoxBase(QDoubleSpinBox):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        self.setFocusPolicy(Qt.StrongFocus)
+
+        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
+        self.InitDefaultStyleSheet('Auto')
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        event.ignore()
+
+    def InitDefaultStyleSheet(self, Theme: str) -> None:
+        super().setStyleSheet(Function_GetStyleSheet('SpinBox', Theme))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+
+
+class ComboBoxBase(QComboBox):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        self.setFocusPolicy(Qt.StrongFocus)
+
+        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
+        self.InitDefaultStyleSheet('Auto')
+
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        event.ignore()
+
+    def InitDefaultStyleSheet(self, Theme: str) -> None:
+        super().setStyleSheet(Function_GetStyleSheet('ComboBox', Theme))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+
+
+class ScrollAreaBase(QScrollArea):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
+        self.InitDefaultStyleSheet('Auto')
+
+    def InitDefaultStyleSheet(self, Theme: str) -> None:
+        super().setStyleSheet(Function_GetStyleSheet('ScrollArea', Theme))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
 
 ##############################################################################################################################
-"""
+
 class TableBase(QTableView):
     '''
     '''

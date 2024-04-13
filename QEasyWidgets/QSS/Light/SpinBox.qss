@@ -1,0 +1,40 @@
+QSpinBox, QDoubleSpinBox {
+	/*font-size: 12px;*/
+	text-align: left;
+	selection-background-color: darkgrey;
+	background-color: transparent;
+	padding-top: 3px;
+	padding-left: 6px;
+	padding-bottom: 3px;
+	padding-right: 6px;
+	border-width: 1.2px;
+	border-style: solid;
+	border-color: rgba(54, 45, 33, 123);
+}
+QSpinBox:hover, QDoubleSpinBox:hover {
+	border-color: rgba(54, 45, 33, 210);
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+	/*width: 9px;
+	height: 9px;*/
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	margin-right: 4.5px;
+	border-width: 0px;
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+	border-image: url(:/(Double)SpinBox_Icon/Sources/UpArrow.png);
+}
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+	/*width: 9px;
+	height: 9px;*/
+	subcontrol-origin: padding;
+	subcontrol-position: bottom right;
+	margin-right: 4.5px;
+	border-width: 0px;
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+	border-image: url(:/(Double)SpinBox_Icon/Sources/DownArrow.png);
+}

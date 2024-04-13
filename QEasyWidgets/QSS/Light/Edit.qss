@@ -2,12 +2,11 @@ LineEditBase {
     background-color: transparent;
     padding: 0px;
     border-width: 1.2px;
-    border-radius: 6px;
     border-style: solid;
-    border-color: rgba(201, 210, 222, 123);
+    border-color: rgba(54, 45, 33, 123);
 }
 LineEditBase:hover {
-    border-color: rgba(201, 210, 222, 210);
+    border-color: rgba(54, 45, 33, 210);
 }
 
 
@@ -29,12 +28,12 @@ LineEditBase QPushButton {
 	border-style: solid;
 }
 LineEditBase QPushButton:hover {
-	background-color: rgba(201, 210, 222, 33);
+	background-color: rgba(54, 45, 33, 33);
 }
 
 
 QToolTip {
-    color: rgb(210, 222, 234);
+    color: rgb(45, 33, 21);
     background-color: transparent;
 	border-width: 0px;
 	border-style: solid;
