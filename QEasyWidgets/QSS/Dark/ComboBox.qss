@@ -33,7 +33,7 @@ QComboBox::down-arrow:on {
 
 QComboBox QAbstractItemView {
 	outline: none;
-	background-color: transparent;
+	background-color: black;
 	border-width: 1.2px;
 	border-style: solid;
 	border-color: rgba(201, 210, 222, 123);

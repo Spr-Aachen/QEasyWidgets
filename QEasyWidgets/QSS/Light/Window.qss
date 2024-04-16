@@ -1,5 +1,5 @@
 QWidget {
-    color: black;
+    color: rgb(45, 33, 21);
 }
 
 QWidget#CentralWidget {
@@ -10,7 +10,7 @@ QWidget#CentralWidget {
 
 
 QToolTip {
-    color: black;
+    color: rgb(45, 33, 21);
     background-color: transparent;
 	border-width: 0px;
 	border-style: solid;

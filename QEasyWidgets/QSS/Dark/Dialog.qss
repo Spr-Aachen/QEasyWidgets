@@ -1,26 +1,24 @@
-MessageBoxBase {
-    background-color: rgba(60, 60, 60, 240);
-    padding: 0px;
-    border-width: 0px;
-    border-radius: 6px;
-    border-style: solid;
-}
+color: rgb(210, 222, 234);
+background-color: rgba(60, 60, 60, 240);
+padding: 0px;
+border: none;
 
-MessageBoxBase QLabel {
+
+QLabel {
     text-align: center;
     font-size: 9.9pt;
     background-color: transparent;
 }
 
-MessageBoxBase QPushButton {
+
+QPushButton {
     text-align: center;
     font-size: 9.9pt;
     background-color: rgba(90, 90, 90, 120);
     border-width: 0px;
-    border-radius: 6px;
     border-style: solid;
 }
-MessageBoxBase QPushButton:hover {
+QPushButton:hover {
     background-color: rgba(90, 90, 90, 210);
 }
 
