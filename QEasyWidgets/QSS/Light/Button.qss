@@ -1,6 +1,6 @@
 ButtonBase {
+	/*font-size: 12px;*/
 	text-align: center;
-	/*color: rgb(0, 0, 0);*/
 	background-color: transparent;
 	padding-top: 3px;
 	padding-left: 6px;
@@ -12,6 +12,25 @@ ButtonBase {
 }
 ButtonBase:hover {
 	border-color: rgba(54, 45, 33, 210);
+}
+
+
+MenuButton QMenu {
+	background-color: white;
+}
+MenuButton QMenu::item {
+	background-color: transparent;
+	padding-top: 3px;
+	padding-left: 6px;
+	padding-bottom: 3px;
+	padding-right: 6px;
+	border: none;
+}
+MenuButton QMenu::item:hover {
+	background-color: rgba(120, 120, 120, 120);
+}
+MenuButton QMenu::item:selected {
+	background-color: rgba(120, 120, 120, 120);
 }
 
 

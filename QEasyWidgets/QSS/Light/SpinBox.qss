@@ -24,7 +24,7 @@ QSpinBox::up-button, QDoubleSpinBox::up-button {
 	border-width: 0px;
 }
 QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
-	border-image: url(:/(Double)SpinBox_Icon/Sources/UpArrow.png);
+	border-image: url(:/(Double)SpinBox_Icon/Icons/UpArrow.png);
 }
 
 QSpinBox::down-button, QDoubleSpinBox::down-button {
@@ -36,5 +36,5 @@ QSpinBox::down-button, QDoubleSpinBox::down-button {
 	border-width: 0px;
 }
 QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
-	border-image: url(:/(Double)SpinBox_Icon/Sources/DownArrow.png);
+	border-image: url(:/(Double)SpinBox_Icon/Icons/DownArrow.png);
 }

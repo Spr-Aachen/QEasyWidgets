@@ -12,23 +12,72 @@ class ButtonBase(QPushButton):
     '''
     '''
     def __init__(self,
-        text: Optional[str] = None,
         parent: Optional[QWidget] = None
     ):
         super().__init__(parent)
 
-        self.setFont('Microsoft YaHei')
-        self.setText(text) if text is not None else None
+        self.setIconSize(QSize(16, 16))
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        Function_SetFont(self)
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Button', Theme))
+        StyleSheetBase.Button.Apply(self)
+
+    def setIcon(self, icon: Optional[Union[QIcon, QPixmap, IconBase]]) -> None:
+        if icon is not None:
+            super().setProperty('hasIcon', True)
+            self._icon = icon
+        else:
+            super().setProperty('hasIcon', False)
+            self._icon = QIcon()
+        super().setStyle(QApplication.style())
+
+    def _drawIcon(self, icon, painter, rect):
+        Function_DrawIcon(icon, painter, rect)
+
+    def paintEvent(self, e: QPaintEvent) -> None:
+        super().paintEvent(e)
+        Width, Height = self.iconSize().width(), self.iconSize().height()
+        #MinWidth, MinHeight = self.minimumSizeHint().width(), self.minimumSizeHint().height()
+        LeftX = (self.width() - Width) /2
+        TopY = (self.height() - Height) / 2
+        Painter = QPainter(self)
+        Painter.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
+        self._drawIcon(self._icon, Painter, QRectF(LeftX, TopY, Width, Height))
 
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Button.Deregistrate(self)
 
+
+class MenuButton(ButtonBase):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        self.setIcon(IconBase.Ellipsis)
+
+    def setMenu(self, menu: QMenu) -> None:
+        def ShowMenu():
+            MenuWidth = menu.sizeHint().width()
+            XPos = MenuWidth - self.width()
+            YPos = self.height()
+            menu.exec(self.mapToGlobal(QPoint(XPos, YPos)))
+        self.clicked.connect(ShowMenu)
+
+    def SetMenu(self, ActionEvents: dict) -> None:
+        Menu = QMenu(self)
+        for Action in ActionEvents.keys():
+            if not isinstance(Action, str):
+                continue
+            MenuAction = QAction(text = Action, parent = self)
+            MenuAction.triggered.connect(ActionEvents.get(Action))
+            Menu.addAction(MenuAction)
+            #Menu.addSeparator()
+        self.setMenu(Menu)
+
+##############################################################################################################################
 
 class SpinBoxBase(QSpinBox):
     '''
@@ -40,17 +89,13 @@ class SpinBoxBase(QSpinBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.SpinBox.Apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('SpinBox', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.SpinBox.Deregistrate(self)
 
 
 class DoubleSpinBoxBase(QDoubleSpinBox):
@@ -63,18 +108,15 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.SpinBox.Apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('SpinBox', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.SpinBox.Deregistrate(self)
 
+##############################################################################################################################
 
 class ComboBoxBase(QComboBox):
     '''
@@ -86,18 +128,15 @@ class ComboBoxBase(QComboBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.ComboBox.Apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('ComboBox', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.ComboBox.Deregistrate(self)
 
+##############################################################################################################################
 
 class ScrollAreaBase(QScrollArea):
     '''
@@ -107,14 +146,10 @@ class ScrollAreaBase(QScrollArea):
     ):
         super().__init__(parent)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
-
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('ScrollArea', Theme))
+        StyleSheetBase.ScrollArea.Apply(self)
 
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.ScrollArea.Deregistrate(self)
 
 ##############################################################################################################################
 
@@ -154,8 +189,7 @@ class TableBase(QTableView):
         self.IsIndexShown = False
         self.SetIndexHeaderVisible(True)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.Table.Apply(self)
 
     def model(self) -> QStandardItemModel:
         return self.StandardItemModel
@@ -260,11 +294,8 @@ class TableBase(QTableView):
         while self.rowCount() > 0:
             self.removeRow(0)
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Table', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Table.Deregistrate(self)
 
 ##############################################################################################################################
 
@@ -290,8 +321,7 @@ class LineEditBase(QFrame):
         HBoxLayout.addWidget(self.LineEdit)
         HBoxLayout.addWidget(self.Button, alignment = Qt.AlignRight)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.Edit.Apply(self)
 
         self.Mask = QLabel(self)
         self.rectChanged.connect(self.Mask.setGeometry)
@@ -345,11 +375,8 @@ class LineEditBase(QFrame):
         self.Button.deleteLater()
         self.Button.hide()
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Edit', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Edit.Deregistrate(self)
 
     def Alert(self, Enable: bool, MaskContent: Optional[str] = None) -> None:
         AlertStyle = 'LineEditBase {border-color: red;}'
@@ -392,8 +419,7 @@ class MediaPlayerBase(QWidget):
         self.MediaPlayer.setAudioOutput(AudioOutput)
         #self.MediaPlayer.mediaStatusChanged.connect(lambda Status: self.MediaPlayer.stop() if Status == QMediaPlayer.EndOfMedia else None)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.Player.Apply(self)
 
     def SetMediaPlayer(self, MediaPath: str):
         self.MediaPlayer.setSource(QUrl.fromLocalFile(MediaPath))
@@ -411,10 +437,7 @@ class MediaPlayerBase(QWidget):
         self.MediaPlayer.setSource('')
         #self.MediaPlayer.deleteLater()
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Player', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Player.Deregistrate(self)
 
 ##############################################################################################################################

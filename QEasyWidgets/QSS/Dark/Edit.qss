@@ -22,7 +22,7 @@ LineEditBase QLineEdit {
 
 
 LineEditBase QPushButton {
-	image: url(:/Button_Icon/Sources/OpenedFolder.png);
+	image: url(:/Button_Icon/Icons/OpenedFolder.png);
 	background-color: transparent;
 	border-width: 0px;
 	border-style: solid;

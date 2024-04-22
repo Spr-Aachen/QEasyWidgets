@@ -19,6 +19,7 @@ import win32print
 import configparser
 from pathlib import Path
 from github import Github
+from packaging import version
 from tqdm import tqdm
 from typing import Tuple, Union, Optional
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
@@ -641,7 +642,7 @@ def CheckUpdate(
         LatestRelease = Repo.get_latest_release() #LatestRelease = Repo.get_release(Version_Latest)
         for Index, Asset in enumerate(LatestRelease.assets):
             if Asset.name == f"{FileName}.{FileFormat}":
-                IsUpdateNeeded = True if Version_Current != Version_Latest else False
+                IsUpdateNeeded = True if version.parse(Version_Current) < version.parse(Version_Latest) else False
                 DownloadURL = Asset.browser_download_url #DownloadURL = f"https://github.com/{RepoOwner}/{RepoName}/releases/download/{Version_Latest}/{FileName}.{FileFormat}"
                 return IsUpdateNeeded, DownloadURL
             elif Index + 1 == len(LatestRelease.assets):

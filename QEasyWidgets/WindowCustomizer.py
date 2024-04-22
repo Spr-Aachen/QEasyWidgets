@@ -43,8 +43,7 @@ class TitleBarBase(QWidget):
         self.HBoxLayout.addWidget(self.MaximizeButton, stretch = 0, alignment = Qt.AlignRight)
         self.HBoxLayout.addWidget(self.CloseButton, stretch = 0, alignment = Qt.AlignRight)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet) if self.isVisible() else None
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.Bar.Apply(self)
 
     '''
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
@@ -69,7 +68,7 @@ class TitleBarBase(QWidget):
         CloseButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         CloseButton.setStyleSheet(
             "QPushButton {"
-            "   image: url(:/Button_Icon/Sources/X.png);"
+            "   image: url(:/Button_Icon/Icons/X.png);"
             "   background-color: transparent;"
             "   padding: 6.6px;"
             "   border-width: 0px;"
@@ -86,7 +85,7 @@ class TitleBarBase(QWidget):
         MaximizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         MaximizeButton.setStyleSheet(
             "QPushButton {"
-            "   image: url(:/Button_Icon/Sources/FullScreen.png);"
+            "   image: url(:/Button_Icon/Icons/FullScreen.png);"
             "   background-color: transparent;"
             "   padding: 6.6px;"
             "   border-width: 0px;"
@@ -103,7 +102,7 @@ class TitleBarBase(QWidget):
         MinimizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         MinimizeButton.setStyleSheet(
             "QPushButton {"
-            "   image: url(:/Button_Icon/Sources/Dash.png);"
+            "   image: url(:/Button_Icon/Icons/Dash.png);"
             "   background-color: transparent;"
             "   padding: 6.6px;"
             "   border-width: 0px;"
@@ -130,11 +129,8 @@ class TitleBarBase(QWidget):
         #TitleLabel.setFont(QFont("Microsoft YaHei", 11.1, QFont.Normal))
         TitleLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Bar', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Bar.Deregistrate(self)
 
 ##############################################################################################################################
 
@@ -334,9 +330,7 @@ class WindowBase:
         try:
             self.TitleBar.deleteLater()
             self.TitleBar.hide()
-            ComponentsSignals.Signal_SetTheme.disconnect(
-                lambda Theme: self.TitleBar.setStyleSheet(Function_GetStyleSheet('Bar', Theme))
-            )
+            StyleSheetBase.Bar.Deregistrate(self.TitleBar)
         except:
             pass
         if TitleBar is not None:
@@ -373,8 +367,8 @@ class MainWindowBase(WindowBase, QMainWindow):
         self.CentralWidget.setObjectName('CentralWidget')
         self.CentralWidget.setLayout(self.CentralLayout)
         self.setCentralWidget(self.CentralWidget)
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+
+        StyleSheetBase.Window.Apply(self)
 
     def setCentralWidget(self, CentralWidget: Optional[QWidget]) -> None:
         try:
@@ -390,11 +384,11 @@ class MainWindowBase(WindowBase, QMainWindow):
             self.CentralWidget.setParent(self) if self.CentralWidget.parent() is None else None
             self.CentralWidget.raise_() if self.CentralWidget.isHidden() else None
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Window', Theme).replace('#CentralWidget', f'#{self.CentralWidget.objectName()}'))
+    def setStyleSheet(self, styleSheet: str) -> None:
+        super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.CentralWidget.objectName()}'))
 
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Window.Deregistrate(self)
 
 
 class ChildWindowBase(WindowBase, QWidget):
@@ -428,6 +422,9 @@ class ChildWindowBase(WindowBase, QWidget):
         Result = self.EventLoop.exit()
         super().closeEvent(event)
 
+    def setStyleSheet(self, styleSheet: str) -> None:
+        super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.objectName()}'))
+
 
 class DialogBase(WindowBase, QDialog):
     '''
@@ -443,8 +440,7 @@ class DialogBase(WindowBase, QDialog):
 
         self.setFrameless(SetStrechable = False)
 
-        ComponentsSignals.Signal_SetTheme.connect(self.InitDefaultStyleSheet)
-        self.InitDefaultStyleSheet('Auto')
+        StyleSheetBase.Dialog.Apply(self)
 
         self.TitleBar.MinimizeButton.hide()
         self.TitleBar.MinimizeButton.deleteLater()
@@ -462,11 +458,8 @@ class DialogBase(WindowBase, QDialog):
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         return
 
-    def InitDefaultStyleSheet(self, Theme: str) -> None:
-        super().setStyleSheet(Function_GetStyleSheet('Dialog', Theme))
-
     def ClearDefaultStyleSheet(self) -> None:
-        ComponentsSignals.Signal_SetTheme.disconnect(self.InitDefaultStyleSheet)
+        StyleSheetBase.Dialog.Deregistrate(self)
 
 ##############################################################################################################################
 

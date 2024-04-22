@@ -1,9 +1,11 @@
 import os
 import darkdetect
+from enum import Enum
 from typing import Union, Optional
 from ctypes import c_int, byref, windll
 from PySide6.QtCore import Qt, QObject, QFile, QRect, QRectF, QSize, Signal, Slot, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
-from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QPainter, QDesktopServices
+from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QPainter, QFont, QDesktopServices
+from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import *
 
 from .Utils import *
@@ -26,36 +28,105 @@ ComponentsSignals = CustomSignals_ComponentsCustomizer()
 
 ##############################################################################################################################
 
-def Function_GetStyleSheet(
-    Widget: str,
-    Theme: Optional[str] = None
+class ThemeBase:
+    '''
+    '''
+    THEME = 'Sys'
+
+    def Update(self, theme: str):
+        if theme in ('Dark', 'Light'):
+            self.THEME = theme
+        else:
+            SysTheme = darkdetect.theme()
+            self.THEME = SysTheme if SysTheme is not None else 'Dark'
+
+
+Theme = ThemeBase()
+
+
+#ComponentsSignals.Signal_SetTheme.connect(Theme.Update)
+
+##############################################################################################################################
+
+RegistratedWidgets = {}
+
+
+class StyleSheetBase(Enum):
+    '''
+    '''
+    ScrollArea = 'ScrollArea'
+    Button = 'Button'
+    SpinBox = 'SpinBox'
+    ComboBox = 'ComboBox'
+    Edit = 'Edit'
+    Player = 'Player'
+    Table = 'Table'
+
+    Bar = 'Bar'
+    Window = 'Window'
+    Dialog = 'Dialog'
+
+    def Path(self):
+        Path = f'QSS/{Theme.THEME}/{self.value}.qss'
+        return Path
+    def Path(self):
+        return
+
+    def Registrate(self, widget, value):
+        RegistratedWidgets[widget] = value
+
+    def Deregistrate(self, widget):
+        RegistratedWidgets.pop(widget)
+
+    def Apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
+        QApplication.processEvents()
+
+        Theme.Update(theme)
+
+        Prefix = 'QSS'
+        FilePath = f'QSS/{Theme.THEME}/{self.value}.qss'
+        File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
+        File.open(QFile.ReadOnly | QFile.Text)
+        QSS = str(File.readAll(), encoding = 'utf-8')
+        File.close()
+
+        widget.setStyleSheet(QSS)
+
+        self.Registrate(widget, self.value) if registrate else None
+
+
+def Function_UpdateStyleSheet(
+    theme: Optional[str] = None
 ):
     '''
-    Get style sheet
-
-    Parameters
-    ----------
-
-    Widget: str
-        Name of widget (base)
-
-    Theme: str | None
-        Type of theme
     '''
-    QApplication.processEvents()
+    for Widget, value in RegistratedWidgets.items():
+        for Value in StyleSheetBase:
+            if Value.value != value:
+                continue
+            try:
+                Value.Apply(Widget, theme)
+            except RuntimeError:
+                Value.Deregistrate(Widget)
+            finally:
+                continue
 
-    if Theme not in ('Dark', 'Light'):
-        SysTheme = darkdetect.theme()
-        Theme = SysTheme if SysTheme is not None else 'Dark'
 
-    Prefix = 'QSS'
-    FilePath = f'QSS/{Theme}/{Widget}.qss'
-    File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
-    File.open(QFile.ReadOnly | QFile.Text)
-    QSS = str(File.readAll(), encoding = 'utf-8')
-    File.close()
+ComponentsSignals.Signal_SetTheme.connect(Function_UpdateStyleSheet)
 
-    return QSS
+##############################################################################################################################
+
+class IconBase(Enum):
+    '''
+    '''
+    Ellipsis = 'Ellipsis'
+
+    def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
+        Prefix = 'Icons'
+        IconPath = f'Icons/{theme if theme is not None else Theme.THEME}/{self.value}.svg'
+        IconPath = Path(f':/{Prefix}').joinpath(IconPath).as_posix()
+        Renderer = QSvgRenderer(IconPath)
+        Renderer.render(painter, QRectF(rect))
 
 
 def Function_DrawIcon(
@@ -65,21 +136,28 @@ def Function_DrawIcon(
 ):
     '''
     Draw icon
-
-    Parameters
-    ----------
-
-    Icon: str | QIcon
-        the icon to be drawn
-
-    Painter: QPainter
-        painter
-
-    Rect: QRect | QRectF
-        the rect to render icon
     '''
-    icon = QIcon(Icon)
-    icon.paint(Painter, QRectF(Rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
+    if isinstance(Icon, IconBase):
+        Icon.paint(Painter, Rect, Theme.THEME)
+    else:
+        icon = QIcon(Icon)
+        icon.paint(Painter, QRectF(Rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
+
+##############################################################################################################################
+
+def Function_SetFont(
+    Widget: QWidget,
+    FontSize:int = 12,
+    Weight = QFont.Normal
+):
+    '''
+    Set the font of widget
+    '''
+    Font = QFont()
+    Font.setFamilies(['Microsoft YaHei'])
+    Font.setPixelSize(FontSize)
+    Font.setWeight(Weight)
+    Widget.setFont(Font)
 
 ##############################################################################################################################
 
