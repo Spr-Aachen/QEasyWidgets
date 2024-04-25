@@ -1,24 +1,27 @@
-color: rgb(45, 33, 21);
-background-color: rgba(234, 234, 234, 246);
-padding: 0px;
-border: none;
+DialogBase {
+    color: rgb(45, 33, 21);
+    background-color: rgba(234, 234, 234, 246);
+    padding: 0px;
+    border: none;
+}
 
 
-QLabel {
+DialogBase QLabel {
+    color: rgb(45, 33, 21);
     text-align: center;
     font-size: 9.9pt;
     background-color: transparent;
 }
 
 
-QPushButton {
+DialogBase QPushButton {
+    color: rgb(45, 33, 21);
     text-align: center;
     font-size: 9.9pt;
     background-color: rgba(210, 210, 210, 120);
-    border-width: 0px;
-    border-style: solid;
+    border: none;
 }
-QPushButton:hover {
+DialogBase QPushButton:hover {
     background-color: rgba(210, 210, 210, 210);
 }
 
@@ -26,6 +29,5 @@ QPushButton:hover {
 QToolTip {
     color: rgb(45, 33, 21);
     background-color: transparent;
-	border-width: 0px;
-	border-style: solid;
+    border: none;
 }

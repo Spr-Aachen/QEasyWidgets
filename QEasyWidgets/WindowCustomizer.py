@@ -412,6 +412,8 @@ class ChildWindowBase(WindowBase, QWidget):
         self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
         self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
 
+        StyleSheetBase.Window.Apply(self)
+
     def exec(self) -> int:
         self.show()
         Result = self.EventLoop.exec()
@@ -424,6 +426,9 @@ class ChildWindowBase(WindowBase, QWidget):
 
     def setStyleSheet(self, styleSheet: str) -> None:
         super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.objectName()}'))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        StyleSheetBase.Window.Deregistrate(self)
 
 
 class DialogBase(WindowBase, QDialog):
@@ -440,8 +445,6 @@ class DialogBase(WindowBase, QDialog):
 
         self.setFrameless(SetStrechable = False)
 
-        StyleSheetBase.Dialog.Apply(self)
-
         self.TitleBar.MinimizeButton.hide()
         self.TitleBar.MinimizeButton.deleteLater()
         self.TitleBar.MaximizeButton.hide()
@@ -449,6 +452,8 @@ class DialogBase(WindowBase, QDialog):
 
         self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
         self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
+
+        StyleSheetBase.Dialog.Apply(self)
 
     def exec(self) -> int:
         Result = super().exec()

@@ -4,8 +4,9 @@ from enum import Enum
 from typing import Union, Optional
 from ctypes import c_int, byref, windll
 from PySide6.QtCore import Qt, QObject, QFile, QRect, QRectF, QSize, Signal, Slot, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
-from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QPainter, QFont, QDesktopServices
+from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QIconEngine, QPainter, QFont, QDesktopServices
 from PySide6.QtSvg import QSvgRenderer
+from PySide6.QtXml import QDomDocument
 from PySide6.QtWidgets import *
 
 from .Utils import *
@@ -28,23 +29,26 @@ ComponentsSignals = CustomSignals_ComponentsCustomizer()
 
 ##############################################################################################################################
 
+class Theme:
+    '''
+    '''
+    Dark = 'Dark'
+    Light = 'Light'
+
+    Auto = darkdetect.theme()
+
+
 class ThemeBase:
     '''
     '''
-    THEME = 'Sys'
+    THEME = Theme.Auto if Theme.Auto is not None else Theme.Dark
 
     def Update(self, theme: str):
-        if theme in ('Dark', 'Light'):
+        if theme in (Theme.Dark, Theme.Light):
             self.THEME = theme
-        else:
-            SysTheme = darkdetect.theme()
-            self.THEME = SysTheme if SysTheme is not None else 'Dark'
 
 
-Theme = ThemeBase()
-
-
-#ComponentsSignals.Signal_SetTheme.connect(Theme.Update)
+EasyTheme = ThemeBase()
 
 ##############################################################################################################################
 
@@ -54,6 +58,7 @@ RegistratedWidgets = {}
 class StyleSheetBase(Enum):
     '''
     '''
+    Label = 'Label'
     ScrollArea = 'ScrollArea'
     Button = 'Button'
     SpinBox = 'SpinBox'
@@ -67,7 +72,7 @@ class StyleSheetBase(Enum):
     Dialog = 'Dialog'
 
     def Path(self):
-        Path = f'QSS/{Theme.THEME}/{self.value}.qss'
+        Path = f'QSS/{EasyTheme.THEME}/{self.value}.qss'
         return Path
     def Path(self):
         return
@@ -81,10 +86,10 @@ class StyleSheetBase(Enum):
     def Apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
         QApplication.processEvents()
 
-        Theme.Update(theme)
+        EasyTheme.Update(theme) if theme is not None else None
 
         Prefix = 'QSS'
-        FilePath = f'QSS/{Theme.THEME}/{self.value}.qss'
+        FilePath = f'QSS/{EasyTheme.THEME}/{self.value}.qss'
         File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
         File.open(QFile.ReadOnly | QFile.Text)
         QSS = str(File.readAll(), encoding = 'utf-8')
@@ -100,7 +105,7 @@ def Function_UpdateStyleSheet(
 ):
     '''
     '''
-    for Widget, value in RegistratedWidgets.items():
+    for Widget, value in list(RegistratedWidgets.items()):
         for Value in StyleSheetBase:
             if Value.value != value:
                 continue
@@ -123,25 +128,25 @@ class IconBase(Enum):
 
     def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
         Prefix = 'Icons'
-        IconPath = f'Icons/{theme if theme is not None else Theme.THEME}/{self.value}.svg'
+        IconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
         IconPath = Path(f':/{Prefix}').joinpath(IconPath).as_posix()
         Renderer = QSvgRenderer(IconPath)
         Renderer.render(painter, QRectF(rect))
 
 
 def Function_DrawIcon(
-    Icon: Union[str, QIcon],
-    Painter: QPainter,
-    Rect: Union[QRect, QRectF]
+    icon: Union[str, QIcon],
+    painter: QPainter,
+    rect: Union[QRect, QRectF]
 ):
     '''
     Draw icon
     '''
-    if isinstance(Icon, IconBase):
-        Icon.paint(Painter, Rect, Theme.THEME)
+    if isinstance(icon, IconBase):
+        icon.paint(painter, rect, EasyTheme.THEME)
     else:
-        icon = QIcon(Icon)
-        icon.paint(Painter, QRectF(Rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
+        icon = QIcon(icon)
+        icon.paint(painter, QRectF(rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
 
 ##############################################################################################################################
 

@@ -153,6 +153,27 @@ class ScrollAreaBase(QScrollArea):
 
 ##############################################################################################################################
 
+class LabelBase(QLabel):
+    '''
+    '''
+    Resized = Signal()
+
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        StyleSheetBase.Label.Apply(self)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.Resized.emit()
+        super().resizeEvent(event)
+
+    def ClearDefaultStyleSheet(self) -> None:
+        StyleSheetBase.Label.Deregistrate(self)
+
+##############################################################################################################################
+
 class TableBase(QTableView):
     '''
     '''
