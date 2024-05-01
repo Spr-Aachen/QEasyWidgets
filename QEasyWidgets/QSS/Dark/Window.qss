@@ -3,7 +3,7 @@ QWidget {
 }
 
 QWidget#CentralWidget {
-    background-color: qlineargradient(spread: pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(51, 51, 51, 246), stop:1 rgba(21, 21, 21, 246));
+    background-color: qlineargradient(spread: pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(36, 36, 36, 246), stop:1 rgba(24, 24, 24, 246));
 	border-width: 0px;
 	border-style: solid;
 }

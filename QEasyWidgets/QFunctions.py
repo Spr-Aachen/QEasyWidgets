@@ -1,9 +1,10 @@
 import os
 import darkdetect
+import locale
 from enum import Enum
 from typing import Union, Optional
 from ctypes import c_int, byref, windll
-from PySide6.QtCore import Qt, QObject, QFile, QRect, QRectF, QSize, Signal, Slot, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
+from PySide6.QtCore import Qt, QObject, QFile, QRect, QRectF, QSize, QTranslator, Signal, Slot, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
 from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QIconEngine, QPainter, QFont, QDesktopServices
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtXml import QDomDocument
@@ -20,6 +21,9 @@ class CustomSignals_ComponentsCustomizer(QObject):
     '''
     # Set theme
     Signal_SetTheme = Signal(str)
+
+    # Set language
+    Signal_SetLanguage = Signal(str)
     '''
     # Get clicked button
     Signal_ClickedButton = Signal(QMessageBox.StandardButton)
@@ -70,12 +74,6 @@ class StyleSheetBase(Enum):
     Bar = 'Bar'
     Window = 'Window'
     Dialog = 'Dialog'
-
-    def Path(self):
-        Path = f'QSS/{EasyTheme.THEME}/{self.value}.qss'
-        return Path
-    def Path(self):
-        return
 
     def Registrate(self, widget, value):
         RegistratedWidgets[widget] = value
@@ -147,6 +145,62 @@ def Function_DrawIcon(
     else:
         icon = QIcon(icon)
         icon.paint(painter, QRectF(rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
+
+##############################################################################################################################
+
+class Language:
+    '''
+    '''
+    ZH = 'Chinese'
+    EN = 'English'
+
+    Auto = locale.getdefaultlocale()[0]
+
+
+class LanguageBase:
+    '''
+    '''
+    LANG = 'Chinese' if Language.Auto in ('zh', 'zh_CN') else 'English'
+
+    def Update(self, language: str):
+        if language in (Language.ZH, Language.EN):
+            self.LANG = language
+
+
+EasyLanguage= LanguageBase()
+
+##############################################################################################################################
+
+class TranslationBase(QTranslator):
+    '''
+    '''
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+    def load(self, language: Optional[str] = None):
+        EasyLanguage.Update(language) if language is not None else None
+
+        Prefix = 'QM'
+        FilePath = f'i18n/{EasyLanguage.LANG}.qm'
+        FilePath = Path(f':/{Prefix}').joinpath(FilePath).as_posix()
+
+        super().load(FilePath)
+
+
+def Function_UpdateLanguage(
+    language: Optional[str] = None
+):
+    '''
+    '''
+    QApplication.processEvents()
+
+    Translator = TranslationBase()
+    Translator.load(language)
+
+    QApplication.instance().installTranslator(Translator)
+
+
+ComponentsSignals.Signal_SetLanguage.connect(Function_UpdateLanguage)
 
 ##############################################################################################################################
 
