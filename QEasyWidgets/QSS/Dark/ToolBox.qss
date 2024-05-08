@@ -1,0 +1,32 @@
+ToolBox {
+    background-color: transparent;
+    padding: 0px;
+    border: none;
+}
+
+ToolPage {
+	background-color: transparent;
+    border: none;
+}
+
+ToolPage QPushButton {
+	/*font-size: 12px;*/
+	text-align: left;
+	background-color: transparent;
+	padding-top: 3px;
+	padding-left: 12px;
+	padding-bottom: 3px;
+	padding-right: 6px;
+    border: none;
+}
+ToolPage QPushButton:hover {
+	background-color: rgba(201, 210, 222, 12);
+}
+
+
+QToolTip {
+    color: rgb(210, 222, 234);
+    background-color: transparent;
+	border-width: 0px;
+	border-style: solid;
+}

@@ -2,18 +2,20 @@ ButtonBase {
 	/*font-size: 12px;*/
 	text-align: center;
 	background-color: transparent;
-	padding-top: 3px;
-	padding-left: 6px;
-	padding-bottom: 3px;
-	padding-right: 6px;
+	border: none;
+}
+ButtonBase:hover {
+}
+
+
+MenuButton {
 	border-width: 1.2px;
 	border-style: solid;
 	border-color: rgba(201, 210, 222, 123);
 }
-ButtonBase:hover {
+MenuButton:hover {
 	border-color: rgba(201, 210, 222, 210);
 }
-
 
 MenuButton QMenu {
 	background-color: black;

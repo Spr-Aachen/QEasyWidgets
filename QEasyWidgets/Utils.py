@@ -125,6 +125,106 @@ def RawString(
     return unicodedata.normalize('NFKC', Text)
 
 
+class SubprocessManager:
+    '''
+    '''
+    def __init__(self,
+        CommunicateThroughConsole: bool = False
+    ):
+        self.CommunicateThroughConsole = CommunicateThroughConsole
+
+        self.Encoding = 'gbk' if platform.system() == 'Windows' else 'utf-8'
+
+    def create(self,
+        Args: Union[list[Union[list, str]], str],
+    ):
+        if not self.CommunicateThroughConsole:
+            for Arg in ToIterable(Args):
+                Arg = shlex.split(Arg) if isinstance(Arg, str) else Arg
+                self.Subprocess = subprocess.Popen(
+                    args = Arg,
+                    stdout = subprocess.PIPE,
+                    stderr = subprocess.PIPE,
+                    env = os.environ,
+                    creationflags = subprocess.CREATE_NO_WINDOW
+                )
+
+        else:
+            TotalInput = str()
+            for Arg in ToIterable(Args):
+                Arg = shlex.join(Arg) if isinstance(Arg, list) else Arg
+                TotalInput += f'{RawString(Arg)}\n'
+            self.TotalInput = TotalInput.encode(self.Encoding, errors = 'replace')
+            if platform.system() == 'Windows':
+                ShellArgs = ['cmd']
+            if platform.system() == 'Linux':
+                ShellArgs = ['bash', '-c']
+            self.Subprocess = subprocess.Popen(
+                args = ShellArgs,
+                stdin = subprocess.PIPE,
+                stdout = subprocess.PIPE,
+                stderr = subprocess.STDOUT,
+                env = os.environ,
+                creationflags = subprocess.CREATE_NO_WINDOW
+            )
+
+        return self.Subprocess
+
+    def monitor(self,
+        ShowProgress: bool = False,
+        DecodeResult: Optional[bool] = None,
+        LogPath: Optional[str] = None
+    ):
+        if not self.CommunicateThroughConsole:
+            TotalOutput, TotalError = (bytes(), bytes())
+            if ShowProgress:
+                Output, Error = (bytes(), bytes())
+                for Line in io.TextIOWrapper(self.Subprocess.stdout, encoding = self.Encoding, errors = 'replace'):
+                    Output += Line.encode(self.Encoding, errors = 'replace')
+                    sys.stdout.write(Line) if sys.stdout is not None else None
+                    if LogPath is not None:
+                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                            Log.write(Line)
+                    self.Subprocess.stdout.flush()
+                    if self.Subprocess.poll() is not None:
+                        break
+                for Line in io.TextIOWrapper(self.Subprocess.stderr, encoding = self.Encoding, errors = 'replace'):
+                    Error += Line.encode(self.Encoding, errors = 'replace')
+                    sys.stderr.write(Line) if sys.stderr is not None else None
+                    if LogPath is not None:
+                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                            Log.write(Line)
+            else:
+                Output, Error = self.Subprocess.communicate()
+                Output, Error = b'' if Output is None else Output, b'' if Error is None else Error
+            TotalOutput, TotalError = TotalOutput + Output, TotalError + Error
+
+        else:
+            if ShowProgress:
+                TotalOutput, TotalError = (bytes(), bytes())
+                self.Subprocess.stdin.write(self.TotalInput)
+                self.Subprocess.stdin.close()
+                for Line in io.TextIOWrapper(self.Subprocess.stdout, encoding = self.Encoding, errors = 'replace'):
+                    TotalOutput += Line.encode(self.Encoding, errors = 'replace')
+                    sys.stdout.write(Line) if sys.stdout is not None else None
+                    if LogPath is not None:
+                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                            Log.write(Line)
+                    self.Subprocess.stdout.flush()
+                    if self.Subprocess.poll() is not None:
+                        break
+                if self.Subprocess.wait() != 0:
+                    TotalError = b"Error occurred, please check the logs for full command output."
+            else:
+                TotalOutput, TotalError = self.Subprocess.communicate(self.TotalInput)
+                TotalOutput, TotalError = b'' if TotalOutput is None else TotalOutput, b'' if TotalError is None else TotalError
+
+        TotalOutput, TotalError = TotalOutput.strip(), TotalError.strip()
+        TotalOutput, TotalError = TotalOutput.decode(self.Encoding, errors = 'ignore') if DecodeResult else TotalOutput, TotalError.decode(self.Encoding, errors = 'ignore') if DecodeResult else TotalError
+
+        return None if TotalOutput in ('', b'') else TotalOutput, None if TotalError in ('', b'') else TotalError, self.Subprocess.returncode
+
+
 def RunCMD(
     Args: Union[list[Union[list, str]], str],
     ShowProgress: bool = False,
@@ -134,82 +234,9 @@ def RunCMD(
 ):
     '''
     '''
-    Encoding = 'gbk' if platform.system() == 'Windows' else 'utf-8'
-
-    if not CommunicateThroughConsole:
-        TotalOutput, TotalError = (bytes(), bytes())
-        for Arg in ToIterable(Args):
-            Arg = shlex.split(Arg) if isinstance(Arg, str) else Arg
-            Subprocess = subprocess.Popen(
-                args = Arg,
-                stdout = subprocess.PIPE,
-                stderr = subprocess.PIPE,
-                env = os.environ,
-                creationflags = subprocess.CREATE_NO_WINDOW
-            )
-            if ShowProgress:
-                Output, Error = (bytes(), bytes())
-                for Line in io.TextIOWrapper(Subprocess.stdout, encoding = Encoding, errors = 'replace'):
-                    Output += Line.encode(Encoding, errors = 'replace')
-                    sys.stdout.write(Line) if sys.stdout is not None else None
-                    if LogPath is not None:
-                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
-                            Log.write(Line)
-                    Subprocess.stdout.flush()
-                    if Subprocess.poll() is not None:
-                        break
-                for Line in io.TextIOWrapper(Subprocess.stderr, encoding = Encoding, errors = 'replace'):
-                    Error += Line.encode(Encoding, errors = 'replace')
-                    sys.stderr.write(Line) if sys.stderr is not None else None
-                    if LogPath is not None:
-                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
-                            Log.write(Line)
-            else:
-                Output, Error = Subprocess.communicate()
-                Output, Error = b'' if Output is None else Output, b'' if Error is None else Error
-            TotalOutput, TotalError = TotalOutput + Output, TotalError + Error
-
-    else:
-        TotalInput = str()
-        for Arg in ToIterable(Args):
-            Arg = shlex.join(Arg) if isinstance(Arg, list) else Arg
-            TotalInput += f'{RawString(Arg)}\n'
-        TotalInput = TotalInput.encode(Encoding, errors = 'replace')
-        if platform.system() == 'Windows':
-            ShellArgs = ['cmd']
-        if platform.system() == 'Linux':
-            ShellArgs = ['bash', '-c']
-        Subprocess = subprocess.Popen(
-            args = ShellArgs,
-            stdin = subprocess.PIPE,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            env = os.environ,
-            creationflags = subprocess.CREATE_NO_WINDOW
-        )
-        if ShowProgress:
-            TotalOutput, TotalError = (bytes(), bytes())
-            Subprocess.stdin.write(TotalInput)
-            Subprocess.stdin.close()
-            for Line in io.TextIOWrapper(Subprocess.stdout, encoding = Encoding, errors = 'replace'):
-                TotalOutput += Line.encode(Encoding, errors = 'replace')
-                sys.stdout.write(Line) if sys.stdout is not None else None
-                if LogPath is not None:
-                    with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
-                        Log.write(Line)
-                Subprocess.stdout.flush()
-                if Subprocess.poll() is not None:
-                    break
-            if Subprocess.wait() != 0:
-                TotalError = b"Error occurred, please check the logs for full command output."
-        else:
-            TotalOutput, TotalError = Subprocess.communicate(TotalInput)
-            TotalOutput, TotalError = b'' if TotalOutput is None else TotalOutput, b'' if TotalError is None else TotalError
-
-    TotalOutput, TotalError = TotalOutput.strip(), TotalError.strip()
-    TotalOutput, TotalError = TotalOutput.decode(Encoding, errors = 'ignore') if DecodeResult else TotalOutput, TotalError.decode(Encoding, errors = 'ignore') if DecodeResult else TotalError
-
-    return None if TotalOutput in ('', b'') else TotalOutput, None if TotalError in ('', b'') else TotalError, Subprocess.returncode
+    ManageSubprocess = SubprocessManager(CommunicateThroughConsole)
+    ManageSubprocess.create(Args)
+    return ManageSubprocess.monitor(ShowProgress, DecodeResult, LogPath)
 
 
 def SetEnvVar(
@@ -450,24 +477,43 @@ def TaskAccelerating(
 
 
 def ProcessTerminator(
-    Program: str,
+    Program: Union[str, int],
     SelfIgnored: bool = True,
     SearchKeyword: bool = False
 ):
     '''
     '''
-    ProgramPath = NormPath(Program) if NormPath(Program) is not None else Program
-    for Process in psutil.process_iter():
+    if isinstance(Program, int):
+        PID = Program
         try:
-            ProcessList =  Process.children(recursive = True) + [Process]
-            for Process in ProcessList:
+            Process = psutil.Process(PID)
+        except psutil.NoSuchProcess:
+            # Process already terminated
+            return
+
+        ProcessList =  Process.children(recursive = True) + [Process]
+        for Process in ProcessList:
+            try:
                 if Process.pid == os.getpid() and SelfIgnored:
                     continue
-                ProcessPath = Process.exe()
-                if ProgramPath == ProcessPath or (ProgramPath.lower() in ProcessPath.lower() and SearchKeyword):
-                    Process.send_signal(signal.SIGTERM) #Process.kill()
-        except:
-            pass
+                os.kill(Process.pid, signal.SIGTERM)
+            except:
+                pass
+
+    if isinstance(Program, str):
+        Name = Program
+        ProgramPath = NormPath(Name) if NormPath(Name) is not None else Name
+        for Process in psutil.process_iter():
+            ProcessList =  Process.children(recursive = True) + [Process]
+            try:
+                for Process in ProcessList:
+                    if Process.pid == os.getpid() and SelfIgnored:
+                        continue
+                    ProcessPath = Process.exe()
+                    if ProgramPath == ProcessPath or (ProgramPath.lower() in ProcessPath.lower() and SearchKeyword):
+                        Process.send_signal(signal.SIGTERM) #Process.kill()
+            except:
+                pass
 
 
 def OccupationTerminator(

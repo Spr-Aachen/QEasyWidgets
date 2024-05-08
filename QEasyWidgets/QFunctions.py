@@ -63,8 +63,9 @@ class StyleSheetBase(Enum):
     '''
     '''
     Label = 'Label'
-    ScrollArea = 'ScrollArea'
     Button = 'Button'
+    ScrollArea = 'ScrollArea'
+    ToolBox = 'ToolBox'
     SpinBox = 'SpinBox'
     ComboBox = 'ComboBox'
     Edit = 'Edit'
@@ -123,6 +124,12 @@ class IconBase(Enum):
     '''
     '''
     Ellipsis = 'Ellipsis'
+    OpenedFolder = 'OpenedFolder'
+    Play = 'Play'
+    Pause = 'Pause'
+    Dash = 'Dash'
+    FullScreen = 'FullScreen'
+    X = 'X'
 
     def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
         Prefix = 'Icons'
@@ -187,6 +194,7 @@ class TranslationBase(QTranslator):
         super().load(FilePath)
 
 
+"""
 def Function_UpdateLanguage(
     language: Optional[str] = None
 ):
@@ -201,6 +209,40 @@ def Function_UpdateLanguage(
 
 
 ComponentsSignals.Signal_SetLanguage.connect(Function_UpdateLanguage)
+"""
+
+##############################################################################################################################
+
+def Function_FindChildUI(
+    ParentUI: QWidget,
+    ChildType: object
+):
+    '''
+    Function to find child UI
+    '''
+    ParentUI_Children = ParentUI.children()
+
+    for ParentUI_Child in ParentUI_Children:
+        if isinstance(ParentUI_Child, ChildType):
+            return ParentUI_Child
+
+
+def Function_FindParentUI(
+    ChildUI: QWidget,
+    ParentType: object
+):
+    '''
+    Function to find parent UI
+    '''
+    ChildUI_Parent = ChildUI.parent()
+
+    while not isinstance(ChildUI_Parent, ParentType):
+        try:
+            ChildUI_Parent = ChildUI_Parent.parent()
+        except:
+            raise Exception(f"{ChildUI}'s parent UI not found! Please check if the layout is correct.")
+
+    return ChildUI_Parent
 
 ##############################################################################################################################
 
@@ -240,6 +282,7 @@ def Function_SetDropShadowEffect(
     DropShadowEffect.setColor(Color)
     Widget.setGraphicsEffect(DropShadowEffect)
 
+##############################################################################################################################
 
 def Function_SetAnimation(
     Animation: QPropertyAnimation,
@@ -292,6 +335,7 @@ def Function_SetWidgetSizeAnimation(
 
     return AnimationGroup
 
+##############################################################################################################################
 
 def Function_SetNoContents(
     Widget: QWidget
@@ -300,6 +344,7 @@ def Function_SetNoContents(
         while Widget.count():
             Widget.removeWidget(Widget.widget(0))
 
+##############################################################################################################################
 
 def Function_SetText(
     Widget: QWidget,
@@ -333,6 +378,7 @@ def Function_GetText(
         Text = Widget.placeholderText() if Text.strip() in ('', str(None)) else Text
     return Text
 
+##############################################################################################################################
 
 def Function_GetFileDialog(
     Mode: str,
@@ -359,6 +405,7 @@ def Function_GetFileDialog(
         )
     return DisplayText
 
+##############################################################################################################################
 
 def GetMissingBorderPixels(hWnd: int):
     MissingBorderSize = []
@@ -383,6 +430,7 @@ def GetMissingBorderPixels(hWnd: int):
 
     return MissingBorderSize
 
+##############################################################################################################################
 
 def Function_OpenURL(
     URL: Union[str, list],

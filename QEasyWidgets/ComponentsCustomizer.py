@@ -8,6 +8,26 @@ from .Sources import *
 
 ##############################################################################################################################
 
+class WidgetBase(QWidget):
+    '''
+    '''
+    Resized = Signal()
+
+    def __init__(self,
+        parent: Optional[QWidget] = None,
+    ):
+        super().__init__(parent)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.Resized.emit()
+        '''
+        if self.minimumSizeHint() != self.size():
+            self.adjustSize()
+        '''
+        super().resizeEvent(event)
+
+##############################################################################################################################
+
 class ButtonBase(QPushButton):
     '''
     '''
@@ -174,6 +194,118 @@ class LabelBase(QLabel):
 
 ##############################################################################################################################
 
+class ToolPage(WidgetBase):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None,
+    ):
+        super().__init__(parent)
+
+        self.IsExpanded = True
+
+        self.Label = QLabel()
+        self.Label.setFixedSize(20, 20)
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 5, 0)
+        layout.setSpacing(0)
+        layout.addStretch(1)
+        layout.addWidget(self.Label)
+        self.FolderButton = QPushButton()
+        self.FolderButton.setLayout(layout)
+        self.FolderButton.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
+
+        widgetlayout = QGridLayout()
+        widgetlayout.setContentsMargins(0, 0, 0, 0)
+        widgetlayout.setSpacing(0)
+        self.Widget = WidgetBase()
+        self.Widget.setAttribute(Qt.WA_StyledBackground)
+        self.Widget.setLayout(widgetlayout)
+        self.Widget.Resized.connect(self._resizeHeight)
+
+        self.Layout = QVBoxLayout(self)
+        self.Layout.setContentsMargins(0, 0, 0, 0)
+        self.Layout.setSpacing(0)
+        self.Layout.addWidget(self.FolderButton)
+        self.Layout.addWidget(self.Widget)
+
+    def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
+        ButtonHeight = self.FolderButton.minimumSizeHint().height()
+        LayoutSpacing = self.Layout.spacing()
+        WidgetLayoutMargins = self.Widget.layout().contentsMargins().top() + self.Widget.layout().contentsMargins().bottom()
+        WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.Widget.height()
+        AdjustedHeight = ButtonHeight + LayoutSpacing + WidgetHeight if WidgetHeight >=0 else 0
+        self.setFixedHeight(AdjustedHeight)
+
+    def addWidget(self, widget: QWidget, title: str):
+        self.Widget.layout().addWidget(widget)
+        self.FolderButton.setText(title)
+        def resizeWidgetHeight():
+            AdjustedHeight = widget.height()
+            self.Widget.setFixedHeight(AdjustedHeight) if self.IsExpanded else None
+        widget.Resized.connect(resizeWidgetHeight) if hasattr(widget, 'Resized') else None
+
+    def expand(self):
+        Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = self.Widget.minimumSizeHint().height()).start()
+        self.Label.setPixmap(QPixmap(":/ToolBox_Icon/Icons/DownArrow.png").scaled(self.Label.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+        self.IsExpanded = True
+
+    def collapse(self):
+        Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = 0).start()
+        self.Label.setPixmap(QPixmap(":/ToolBox_Icon/Icons/LeftArrow.png").scaled(self.Label.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+        self.IsExpanded = False
+
+    def setText(self, text: str):
+        self.FolderButton.setText(text)
+
+
+class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
+    '''
+    '''
+    def __init__(self,
+        parent: Optional[QWidget] = None
+    ):
+        super().__init__(parent)
+
+        self.Pages = []
+
+        self.Layout = QVBoxLayout(self)
+        self.Layout.setContentsMargins(0, 0, 0, 0)
+        self.Layout.setSpacing(12)
+        #self.Layout.addStretch(1)
+
+        StyleSheetBase.ToolBox.Apply(self)
+
+    def addItem(self, widget: QWidget, text: str):
+        page = ToolPage(self)
+        page.addWidget(widget, text)
+        self.Layout.addWidget(page)
+        self.Pages.append(page)
+        def resizeHeight():
+            AdjustedHeight = page.height()
+            self.setFixedHeight(AdjustedHeight)
+        page.Resized.connect(resizeHeight)
+
+    def widget(self, index: int) -> ToolPage:
+        return self.Pages[index]
+
+    def setItemText(self, index: int, text: str) -> None:
+        self.widget(index).setText(text)
+
+    def setCurrentIndex(self, index: int) -> None:
+        ''''''
+
+    def CurrentIndex(self) -> int:
+        ''''''
+
+    def indexOf(self, widget: QWidget) -> int:
+        return self.Pages.index(widget if isinstance(widget, ToolPage) else Function_FindParentUI(widget, ToolPage))
+
+    def ClearDefaultStyleSheet(self) -> None:
+        StyleSheetBase.ToolBox.Deregistrate(self)
+
+##############################################################################################################################
+
 class TableBase(QTableView):
     '''
     '''
@@ -334,7 +466,8 @@ class LineEditBase(QFrame):
         self.LineEdit.textChanged.connect(self.LineEdit.setStatusTip)
         self.LineEdit.textChanged.connect(self.textChanged.emit)
 
-        self.Button = QPushButton()
+        self.Button = ButtonBase()
+        self.Button.setIcon(IconBase.OpenedFolder)
 
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
@@ -416,10 +549,10 @@ class MediaPlayerBase(QWidget):
         self.StackedWidget = QStackedWidget()
         self.StackedWidget.setMaximumSize(36, 36)
         self.StackedWidget.setContentsMargins(0, 0, 0, 0)
-        self.PlayButton = QPushButton()
-        self.PlayButton.setStyleSheet(self.styleSheet() + "QPushButton {border-image: url(:/Button_Icon/Sources/Play.png);}")
-        self.PauseButton = QPushButton()
-        self.PauseButton.setStyleSheet(self.styleSheet() + "QPushButton {border-image: url(:/Button_Icon/Sources/Pause.png);}")
+        self.PlayButton = ButtonBase()
+        self.PlayButton.setIcon(IconBase.Play)
+        self.PauseButton = ButtonBase()
+        self.PauseButton.setIcon(IconBase.Pause)
         self.PauseButton.clicked.connect(lambda: self.StackedWidget.setCurrentWidget(self.PlayButton))
         self.PlayButton.clicked.connect(lambda: self.StackedWidget.setCurrentWidget(self.PauseButton))
         self.StackedWidget.addWidget(self.PlayButton)

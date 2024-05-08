@@ -16,18 +16,15 @@ LineEditBase QLineEdit {
 	padding-left: 6px;
 	padding-bottom: 3px;
 	padding-right: 6px;
-	border-width: 0px;
-	border-style: solid;
+    border: none;
 }
 
 
-LineEditBase QPushButton {
-	image: url(:/Button_Icon/Icons/OpenedFolder.png);
+LineEditBase ButtonBase {
 	background-color: transparent;
-	border-width: 0px;
-	border-style: solid;
+	border: none;
 }
-LineEditBase QPushButton:hover {
+LineEditBase ButtonBase:hover {
 	background-color: rgba(201, 210, 222, 33);
 }
 

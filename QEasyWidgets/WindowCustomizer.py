@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt, QPoint, QEvent, QEventLoop
 from PySide6.QtGui import QPixmap, QIcon, QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import *
 
+from .ComponentsCustomizer import *
 from .QFunctions import *
 from .Sources import *
 
@@ -64,53 +65,50 @@ class TitleBarBase(QWidget):
         self.Window.showMinimized()
 
     def setCloseButton(self, parent):
-        CloseButton = QPushButton("", parent)
+        CloseButton = ButtonBase(parent)
         CloseButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+        CloseButton.ClearDefaultStyleSheet()
         CloseButton.setStyleSheet(
-            "QPushButton {"
-            "   image: url(:/Button_Icon/Icons/X.png);"
+            "ButtonBase {"
             "   background-color: transparent;"
-            "   padding: 6.6px;"
-            "   border-width: 0px;"
             "}"
-            "QPushButton:hover {"
+            "ButtonBase:hover {"
             "   background-color: rgba(210, 123, 123, 210);"
             "}"
         )
+        CloseButton.setIcon(IconBase.X)
         CloseButton.setCursor(Qt.PointingHandCursor)
         return CloseButton
 
     def setMaximizeButton(self, parent):
-        MaximizeButton = QPushButton("", parent)
+        MaximizeButton = ButtonBase(parent)
         MaximizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+        MaximizeButton.ClearDefaultStyleSheet()
         MaximizeButton.setStyleSheet(
-            "QPushButton {"
-            "   image: url(:/Button_Icon/Icons/FullScreen.png);"
+            "ButtonBase {"
             "   background-color: transparent;"
-            "   padding: 6.6px;"
-            "   border-width: 0px;"
             "}"
-            "QPushButton:hover {"
+            "ButtonBase:hover {"
             "   background-color: rgba(123, 123, 123, 123);"
             "}"
         )
+        MaximizeButton.setIcon(IconBase.FullScreen)
         MaximizeButton.setCursor(Qt.PointingHandCursor)
         return MaximizeButton
 
     def setMinimizeButton(self, parent):
-        MinimizeButton = QPushButton("", parent)
+        MinimizeButton = ButtonBase(parent)
         MinimizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
+        MinimizeButton.ClearDefaultStyleSheet()
         MinimizeButton.setStyleSheet(
-            "QPushButton {"
-            "   image: url(:/Button_Icon/Icons/Dash.png);"
+            "ButtonBase {"
             "   background-color: transparent;"
-            "   padding: 6.6px;"
-            "   border-width: 0px;"
             "}"
-            "QPushButton:hover {"
+            "ButtonBase:hover {"
             "   background-color: rgba(123, 123, 123, 123);"
             "}"
         )
+        MinimizeButton.setIcon(IconBase.Dash)
         MinimizeButton.setCursor(Qt.PointingHandCursor)
         return MinimizeButton
 
@@ -471,8 +469,6 @@ class DialogBase(WindowBase, QDialog):
 class MessageBoxBase(DialogBase):
     '''
     '''
-    ClickedButton = None
-
     StandardButtonDict = {
         QMessageBox.NoButton:        QDialogButtonBox.NoButton,
         QMessageBox.Ok:              QDialogButtonBox.Ok,
@@ -535,7 +531,7 @@ class MessageBoxBase(DialogBase):
 
     def exec(self) -> int:
         Result = super().exec()
-        return self.ClickedButton# if self.ClickedButton is not None else Result
+        return self.ClickedButton if hasattr(self, 'ClickedButton') else Result
 
     def setStandardButtons(self, buttons: QMessageBox.StandardButton) -> None:
         buttons = self.StandardButtonDict.get(buttons, buttons)
