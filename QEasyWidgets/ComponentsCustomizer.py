@@ -81,7 +81,7 @@ class MenuButton(ButtonBase):
     def setMenu(self, menu: QMenu) -> None:
         def ShowMenu():
             MenuWidth = menu.sizeHint().width()
-            XPos = MenuWidth - self.width()
+            XPos = self.width() - MenuWidth
             YPos = self.height()
             menu.exec(self.mapToGlobal(QPoint(XPos, YPos)))
         self.clicked.connect(ShowMenu)
@@ -452,19 +452,41 @@ class TableBase(QTableView):
 
 ##############################################################################################################################
 
+class LineEdit(QLineEdit):
+    '''
+    '''
+    focusedIn = Signal()
+    focusedOut = Signal()
+
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+    def focusInEvent(self, arg__1: QFocusEvent) -> None:
+        self.focusedIn.emit()
+
+    def focusOutEvent(self, arg__1: QFocusEvent) -> None:
+        self.focusedOut.emit()
+
+
 class LineEditBase(QFrame):
     '''
     '''
     textChanged = Signal(str)
+    cursorPositionChanged = Signal(int, int)
+
+    focusedIn = Signal()
+    focusedOut = Signal()
 
     rectChanged = Signal(QRect)
 
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
-        self.LineEdit = QLineEdit()
-        self.LineEdit.textChanged.connect(self.LineEdit.setStatusTip)
+        self.LineEdit = LineEdit()
         self.LineEdit.textChanged.connect(self.textChanged.emit)
+        #self.LineEdit.cursorPositionChanged.connect(self.cursorPositionChanged.emit)
+        self.LineEdit.focusedIn.connect(self.focusInEvent)
+        self.LineEdit.focusedOut.connect(self.focusOutEvent)
 
         self.Button = ButtonBase()
         self.Button.setIcon(IconBase.OpenedFolder)
@@ -475,16 +497,32 @@ class LineEditBase(QFrame):
         HBoxLayout.addWidget(self.LineEdit)
         HBoxLayout.addWidget(self.Button, alignment = Qt.AlignRight)
 
+        self.ToolTip = QToolTip()
+        self.IsAlerted = False
+
         StyleSheetBase.Edit.Apply(self)
 
-        self.Mask = QLabel(self)
-        self.rectChanged.connect(self.Mask.setGeometry)
-        self.Mask.setStyleSheet('background-color: rgba(0, 0, 0, 111);')
-        self.Mask.setAlignment(Qt.AlignCenter)
-        self.Mask.hide()
+    def focusInEvent(self) -> None:
+        self.focusedIn.emit()
+
+    def focusOutEvent(self) -> None:
+        self.focusedOut.emit()
+
+    def showToolTip(self, Content: Optional[str] = None) -> None:
+        XPos = 0
+        YPos = 0 - self.height()
+        self.ToolTip.showText(self.mapToGlobal(QPoint(XPos, YPos)), Content) if not self.ToolTip.isVisible() and Content is not None else None
+
+    def hideToolTip(self) -> None:
+        self.ToolTip.hideText() if self.ToolTip.isVisible() else None
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        self.Mask.hide()
+        position = event.position()
+        self.cursorPositionChanged.emit(position.x(), position.y())
+        if 0 < position.x() < self.width() and 0 < position.y() < self.height():
+            pass #self.focusInEvent()
+        else:
+            self.focusOutEvent()
 
     def moveEvent(self, event: QMoveEvent) -> None:
         self.rectChanged.emit(self.rect())
@@ -532,11 +570,14 @@ class LineEditBase(QFrame):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
 
-    def Alert(self, Enable: bool, MaskContent: Optional[str] = None) -> None:
-        AlertStyle = 'LineEditBase {border-color: red;}'
-        self.setStyleSheet((self.styleSheet() + AlertStyle) if Enable else self.styleSheet().replace(AlertStyle, ''))
-        self.Mask.setText(MaskContent) if MaskContent is not None else None
-        self.Mask.show() if Enable else self.Mask.hide()
+    def setStyleSheet(self, styleSheet: str) -> None:
+        AlertStyle = 'LineEditBase {border-color: red;}' if self.IsAlerted else ''
+        super().setStyleSheet(styleSheet + AlertStyle)
+
+    def Alert(self, Enable: bool, Content: Optional[str] = None) -> None:
+        self.IsAlerted = Enable
+        StyleSheetBase.Edit.Apply(self)
+        self.showToolTip(Content) if Enable else self.hideToolTip()
 
 ##############################################################################################################################
 

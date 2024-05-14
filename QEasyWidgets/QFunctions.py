@@ -335,6 +335,23 @@ def Function_SetWidgetSizeAnimation(
 
     return AnimationGroup
 
+
+def Function_SetWidgetOpacityAnimation(
+    Widget: QWidget,
+    OriginalOpacity: float,
+    TargetOpacity: float,
+    Duration: int = 99
+):
+    OpacityEffect = QGraphicsOpacityEffect()
+    Widget.setGraphicsEffect(OpacityEffect)
+
+    OriginalOpacity = OriginalOpacity
+    AlteredOpacity = TargetOpacity
+
+    WidgetAnimation = QPropertyAnimation(OpacityEffect, b"opacity", Widget)
+
+    return Function_SetAnimation(WidgetAnimation, OriginalOpacity, AlteredOpacity, Duration)
+
 ##############################################################################################################################
 
 def Function_SetNoContents(
