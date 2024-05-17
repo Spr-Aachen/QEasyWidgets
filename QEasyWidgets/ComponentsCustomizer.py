@@ -477,6 +477,8 @@ class LineEditBase(QFrame):
     focusedIn = Signal()
     focusedOut = Signal()
 
+    interacted = Signal()
+
     rectChanged = Signal(QRect)
 
     def __init__(self, parent: QWidget = None):
@@ -484,12 +486,14 @@ class LineEditBase(QFrame):
 
         self.LineEdit = LineEdit()
         self.LineEdit.textChanged.connect(self.textChanged.emit)
+        self.LineEdit.textChanged.connect(lambda: self.interacted.emit())
         #self.LineEdit.cursorPositionChanged.connect(self.cursorPositionChanged.emit)
         self.LineEdit.focusedIn.connect(self.focusInEvent)
         self.LineEdit.focusedOut.connect(self.focusOutEvent)
 
         self.Button = ButtonBase()
         self.Button.setIcon(IconBase.OpenedFolder)
+        self.Button.clicked.connect(self.interacted.emit)
 
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
@@ -519,10 +523,7 @@ class LineEditBase(QFrame):
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         position = event.position()
         self.cursorPositionChanged.emit(position.x(), position.y())
-        if 0 < position.x() < self.width() and 0 < position.y() < self.height():
-            pass #self.focusInEvent()
-        else:
-            self.focusOutEvent()
+        self.interacted.emit()
 
     def moveEvent(self, event: QMoveEvent) -> None:
         self.rectChanged.emit(self.rect())

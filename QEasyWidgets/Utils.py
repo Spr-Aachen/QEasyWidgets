@@ -770,10 +770,11 @@ class ManageConfig:
         self.Config_Path = NormPath(Path(os.getenv('SystemDrive')).joinpath('Config.ini')) if Config_Path == None else Config_Path
         os.makedirs(Path(self.Config_Path).parent, exist_ok = True)
 
-    def ReadConfig(self):
-        ConfigParser = configparser.ConfigParser()
-        ConfigParser.read(self.Config_Path)
-        return ConfigParser
+        self.ConfigParser = configparser.ConfigParser()
+        self.ConfigParser.read(self.Config_Path)
+
+    def Parser(self):
+        return self.ConfigParser
 
     def EditConfig(self,
         Section: str = ...,
@@ -781,7 +782,7 @@ class ManageConfig:
         Value: str = ...,
         ConfigParser: Optional[configparser.ConfigParser] = None
     ):
-        ConfigParser = self.ReadConfig() if ConfigParser == None else ConfigParser
+        ConfigParser = self.Parser() if ConfigParser == None else ConfigParser
         try:
             ConfigParser.add_section(Section)
         except:
@@ -796,7 +797,7 @@ class ManageConfig:
         InitValue: Optional[str] = None,
         ConfigParser: Optional[configparser.ConfigParser] = None
     ):
-        ConfigParser = self.ReadConfig() if ConfigParser == None else ConfigParser
+        ConfigParser = self.Parser() if ConfigParser == None else ConfigParser
         try:
             Value = ConfigParser.get(Section, Option)
         except:
