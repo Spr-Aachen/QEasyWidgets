@@ -65,6 +65,7 @@ class StyleSheetBase(Enum):
     Label = 'Label'
     Button = 'Button'
     ScrollArea = 'ScrollArea'
+    Tree = 'Tree'
     ToolBox = 'ToolBox'
     SpinBox = 'SpinBox'
     ComboBox = 'ComboBox'
@@ -120,6 +121,26 @@ ComponentsSignals.Signal_SetTheme.connect(Function_UpdateStyleSheet)
 
 ##############################################################################################################################
 
+class IconEngine(QIconEngine):
+    '''
+    '''
+    def __init__(self):
+        super().__init__()
+
+        self.IsIconSVG = False
+
+    def loadSVG(self, SVGString: str):
+        self.IsIconSVG = True
+        self.Icon = SVGString.encode(errors = 'replace')
+
+    def paint(self, painter: QPainter, rect: QRect, mode: QIcon.Mode, state: QIcon.State) -> None:
+        if self.IsIconSVG:
+            renderer = QSvgRenderer(self.Icon)
+            renderer.render(painter, QRectF(rect))
+        else:
+            super().paint(painter, rect, mode, state)
+
+
 class IconBase(Enum):
     '''
     '''
@@ -137,6 +158,21 @@ class IconBase(Enum):
         IconPath = Path(f':/{Prefix}').joinpath(IconPath).as_posix()
         Renderer = QSvgRenderer(IconPath)
         Renderer.render(painter, QRectF(rect))
+
+    def create(self, theme: Optional[str] = None) -> QIcon:
+        Prefix = 'Icons'
+        IconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
+        File = QFile(Path(f':/{Prefix}').joinpath(IconPath))
+        File.open(QFile.ReadOnly)
+        DomDocument = QDomDocument()
+        DomDocument.setContent(File.readAll())
+        File.close()
+
+        Engine = IconEngine()
+        Engine.loadSVG(DomDocument.toString())
+        Icon = QIcon(Engine)
+
+        return Icon
 
 
 def Function_DrawIcon(

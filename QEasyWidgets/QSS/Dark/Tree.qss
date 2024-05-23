@@ -1,0 +1,69 @@
+QTreeView {
+	/*font-size: 12px;
+	text-align: center;*/
+	background-color: transparent;
+	border: none;
+}
+
+QTreeView::item {
+	background-color: transparent;
+	padding: 3px;
+}
+QTreeView::item:hover {
+	background-color: rgba(201, 210, 222, 33);
+}
+QTreeView::item:selected {
+}
+
+QTreeView::branch {
+    background-color: transparent;
+	border: none;
+}
+QTreeView::branch:open:has-children {
+	image: url(:/Tree_Icon/Icons/DownArrow.png);
+	padding: 3px;
+}
+QTreeView::branch:closed:has-children {
+	image: url(:/Tree_Icon/Icons/RightArrow.png);
+	padding: 3px;
+}
+
+
+QScrollBar {
+	background-color: transparent;
+	border-width: 1.2px;
+	border-radius: 6px;
+	border-style: solid;
+	border-color: transparent;
+	margin: 0px;
+}
+QScrollBar:hover {
+}
+
+QScrollBar::horizontal {
+	height: 9px;
+}
+QScrollBar::vertical {
+	width: 9px;
+}
+
+QScrollBar::sub-line, QScrollBar::add-line {
+	background-color: transparent;
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+
+QScrollBar::sub-page, QScrollBar::add-page {
+	background-color: transparent;
+}
+
+QScrollBar::handle {
+	background-color: rgba(123, 123, 123, 123);
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+QScrollBar::handle:hover {
+	background-color: rgba(123, 123, 123, 210);
+}

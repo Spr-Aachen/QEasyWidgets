@@ -9,6 +9,7 @@ import signal
 import shlex
 import subprocess
 import collections
+import inspect
 import hashlib
 import urllib
 import platform
@@ -392,6 +393,16 @@ def FindURL(
     URL = URLList[0]
 
     return URL
+
+#############################################################################################################
+
+def GetClassFromMethod(Method):
+    '''
+    Modules = list(inspect.getmodule(Method).__dict__.values())
+    Modules = [Module for Module in Modules if str(Module).startswith("<class '__main__.")]
+    return Modules[-1]
+    '''
+    return inspect.getmodule(Method).__dict__[Method.__qualname__.split('.')[0]]
 
 #############################################################################################################
 

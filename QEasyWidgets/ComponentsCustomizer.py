@@ -11,7 +11,7 @@ from .Sources import *
 class WidgetBase(QWidget):
     '''
     '''
-    Resized = Signal()
+    resized = Signal()
 
     def __init__(self,
         parent: Optional[QWidget] = None,
@@ -19,7 +19,7 @@ class WidgetBase(QWidget):
         super().__init__(parent)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.Resized.emit()
+        self.resized.emit()
         '''
         if self.minimumSizeHint() != self.size():
             self.adjustSize()
@@ -173,10 +173,29 @@ class ScrollAreaBase(QScrollArea):
 
 ##############################################################################################################################
 
+class TreeWidgetBase(QTreeWidget):
+    '''
+    '''
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.header().setHighlightSections(False)
+        self.header().setDefaultAlignment(Qt.AlignCenter)
+
+        self.setItemDelegate(QStyledItemDelegate(self))
+        self.setIconSize(QSize(16, 16))
+
+        StyleSheetBase.Tree.Apply(self)
+
+    def ClearDefaultStyleSheet(self) -> None:
+        StyleSheetBase.Tree.Deregistrate(self)
+
+##############################################################################################################################
+
 class LabelBase(QLabel):
     '''
     '''
-    Resized = Signal()
+    resized = Signal()
 
     def __init__(self,
         parent: Optional[QWidget] = None
@@ -186,7 +205,7 @@ class LabelBase(QLabel):
         StyleSheetBase.Label.Apply(self)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
-        self.Resized.emit()
+        self.resized.emit()
         super().resizeEvent(event)
 
     def ClearDefaultStyleSheet(self) -> None:
@@ -221,7 +240,7 @@ class ToolPage(WidgetBase):
         self.Widget = WidgetBase()
         self.Widget.setAttribute(Qt.WA_StyledBackground)
         self.Widget.setLayout(widgetlayout)
-        self.Widget.Resized.connect(self._resizeHeight)
+        self.Widget.resized.connect(self._resizeHeight)
 
         self.Layout = QVBoxLayout(self)
         self.Layout.setContentsMargins(0, 0, 0, 0)
@@ -243,7 +262,7 @@ class ToolPage(WidgetBase):
         def resizeWidgetHeight():
             AdjustedHeight = widget.height()
             self.Widget.setFixedHeight(AdjustedHeight) if self.IsExpanded else None
-        widget.Resized.connect(resizeWidgetHeight) if hasattr(widget, 'Resized') else None
+        widget.resized.connect(resizeWidgetHeight) if hasattr(widget, 'resized') else None
 
     def expand(self):
         Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = self.Widget.minimumSizeHint().height()).start()
@@ -284,7 +303,7 @@ class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
         def resizeHeight():
             AdjustedHeight = page.height()
             self.setFixedHeight(AdjustedHeight)
-        page.Resized.connect(resizeHeight)
+        page.resized.connect(resizeHeight)
 
     def widget(self, index: int) -> ToolPage:
         return self.Pages[index]
