@@ -189,6 +189,15 @@ def Function_DrawIcon(
         icon = QIcon(icon)
         icon.paint(painter, QRectF(rect).toRect(), Qt.AlignCenter, state = QIcon.Off)
 
+
+def Function_ToQIcon(
+    icon: Union[str, QIcon, IconBase]
+):
+    if isinstance(icon, IconBase):
+        return icon.create()
+    else:
+        return QIcon(icon)
+
 ##############################################################################################################################
 
 class Language:

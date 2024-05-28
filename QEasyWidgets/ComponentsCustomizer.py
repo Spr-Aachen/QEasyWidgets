@@ -7,6 +7,8 @@ from .QFunctions import *
 from .Sources import *
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class WidgetBase(QWidget):
     '''
@@ -26,6 +28,8 @@ class WidgetBase(QWidget):
         '''
         super().resizeEvent(event)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
 
 class ButtonBase(QPushButton):
@@ -51,11 +55,16 @@ class ButtonBase(QPushButton):
             self._icon = QIcon()
         super().setStyle(QApplication.style())
 
+    def icon(self) -> QIcon:
+        return Function_ToQIcon(self._icon)
+
     def _drawIcon(self, icon, painter, rect):
         Function_DrawIcon(icon, painter, rect)
 
     def paintEvent(self, e: QPaintEvent) -> None:
         super().paintEvent(e)
+        if self.icon().isNull():
+            return
         Width, Height = self.iconSize().width(), self.iconSize().height()
         #MinWidth, MinHeight = self.minimumSizeHint().width(), self.minimumSizeHint().height()
         LeftX = (self.width() - Width) /2
@@ -98,6 +107,8 @@ class MenuButton(ButtonBase):
         self.setMenu(Menu)
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class SpinBoxBase(QSpinBox):
     '''
@@ -117,6 +128,7 @@ class SpinBoxBase(QSpinBox):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
 
+##############################################################################################################################
 
 class DoubleSpinBoxBase(QDoubleSpinBox):
     '''
@@ -136,6 +148,8 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
 
 class ComboBoxBase(QComboBox):
@@ -157,6 +171,8 @@ class ComboBoxBase(QComboBox):
         StyleSheetBase.ComboBox.Deregistrate(self)
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class ScrollAreaBase(QScrollArea):
     '''
@@ -172,6 +188,8 @@ class ScrollAreaBase(QScrollArea):
         StyleSheetBase.ScrollArea.Deregistrate(self)
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class TreeWidgetBase(QTreeWidget):
     '''
@@ -179,17 +197,42 @@ class TreeWidgetBase(QTreeWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
+        self.setColumnCount(1)
+
         self.header().setHighlightSections(False)
         self.header().setDefaultAlignment(Qt.AlignCenter)
+        #self.setHeaderHidden(True)
 
         self.setItemDelegate(QStyledItemDelegate(self))
         self.setIconSize(QSize(16, 16))
 
         StyleSheetBase.Tree.Apply(self)
 
+    def drawBranches(self, painter: QPainter, rect: QRect, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
+        #rect.moveLeft(3)
+        super().drawBranches(painter, rect, index)
+
+    def rootItems(self) -> list[QTreeWidgetItem]:
+        RootItems = [self.topLevelItem(Index) for Index in range(0, self.topLevelItemCount())]
+        return RootItems
+
+    def rootItemTexts(self) -> list[str]:
+        RootItemTexts = [RootItem.text(0) for RootItem in self.rootItems()]
+        return RootItemTexts
+
+    def childItems(self, RootItem: QTreeWidgetItem) -> list[QTreeWidgetItem]:
+        ChildItems = [RootItem.child(Index) for Index in range(0, RootItem.childCount())]
+        return ChildItems
+
+    def childItemTexts(self, RootItem: QTreeWidgetItem) -> list[str]:
+        ChildItemTexts = [ChildItem.text(0) for ChildItem in self.childItems(RootItem)]
+        return ChildItemTexts
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Tree.Deregistrate(self)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
 
 class LabelBase(QLabel):
@@ -211,6 +254,8 @@ class LabelBase(QLabel):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Label.Deregistrate(self)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
 
 class ToolPage(WidgetBase):
@@ -323,6 +368,8 @@ class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ToolBox.Deregistrate(self)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
 
 class TableBase(QTableView):
@@ -470,6 +517,8 @@ class TableBase(QTableView):
         StyleSheetBase.Table.Deregistrate(self)
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class LineEdit(QLineEdit):
     '''
@@ -600,6 +649,8 @@ class LineEditBase(QFrame):
         self.showToolTip(Content) if Enable else self.hideToolTip()
 
 ##############################################################################################################################
+##############################################################################################################################
+##############################################################################################################################
 
 class MediaPlayerBase(QWidget):
     '''
@@ -655,4 +706,6 @@ class MediaPlayerBase(QWidget):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Player.Deregistrate(self)
 
+##############################################################################################################################
+##############################################################################################################################
 ##############################################################################################################################
