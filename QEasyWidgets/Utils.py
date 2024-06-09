@@ -782,7 +782,7 @@ class ManageConfig:
         os.makedirs(Path(self.Config_Path).parent, exist_ok = True)
 
         self.ConfigParser = configparser.ConfigParser()
-        self.ConfigParser.read(self.Config_Path)
+        self.ConfigParser.read(self.Config_Path, encoding = 'utf-8')
 
     def Parser(self):
         return self.ConfigParser
@@ -799,7 +799,7 @@ class ManageConfig:
         except:
             pass
         ConfigParser.set(Section, Option, Value)
-        with open(self.Config_Path, 'w') as Config:
+        with open(self.Config_Path, 'w', encoding = 'utf-8') as Config:
             ConfigParser.write(Config)
 
     def GetValue(self,

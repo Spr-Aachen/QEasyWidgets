@@ -93,7 +93,7 @@ class MonitorFile(QThread):
     def run(self):
         self.FileContent_Prev = str()
         while True:
-            with open(self.FilePath, 'r') as File:
+            with open(self.FilePath, 'r', encoding = 'utf-8') as File:
                 FileContent = File.read()
 
             if FileContent == self.FileContent_Prev:

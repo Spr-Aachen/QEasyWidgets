@@ -1,11 +1,14 @@
-LineEditBase {
+LineEditBase, TextEditBase {
+	/*font-size: 12px;*/
+	text-align: left;
+	selection-background-color: darkgrey;
     background-color: transparent;
     padding: 0px;
     border-width: 1.2px;
     border-style: solid;
     border-color: rgba(201, 210, 222, 123);
 }
-LineEditBase:hover {
+LineEditBase:hover, TextEditBase:hover {
     border-color: rgba(201, 210, 222, 210);
 }
 
@@ -26,6 +29,47 @@ LineEditBase ButtonBase {
 }
 LineEditBase ButtonBase:hover {
 	background-color: rgba(201, 210, 222, 33);
+}
+
+
+TextEditBase QScrollBar {
+	background-color: rgba(54, 45, 33, 123);
+	border-width: 1.2px;
+	border-radius: 6px;
+	border-style: solid;
+	border-color: transparent;
+	margin: 0px;
+}
+TextEditBase QScrollBar:hover {
+	background-color: rgba(54, 45, 33, 210);
+}
+
+TextEditBase QScrollBar::horizontal {
+	height: 9px;
+}
+TextEditBase QScrollBar::vertical {
+	width: 9px;
+}
+
+TextEditBase QScrollBar::sub-line, TextEditBase QScrollBar::add-line {
+	background-color: transparent;
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+
+TextEditBase QScrollBar::sub-page, TextEditBase QScrollBar::add-page {
+	background-color: transparent;
+}
+
+TextEditBase QScrollBar::handle {
+	background-color: rgba(120, 120, 120, 123);
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+TextEditBase QScrollBar::handle:hover {
+	background-color: rgba(120, 120, 120, 210);
 }
 
 

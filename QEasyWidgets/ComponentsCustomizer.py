@@ -649,6 +649,52 @@ class LineEditBase(QFrame):
         self.showToolTip(Content) if Enable else self.hideToolTip()
 
 ##############################################################################################################################
+
+class TextEdit(QTextEdit):
+    '''
+    '''
+    keyEnterPressed = Signal()
+
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+    def keyPressEvent(self, e: QKeyEvent) -> None:
+        if e.key() == Qt.Key_Return:
+            self.keyEnterPressed.emit()
+        super().keyPressEvent(e)
+
+
+class TextEditBase(QFrame):
+    '''
+    '''
+    textChanged = Signal(str)
+
+    keyEnterPressed = Signal()
+
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+        self.TextEdit = TextEdit()
+        self.TextEdit.textChanged.connect(lambda: self.textChanged.emit(self.toPlainText()))
+        self.TextEdit.keyEnterPressed.connect(self.keyEnterPressed.emit)
+
+        HBoxLayout = QHBoxLayout(self)
+        HBoxLayout.setSpacing(0)
+        HBoxLayout.setContentsMargins(0, 0, 0, 0)
+        HBoxLayout.addWidget(self.TextEdit)
+
+        StyleSheetBase.Edit.Apply(self)
+
+    def toPlainText(self) -> str:
+        return self.TextEdit.toPlainText()
+
+    def setText(self, text: str) -> None:
+        return self.TextEdit.setText(text)
+
+    def ClearDefaultStyleSheet(self) -> None:
+        StyleSheetBase.Edit.Deregistrate(self)
+
+##############################################################################################################################
 ##############################################################################################################################
 ##############################################################################################################################
 
