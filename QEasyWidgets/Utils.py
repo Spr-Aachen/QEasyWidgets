@@ -782,7 +782,12 @@ class ManageConfig:
         os.makedirs(Path(self.Config_Path).parent, exist_ok = True)
 
         self.ConfigParser = configparser.ConfigParser()
-        self.ConfigParser.read(self.Config_Path, encoding = 'utf-8')
+        try:
+            self.ConfigParser.read(self.Config_Path, encoding = 'utf-8')
+        except:
+            with open(self.Config_Path, 'w'):
+                pass
+            self.ConfigParser.clear()
 
     def Parser(self):
         return self.ConfigParser

@@ -50,17 +50,21 @@ class ConsolOutputHandler(QThread):
 # Monitor the cpu&gpu's usage
 class MonitorUsage(QThread):
     '''
-    Get the usage of CPU and GPU and send to the UI
+    Get the usage of CPU and NVIDIA GPU
     '''
     Signal_UsageInfo = Signal(str, str)
 
     def __init__(self):
         super().__init__()
 
-        pynvml.nvmlInit()
+        try:
+            pynvml.nvmlInit()
+            self.IsNVIDIAGPU = True
+        except:
+            self.IsNVIDIAGPU = False
 
     def run(self):
-        while True:
+        while self.IsNVIDIAGPU:
             Usage_CPU_Percent = psutil.cpu_percent(interval = 1.)
             Usage_CPU = f"{Usage_CPU_Percent}%"
 

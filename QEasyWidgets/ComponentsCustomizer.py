@@ -261,6 +261,11 @@ class LabelBase(QLabel):
 class ToolPage(WidgetBase):
     '''
     '''
+    FolderButtonHeight = 30
+
+    FontSize = int(FolderButtonHeight*0.45)
+    IndicatorSize = QSize(int(FolderButtonHeight*0.6), int(FolderButtonHeight*0.6))
+
     def __init__(self,
         parent: Optional[QWidget] = None,
     ):
@@ -268,16 +273,18 @@ class ToolPage(WidgetBase):
 
         self.IsExpanded = True
 
-        self.Label = QLabel()
-        self.Label.setFixedSize(20, 20)
+        self.Indicator = QLabel()
+        self.Indicator.setFixedSize(self.IndicatorSize)
         layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 5, 0)
+        layout.setContentsMargins(3, 3, 6, 3)
         layout.setSpacing(0)
         layout.addStretch(1)
-        layout.addWidget(self.Label)
+        layout.addWidget(self.Indicator)
         self.FolderButton = QPushButton()
+        self.FolderButton.setFixedHeight(self.FolderButtonHeight)
         self.FolderButton.setLayout(layout)
         self.FolderButton.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
+        Function_SetFont(self.FolderButton, self.FontSize)
 
         widgetlayout = QGridLayout()
         widgetlayout.setContentsMargins(0, 0, 0, 0)
@@ -294,7 +301,7 @@ class ToolPage(WidgetBase):
         self.Layout.addWidget(self.Widget)
 
     def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
-        ButtonHeight = self.FolderButton.minimumSizeHint().height()
+        ButtonHeight = self.FolderButtonHeight
         LayoutSpacing = self.Layout.spacing()
         WidgetLayoutMargins = self.Widget.layout().contentsMargins().top() + self.Widget.layout().contentsMargins().bottom()
         WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.Widget.height()
@@ -311,12 +318,12 @@ class ToolPage(WidgetBase):
 
     def expand(self):
         Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = self.Widget.minimumSizeHint().height()).start()
-        self.Label.setPixmap(QPixmap(":/ToolBox_Icon/Icons/DownArrow.png").scaled(self.Label.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+        self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/DownArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.IsExpanded = True
 
     def collapse(self):
         Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = 0).start()
-        self.Label.setPixmap(QPixmap(":/ToolBox_Icon/Icons/LeftArrow.png").scaled(self.Label.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+        self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/LeftArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.IsExpanded = False
 
     def setText(self, text: str):
