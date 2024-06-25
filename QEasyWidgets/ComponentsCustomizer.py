@@ -536,11 +536,29 @@ class LineEdit(QLineEdit):
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
+        self.setAcceptDrops(True)
+
     def focusInEvent(self, arg__1: QFocusEvent) -> None:
         self.focusedIn.emit()
 
     def focusOutEvent(self, arg__1: QFocusEvent) -> None:
         self.focusedOut.emit()
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        if event.mimeData().hasUrls():
+            paths = [url.toLocalFile() for url in event.mimeData().urls()]
+            self.setText(paths[0] if len(paths) == 1 else ", ".join(paths))
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if event.type() in (QEvent.DragEnter, QEvent.Drop):
+            mime_data = event.mimeData()
+            if mime_data.hasUrls():
+                event.acceptProposedAction()
+        return super().eventFilter(watched, event)
 
 
 class LineEditBase(QFrame):
@@ -560,6 +578,7 @@ class LineEditBase(QFrame):
         super().__init__(parent)
 
         self.LineEdit = LineEdit()
+        self.LineEdit.installEventFilter(self)
         self.LineEdit.textChanged.connect(self.textChanged.emit)
         self.LineEdit.textChanged.connect(lambda: self.interacted.emit())
         #self.LineEdit.cursorPositionChanged.connect(self.cursorPositionChanged.emit)

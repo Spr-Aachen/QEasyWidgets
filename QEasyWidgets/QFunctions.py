@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Union, Optional
 from ctypes import c_int, byref, windll
 from PySide6.QtCore import Qt, QObject, QFile, QRect, QRectF, QSize, QTranslator, Signal, Slot, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
-from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QIconEngine, QPainter, QFont, QDesktopServices
+from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QIcon, QIconEngine, QPainter, QPixmap, QImage, QFont, QDesktopServices
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtXml import QDomDocument
 from PySide6.QtWidgets import *
@@ -139,6 +139,17 @@ class IconEngine(QIconEngine):
             renderer.render(painter, QRectF(rect))
         else:
             super().paint(painter, rect, mode, state)
+
+    def pixmap(self, size: QSize, mode: QIcon.Mode, state: QIcon.State) -> QPixmap:
+        image = QImage(size, QImage.Format_ARGB32)
+        image.fill(Qt.transparent)
+        pixmap = QPixmap.fromImage(image, Qt.NoFormatConversion)
+
+        painter = QPainter(pixmap)
+        rect = QRect(0, 0, size.width(), size.height())
+        self.paint(painter, rect, mode, state)
+
+        return pixmap
 
 
 class IconBase(Enum):
