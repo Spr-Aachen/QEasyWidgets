@@ -9,6 +9,7 @@ import signal
 import shlex
 import subprocess
 import collections
+collections.Iterable = collections.abc.Iterable
 import inspect
 import hashlib
 import urllib

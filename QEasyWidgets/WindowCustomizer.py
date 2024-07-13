@@ -217,7 +217,7 @@ class WindowBase:
         self.Mask.hide()
 
     def _check_ifdraggable(self, pos) -> bool:
-        return 0 < pos.x() < self.width() and 0 < pos.y() < self.TitleBar.height()
+        return (0 < pos.x() < self.width() and 0 < pos.y() < self.TitleBar.height()) if self.TitleBar is not None else False
 
     def _move_window(self, pos) -> None:
         self.windowHandle().startSystemMove()
@@ -335,6 +335,8 @@ class WindowBase:
             self.TitleBar = TitleBar
             self.TitleBar.setParent(self) if self.TitleBar.parent() is None else None
             self.TitleBar.raise_() if self.TitleBar.isHidden() else None
+        else:
+            self.TitleBar = None
 
     def ShowMask(self, SetVisible: bool, MaskContent: Optional[str] = None) -> None:
         if SetVisible:
@@ -381,6 +383,8 @@ class MainWindowBase(WindowBase, QMainWindow):
             super().setCentralWidget(self.CentralWidget)
             self.CentralWidget.setParent(self) if self.CentralWidget.parent() is None else None
             self.CentralWidget.raise_() if self.CentralWidget.isHidden() else None
+        else:
+            self.CentralWidget = None
 
     def setStyleSheet(self, styleSheet: str) -> None:
         super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.CentralWidget.objectName()}'))

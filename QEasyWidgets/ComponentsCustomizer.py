@@ -717,6 +717,12 @@ class TextEditBase(QFrame):
     def setText(self, text: str) -> None:
         return self.TextEdit.setText(text)
 
+    def setPlaceholderText(self, placeholderText: str) -> None:
+        self.TextEdit.setPlaceholderText(placeholderText)
+
+    def clear(self) -> None:
+        self.TextEdit.clear()
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
 
