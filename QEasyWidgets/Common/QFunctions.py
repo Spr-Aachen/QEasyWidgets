@@ -11,7 +11,7 @@ from PySide6.QtXml import QDomDocument
 from PySide6.QtWidgets import *
 
 from .Utils import *
-from .Sources import *
+from ..Resources.Sources import *
 
 ##############################################################################################################################
 
@@ -369,7 +369,8 @@ def Function_SetWidgetSizeAnimation(
     Frame: QWidget,
     TargetWidth: Optional[int] = None,
     TargetHeight: Optional[int] = None,
-    Duration: int = 210
+    Duration: int = 210,
+    SupportSplitter: bool = False
 ):
     '''
     Function to animate widget size
@@ -384,9 +385,9 @@ def Function_SetWidgetSizeAnimation(
 
     AnimationGroup = QParallelAnimationGroup(Frame)
 
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinWidth, CurrentWidth, TargetWidth, Duration)) if TargetWidth is not None else None
+    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinWidth, CurrentWidth, TargetWidth, Duration)) if TargetWidth is not None and not SupportSplitter else None
     AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMaxWidth, CurrentWidth, TargetWidth, Duration)) if TargetWidth is not None else None
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinHeight, CurrentHeight, TargetHeight, Duration)) if TargetHeight is not None else None
+    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinHeight, CurrentHeight, TargetHeight, Duration)) if TargetHeight is not None and not SupportSplitter else None
     AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMaxHeight, CurrentHeight, TargetHeight, Duration)) if TargetHeight is not None else None
 
     return AnimationGroup

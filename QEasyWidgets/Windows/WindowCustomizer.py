@@ -6,9 +6,9 @@ from PySide6.QtCore import Qt, QPoint, QEvent, QEventLoop
 from PySide6.QtGui import QPixmap, QIcon, QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import *
 
-from .ComponentsCustomizer import *
-from .QFunctions import *
-from .Sources import *
+from ..Components.ComponentsCustomizer import *
+from ..Common.QFunctions import *
+from ..Resources.Sources import *
 
 ##############################################################################################################################
 

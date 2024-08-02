@@ -3,8 +3,8 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 
-from .QFunctions import *
-from .Sources import *
+from ..Common.QFunctions import *
+from ..Resources.Sources import *
 
 ##############################################################################################################################
 ##############################################################################################################################
@@ -681,13 +681,18 @@ class TextEdit(QTextEdit):
     '''
     keyEnterPressed = Signal()
 
+    keyEnterBlocked = False
+
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
-        if e.key() == Qt.Key_Return:
+        if e.key() == Qt.Key_Return and not self.keyEnterBlocked:
             self.keyEnterPressed.emit()
         super().keyPressEvent(e)
+
+    def blockKeyEnter(self, block: bool) -> None:
+        self.keyEnterBlocked = not block
 
 
 class TextEditBase(QFrame):
@@ -722,6 +727,9 @@ class TextEditBase(QFrame):
 
     def clear(self) -> None:
         self.TextEdit.clear()
+
+    def blockKeyEnter(self, block: bool) -> None:
+        self.TextEdit.blockKeyEnter(block)
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
