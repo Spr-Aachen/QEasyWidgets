@@ -35,6 +35,8 @@ class WidgetBase(QWidget):
 class ButtonBase(QPushButton):
     '''
     '''
+    _icon = None
+
     def __init__(self,
         parent: Optional[QWidget] = None
     ):
