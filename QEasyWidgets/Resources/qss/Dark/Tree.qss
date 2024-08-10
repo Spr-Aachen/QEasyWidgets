@@ -2,11 +2,14 @@ QTreeView {
 	/*font-size: 12px;
 	text-align: center;*/
 	background-color: transparent;
+    outline: none;
 	border: none;
 }
 
 QTreeView::item {
+    color: rgb(210, 222, 234);
 	background-color: transparent;
+	border: none;
 	padding: 3px;
 }
 QTreeView::item:hover {

@@ -1,0 +1,62 @@
+TextBrowserBase {
+	/*font-size: 12px;*/
+	text-align: left;
+	selection-background-color: darkgrey;
+    background-color: transparent;
+    padding: 0px;
+    border-width: 1.2px;
+    border-style: solid;
+    border-color: rgba(201, 210, 222, 123);
+}
+TextBrowserBase:hover {
+    border-color: rgba(201, 210, 222, 210);
+}
+
+
+TextBrowserBase QScrollBar {
+	background-color: rgba(210, 210, 210, 123);
+	border-width: 1.2px;
+	border-radius: 6px;
+	border-style: solid;
+	border-color: transparent;
+	margin: 0px;
+}
+TextBrowserBase QScrollBar:hover {
+	background-color: rgba(210, 210, 210, 210);
+}
+
+TextBrowserBase QScrollBar::horizontal {
+	height: 9px;
+}
+TextBrowserBase QScrollBar::vertical {
+	width: 9px;
+}
+
+TextBrowserBase QScrollBar::sub-line, TextBrowserBase QScrollBar::add-line {
+	background-color: transparent;
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+
+TextBrowserBase QScrollBar::sub-page, TextBrowserBase QScrollBar::add-page {
+	background-color: transparent;
+}
+
+TextBrowserBase QScrollBar::handle {
+	background-color: rgba(123, 123, 123, 123);
+	border-width: 0px;
+	border-radius: 0px;
+	border-style: solid;
+}
+TextBrowserBase QScrollBar::handle:hover {
+	background-color: rgba(123, 123, 123, 210);
+}
+
+
+QToolTip {
+    color: rgb(45, 33, 21);
+    background-color: transparent;
+	border-width: 0px;
+	border-style: solid;
+}

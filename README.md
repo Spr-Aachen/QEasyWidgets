@@ -12,7 +12,7 @@
 ### Overview
 
 A simple widget library based on PySide6, which is currently used to serve for [Easy Voice Toolkit](https://github.com/Spr-Aachen/Easy-Voice-Toolkit).
-PS: The project was meant to be named as 'QSimpleWidgets', but sadly it has been registered.
+PS: The project was meant to be named as 'QSimpleWidgets', but sadly it has been registered:(
 
 
 ## Consideration
@@ -29,26 +29,6 @@ Currently this project only supports Windows system
 ```shell
 pip install QEasyWidgets -i https://pypi.org/simple/
 ```
-
-
-## Tested Devices
-
-### Windows OS
-
-#### Honor Hunter V700
-- **Type**: Laptop
-- **GPU**: GTX 1660Ti
-- **CPU**: i5-10300H
-- **RAM**: 16G
-- **OS**: Win10
-- **Python**: 3.9
-- **Torch**: 2.0.1
-
-#### (Waiting to add other devices)
-
-### Linux OS
-
-#### (Waiting to add other devices)
 
 
 ## Reference

@@ -1,34 +1,32 @@
-QTreeView {
+ListBase {
 	/*font-size: 12px;
 	text-align: center;*/
 	background-color: transparent;
+    padding: 0px;
     outline: none;
-	border: none;
+    border-width: 1.2px;
+    border-style: solid;
+    border-color: rgba(201, 210, 222, 123);
+}
+ListBase:hover {
+    border-color: rgba(201, 210, 222, 210);
 }
 
-QTreeView::item {
-    color: rgb(45, 33, 21);
+ListBase::item {
+    color: rgb(210, 222, 234);
 	background-color: transparent;
-	border: none;
-	padding: 3px;
+    border-width: 2.4px;
+    border-style: solid;
+	border-color: transparent;
+	padding: 2.4px;
 }
-QTreeView::item:hover {
-	background-color: rgba(54, 45, 33, 12);
+ListBase::item:hover {
+	background-color: rgba(201, 210, 222, 33);
 }
-QTreeView::item:selected {
-}
-
-QTreeView::branch {
-    background-color: transparent;
-	border: none;
-}
-QTreeView::branch:open:has-children {
-	image: url(:/Tree_Icon/Icons/DownArrow.png);
-	padding: 3px;
-}
-QTreeView::branch:closed:has-children {
-	image: url(:/Tree_Icon/Icons/RightArrow.png);
-	padding: 3px;
+ListBase::item:selected {
+	background-color: transparent;
+	border-left-color: rgb(120, 180, 240);
+	/*padding-left: 1.2px;*/
 }
 
 

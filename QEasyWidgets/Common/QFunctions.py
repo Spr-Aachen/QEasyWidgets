@@ -66,10 +66,12 @@ class StyleSheetBase(Enum):
     Button = 'Button'
     ScrollArea = 'ScrollArea'
     Tree = 'Tree'
+    List = 'List'
     ToolBox = 'ToolBox'
     SpinBox = 'SpinBox'
     ComboBox = 'ComboBox'
     Edit = 'Edit'
+    Browser = 'Browser'
     Player = 'Player'
     Table = 'Table'
 

@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import json
 import unicodedata
 import io
 import shutil
@@ -13,6 +14,8 @@ collections.Iterable = collections.abc.Iterable
 import inspect
 import hashlib
 import urllib
+import urllib.parse as urlparse
+import pandas
 import platform
 import win32gui
 import win32con
@@ -343,6 +346,39 @@ def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
 
 #############################################################################################################
 
+def isJson(content: str):
+    try:
+        json.loads(json.dumps(eval(content)))
+        return True
+    except:
+        return False
+
+
+def isUrl(content: str):
+    if urlparse.urlparse(content).scheme in ['http', 'https']:
+        return True
+    else:
+        return False
+
+
+def ToMarkdown(content: str):
+    if isUrl(content):
+        content = f"[URL]({content})"
+    if isJson(content):
+        content = pandas.DataFrame(json.loads(json.dumps(eval(content)))).to_markdown()
+    return content
+
+
+def ToHtml(Content, Align, Size, Weight, LetterSpacing, LineHeight):
+    Style = f"'text-align:{Align}; font-size:{Size}pt; font-weight:{Weight}; letter-spacing: {LetterSpacing}px; line-height: {LineHeight}px'"
+    Content = re.sub(
+        pattern = "[\n]",
+        repl = "<br>",
+        string = Content
+    ) if Content is not None else None
+    return f"<p style={Style}>{Content}</p>" if Content is not None else ''
+
+
 def SetRichText(
     Title: Optional[str] = None,
     TitleAlign: str = "left",
@@ -360,14 +396,6 @@ def SetRichText(
     '''
     Function to set text for widget
     '''
-    def ToHtml(Content, Align, Size, Weight, LetterSpacing, LineHeight):
-        Style = f"'text-align:{Align}; font-size:{Size}pt; font-weight:{Weight}; letter-spacing: {LetterSpacing}px; line-height: {LineHeight}px'"
-        Content = re.sub(
-            pattern = "[\n]",
-            repl = "<br>",
-            string = Content
-        ) if Content is not None else None
-        return f"<p style={Style}>{Content}</p>" if Content is not None else ''
 
     RichText = (
         "<html>"
@@ -546,6 +574,19 @@ def OccupationTerminator(
             pass
 
 #############################################################################################################
+
+def RenameFile(FilePath: str):
+    Directory, FileName = os.path.split(FilePath)
+    while Path(FilePath).exists():
+        pattern = r'(\d+)\)\.'
+        if re.search(pattern, FileName) is None:
+            FileName = FileName.replace('.', '(0).')
+        else:
+            CurrentNumber = int(re.findall(pattern, FileName)[-1])
+            FileName = FileName.replace(f'({CurrentNumber}).', f'({CurrentNumber + 1}).')
+        FilePath = Path(Directory).joinpath(FileName).as_posix()
+    return FilePath
+
 
 def CleanDirectory(
     Directory: str,

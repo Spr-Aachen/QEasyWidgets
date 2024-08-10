@@ -13,7 +13,13 @@ LineEditBase:hover, TextEditBase:hover {
 }
 
 
-LineEditBase QLineEdit {
+TextEditBase TextEdit {
+	background-color: transparent;
+    border: none;
+}
+
+
+LineEditBase LineEdit {
 	background-color: transparent;
 	padding-top: 3px;
 	padding-left: 6px;
