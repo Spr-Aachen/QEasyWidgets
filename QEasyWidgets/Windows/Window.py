@@ -3,132 +3,12 @@ import win32con
 from ctypes import Structure, c_int, POINTER, WinDLL, byref
 from ctypes.wintypes import UINT, HWND, RECT, MSG, LPRECT
 from PySide6.QtCore import Qt, QPoint, QEvent, QEventLoop
-from PySide6.QtGui import QPixmap, QIcon, QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
-from PySide6.QtWidgets import *
+from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
+from PySide6.QtWidgets import QWidget, QMainWindow
 
-from ..Components.ComponentsCustomizer import *
 from ..Common.QFunctions import *
 from ..Resources.Sources import *
-
-##############################################################################################################################
-
-class TitleBarBase(QWidget):
-    '''
-    '''
-    DEFAULT_TITILE_BAR_HEIGHT = 30 # 默认标题栏高度
-
-    def __init__(self,
-        parent: QWidget = ...,
-    ):
-        super().__init__(parent)
-
-        self.Window = parent if isinstance(parent, (QMainWindow, QDialog)) else parent.window()
-        self.Window.installEventFilter(self)
-
-        self.setFixedHeight(self.DEFAULT_TITILE_BAR_HEIGHT)
-        self.setGeometry(0, 0, self.Window.width(), self.height())
-
-        self.MinimizeButton = self.setMinimizeButton(parent = self)
-        self.MinimizeButton.clicked.connect(self.setMinimizeEvent)
-        self.MaximizeButton = self.setMaximizeButton(parent = self)
-        self.MaximizeButton.clicked.connect(self.setMaximizeEvent)
-        self.CloseButton = self.setCloseButton(parent = self)
-        self.CloseButton.clicked.connect(self.setCloseEvent)
-
-        self.HBoxLayout = QHBoxLayout(self)
-        self.HBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        self.HBoxLayout.setContentsMargins(0, 0, 0, 0)
-        self.HBoxLayout.setSpacing(0)
-        self.HBoxLayout.addStretch(1)
-        self.HBoxLayout.addWidget(self.MinimizeButton, stretch = 0, alignment = Qt.AlignRight)
-        self.HBoxLayout.addWidget(self.MaximizeButton, stretch = 0, alignment = Qt.AlignRight)
-        self.HBoxLayout.addWidget(self.CloseButton, stretch = 0, alignment = Qt.AlignRight)
-
-        StyleSheetBase.Bar.Apply(self)
-
-    '''
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        if 0 < event.position().y() < self.height() and event.buttons() == Qt.MouseButton.LeftButton:
-            self.setMaximizeEvent()
-    '''
-
-    def resizeEvent(self, event: QResizeEvent):
-        self.resize(self.Window.width(), self.DEFAULT_TITILE_BAR_HEIGHT)
-
-    def setCloseEvent(self):
-        self.Window.close()
-
-    def setMaximizeEvent(self):
-        self.Window.showNormal() if self.Window.isMaximized() else self.Window.showMaximized()
-
-    def setMinimizeEvent(self):
-        self.Window.showMinimized()
-
-    def setCloseButton(self, parent):
-        CloseButton = ButtonBase(parent)
-        CloseButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        CloseButton.ClearDefaultStyleSheet()
-        CloseButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(210, 123, 123, 210);"
-            "}"
-        )
-        CloseButton.setIcon(IconBase.X)
-        CloseButton.setCursor(Qt.PointingHandCursor)
-        return CloseButton
-
-    def setMaximizeButton(self, parent):
-        MaximizeButton = ButtonBase(parent)
-        MaximizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        MaximizeButton.ClearDefaultStyleSheet()
-        MaximizeButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(123, 123, 123, 123);"
-            "}"
-        )
-        MaximizeButton.setIcon(IconBase.FullScreen)
-        MaximizeButton.setCursor(Qt.PointingHandCursor)
-        return MaximizeButton
-
-    def setMinimizeButton(self, parent):
-        MinimizeButton = ButtonBase(parent)
-        MinimizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        MinimizeButton.ClearDefaultStyleSheet()
-        MinimizeButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(123, 123, 123, 123);"
-            "}"
-        )
-        MinimizeButton.setIcon(IconBase.Dash)
-        MinimizeButton.setCursor(Qt.PointingHandCursor)
-        return MinimizeButton
-
-    def setTitle(self, Text: str, parent):
-        TitleLabel = QLabel(Text, parent)
-        TitleLabel.setGeometry(0 + 33, 0 + self.height() / 5, self.width() / 2, self.height())
-        TitleLabel.setStyleSheet(
-            "QLabel {"
-            "   color: rgba(210, 210, 210, 210);"
-            "   background-color: transparent;"
-            "   padding: 3.3px;"
-            "   border-width: 0px;"
-            "   border-style: solid;"
-            "}"
-        )
-        #TitleLabel.setFont(QFont("Microsoft YaHei", 11.1, QFont.Normal))
-        TitleLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-
-    def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Bar.Deregistrate(self)
+from .Bar import TitleBarBase
 
 ##############################################################################################################################
 
@@ -216,6 +96,8 @@ class WindowBase:
         self.Mask.setFont(QFont('Microsoft YaHei', int(min_height / 10), QFont.Bold))
         self.Mask.hide()
 
+        self.System = platform.system()
+
     def _check_ifdraggable(self, pos) -> bool:
         return (0 < pos.x() < self.width() and 0 < pos.y() < self.TitleBar.height()) if self.TitleBar is not None else False
 
@@ -236,16 +118,18 @@ class WindowBase:
         self.windowHandle().startSystemResize(edges) if edges is not None else None
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if self.System != 'Windows':
+            return
         if self._check_ifdraggable(event.position()) == True and event.buttons() == Qt.MouseButton.LeftButton:
             self.setCursor(Qt.CursorShape.OpenHandCursor)
             self._move_window(event.position())
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        '''
+        if self.System == 'Windows':
+            return
         if self._check_ifdraggable(event.position()) == True and event.buttons() == Qt.MouseButton.LeftButton:
             self.setCursor(Qt.CursorShape.OpenHandCursor)
             self._move_window(event.position())
-        '''
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         if self._check_ifdraggable(event.position()) == True:
@@ -272,6 +156,18 @@ class WindowBase:
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def nativeEvent(self, eventType, message):
+        if self.System != 'Windows':
+            if eventType.type() in (QEvent.MouseButtonPress, QEvent.MouseMove):
+                border_width = self.edge_size
+                left   = (eventType.globalPos() - self.pos()).x() < border_width
+                top    = (eventType.globalPos() - self.pos()).y() < border_width
+                right  = (eventType.globalPos() - self.pos()).x() > self.width() - border_width
+                bottom = (eventType.globalPos() - self.pos()).y() > self.height() - border_width
+                if True not in (left, top, right, bottom):
+                    pass
+                elif eventType.type() == QEvent.MouseButtonPress and self.windowState() != Qt.WindowNoState:
+                    self._move_window(eventType.globalPos())
+            return False
         Message = MSG.from_address(int(message))
         if Message.message == win32con.WM_NCCALCSIZE:
             if Message.wParam != 0:
@@ -313,6 +209,8 @@ class WindowBase:
 
     def setFrameless(self, SetStrechable: bool = True, SetDropShadowEffect: bool = True) -> None:
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        if self.System != 'Windows':
+            return
         hWnd = self.winId()
         Index = win32con.GWL_STYLE
         Value = win32gui.GetWindowLong(hWnd, Index)
@@ -431,147 +329,5 @@ class ChildWindowBase(WindowBase, QWidget):
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Window.Deregistrate(self)
-
-
-class DialogBase(WindowBase, QDialog):
-    '''
-    '''
-    def __init__(self,
-        parent: Optional[QWidget] = None,
-        f: Qt.WindowType = Qt.Dialog,
-        min_width: int = 630,
-        min_height: int = 420
-    ):
-        QDialog.__init__(self, None, f) #QDialog.__init__(self, parent, f)
-        WindowBase.__init__(self, min_width, min_height)
-
-        self.setFrameless(SetStrechable = False)
-
-        self.TitleBar.MinimizeButton.hide()
-        self.TitleBar.MinimizeButton.deleteLater()
-        self.TitleBar.MaximizeButton.hide()
-        self.TitleBar.MaximizeButton.deleteLater()
-
-        self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
-        self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
-
-        StyleSheetBase.Dialog.Apply(self)
-
-    def exec(self) -> int:
-        Result = super().exec()
-        self.closed.emit()
-        return Result
-
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        return
-
-    def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Dialog.Deregistrate(self)
-
-##############################################################################################################################
-
-class MessageBoxBase(DialogBase):
-    '''
-    '''
-    StandardButtonDict = {
-        QMessageBox.NoButton:        QDialogButtonBox.NoButton,
-        QMessageBox.Ok:              QDialogButtonBox.Ok,
-        QMessageBox.Cancel:          QDialogButtonBox.Cancel,
-        QMessageBox.Yes:             QDialogButtonBox.Yes,
-        QMessageBox.No:              QDialogButtonBox.No,
-        QMessageBox.Retry:           QDialogButtonBox.Retry,
-        QMessageBox.Ignore:          QDialogButtonBox.Ignore,
-        QMessageBox.Open:            QDialogButtonBox.Open,
-        QMessageBox.Close:           QDialogButtonBox.Close,
-        QMessageBox.Save:            QDialogButtonBox.Save,
-        QMessageBox.Discard:         QDialogButtonBox.Discard,
-        QMessageBox.Apply:           QDialogButtonBox.Apply,
-        QMessageBox.RestoreDefaults: QDialogButtonBox.RestoreDefaults,
-        QMessageBox.Ok | QMessageBox.Cancel:             QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
-        QMessageBox.Yes | QMessageBox.No:                QDialogButtonBox.Yes | QDialogButtonBox.No,
-        QMessageBox.Retry | QMessageBox.Ignore:          QDialogButtonBox.Retry | QDialogButtonBox.Ignore,
-        QMessageBox.Open | QMessageBox.Close:            QDialogButtonBox.Open | QDialogButtonBox.Close,
-        QMessageBox.Save | QMessageBox.Discard:          QDialogButtonBox.Save | QDialogButtonBox.Discard,
-        QMessageBox.Apply | QMessageBox.RestoreDefaults: QDialogButtonBox.Apply | QDialogButtonBox.RestoreDefaults
-    }
-
-    StandardIconDict = {
-        QMessageBox.Question:    QStyle.SP_MessageBoxQuestion,
-        QMessageBox.Information: QStyle.SP_MessageBoxInformation,
-        QMessageBox.Warning:     QStyle.SP_MessageBoxWarning,
-        QMessageBox.Critical:    QStyle.SP_MessageBoxCritical
-    }
-
-    def __init__(self,
-        parent: Optional[QWidget] = None,
-        min_width = 360,
-        min_height = 210
-    ):  
-        super().__init__(parent, Qt.Dialog, min_width, min_height)
-
-        self.PicLabel = QLabel()
-        self.TextLabel = QLabel()
-        PicTextLayout = QHBoxLayout()
-        PicTextLayout.setContentsMargins(0, 0, 0, 0)
-        PicTextLayout.setSpacing(0)
-        PicTextLayout.addWidget(self.PicLabel, stretch = 0)
-        PicTextLayout.addWidget(self.TextLabel, stretch = 1)
-
-        self.ButtonBox = QDialogButtonBox()
-        self.ButtonBox.clicked.connect(self.updateClickedButton)
-        self.ButtonBox.accepted.connect(self.accept)
-        self.ButtonBox.rejected.connect(self.reject)
-        self.ButtonBox.setOrientation(Qt.Horizontal)
-        self.ButtonBox.setStyleSheet("padding: 6px 18px 6px 18px;")
-
-        self.Layout = QVBoxLayout(self)
-        self.Layout.setContentsMargins(21, 12, 21, 12)
-        self.Layout.setSpacing(12)
-        self.Layout.addLayout(PicTextLayout)
-        self.Layout.addWidget(self.ButtonBox)
-
-    def updateClickedButton(self, button: QAbstractButton):
-        self.ClickedButton = FindKey(self.StandardButtonDict, self.ButtonBox.standardButton(button))
-
-    def exec(self) -> int:
-        Result = super().exec()
-        return self.ClickedButton if hasattr(self, 'ClickedButton') else Result
-
-    def setStandardButtons(self, buttons: QMessageBox.StandardButton) -> None:
-        buttons = self.StandardButtonDict.get(buttons, buttons)
-        if isinstance(buttons, QMessageBox.StandardButton):
-            pass
-        self.ButtonBox.setStandardButtons(buttons)
-
-    def setWindowIcon(self, icon: Union[QIcon, QPixmap, QStyle.StandardPixmap]) -> None:
-        icon = self.StandardIconDict.get(icon, icon)
-        if isinstance(icon, QStyle.StandardPixmap):
-            icon = QApplication.style().standardIcon(icon)
-        if isinstance(icon, (QIcon, QPixmap)):
-            pass
-        super().setWindowIcon(icon)
-
-    def setIcon(self, icon: Union[QIcon, QPixmap, QStyle.StandardPixmap]) -> None:
-        icon = self.StandardIconDict.get(icon, icon)
-        Length = int(min(self.width(), self.height()) / 6)
-        if isinstance(icon, QStyle.StandardPixmap):
-            standardIcon = QApplication.style().standardIcon(icon)
-            icon = standardIcon.pixmap(standardIcon.actualSize(QSize(Length, Length)))
-        if isinstance(icon, QIcon):
-            icon = icon.pixmap(icon.actualSize(QSize(Length, Length)))
-        if isinstance(icon, QPixmap):
-            pass
-        self.PicLabel.setPixmap(icon)
-
-    def setText(self, text: str, textsize: float = 11.1, textweight: int = 420):
-        Function_SetText(
-            Widget = self.TextLabel,
-            Text = SetRichText(
-                Title = text,
-                TitleSize = textsize,
-                TitleWeight = textweight,
-                TitleAlign = 'center'
-            )
-        )
 
 ##############################################################################################################################
