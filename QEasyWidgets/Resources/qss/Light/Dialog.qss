@@ -14,6 +14,20 @@ DialogBase QLabel {
 }
 
 
+DialogBase QLineEdit {
+    color: rgb(45, 33, 21);
+    text-align: left;
+    font-size: 9.9pt;
+    background-color: transparent;
+    border-width: 1.2px;
+    border-style: solid;
+    border-color: rgba(54, 45, 33, 123);
+}
+DialogBase QLineEdit:hover {
+    border-color: rgba(54, 45, 33, 210);
+}
+
+
 DialogBase QPushButton {
     color: rgb(45, 33, 21);
     text-align: center;

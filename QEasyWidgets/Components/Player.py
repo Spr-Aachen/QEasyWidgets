@@ -3,8 +3,9 @@ from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 
+from ..Common.Icon import *
+from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 from .Button import ButtonBase
 
 ##############################################################################################################################

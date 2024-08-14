@@ -1,22 +1,18 @@
-from PySide6.QtGui import *
-from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 
 ##############################################################################################################################
 
-class TextBrowserBase(QTextBrowser):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+class MenuBase(QMenu):
+
+    def __init__(self, parent = None):
         super().__init__(parent)
 
-        StyleSheetBase.Browser.Apply(self)
+        StyleSheetBase.Menu.Apply(self)
 
     def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Browser.Deregistrate(self)
+        StyleSheetBase.Menu.Deregistrate(self)
 
 ##############################################################################################################################

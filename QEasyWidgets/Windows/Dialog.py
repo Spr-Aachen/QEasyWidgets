@@ -2,8 +2,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QIcon, QMouseEvent
 from PySide6.QtWidgets import *
 
+from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 from .Window import WindowBase
 
 ##############################################################################################################################
@@ -85,14 +85,17 @@ class MessageBoxBase(DialogBase):
         super().__init__(parent, Qt.Dialog, min_width, min_height)
 
         self.PicLabel = QLabel()
+        self.PicLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.TextLabel = QLabel()
+        self.TextLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         PicTextLayout = QHBoxLayout()
         PicTextLayout.setContentsMargins(0, 0, 0, 0)
-        PicTextLayout.setSpacing(0)
+        PicTextLayout.setSpacing(12)
         PicTextLayout.addWidget(self.PicLabel, stretch = 0)
         PicTextLayout.addWidget(self.TextLabel, stretch = 1)
 
         self.ButtonBox = QDialogButtonBox()
+        self.ButtonBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.ButtonBox.clicked.connect(self.updateClickedButton)
         self.ButtonBox.accepted.connect(self.accept)
         self.ButtonBox.rejected.connect(self.reject)
@@ -148,5 +151,42 @@ class MessageBoxBase(DialogBase):
                 TitleAlign = 'center'
             )
         )
+
+    def getText(self, title: str, label: str, echo: QLineEdit.EchoMode = None, text: str = None, flags: Qt.WindowType = Qt.Dialog, inputMethodHints: Qt.InputMethodHint = None):
+        self.setWindowFlags(flags)
+        self.setText(title) #self.setWindowTitle(title)
+        InputLabel = QLabel()
+        InputLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        InputArea = QLineEdit()
+        InputArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        InputLayout = QHBoxLayout()
+        InputLayout.setContentsMargins(0, 0, 0, 0)
+        InputLayout.setSpacing(12)
+        InputLayout.addWidget(InputLabel, stretch = 0)
+        InputLayout.addWidget(InputArea, stretch = 1)
+        InputLabel.setText(label)
+        InputArea.setEchoMode(echo) if echo else None
+        InputArea.setText(text) if text else None
+        InputArea.setInputMethodHints(inputMethodHints) if inputMethodHints else None
+        self.Layout.insertLayout(1, InputLayout, stretch = 1)
+        self.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        Result = self.exec()
+        return InputArea.text(), True if Result == QMessageBox.Ok else False
+
+##############################################################################################################################
+
+class InputDialogBase(MessageBoxBase):
+
+    def __init__(self,
+        parent: Optional[QWidget] = None,
+        min_width = 360,
+        min_height = 210
+    ):  
+        super().__init__(parent, min_width, min_height)
+
+    @staticmethod
+    def getText(parent: QWidget, title: str, label: str, echo: QLineEdit.EchoMode = None, text: str = None, flags: Qt.WindowType = Qt.Dialog, inputMethodHints: Qt.InputMethodHint = None):
+        MessageBox = MessageBoxBase(parent, 420, 210)
+        return MessageBox.getText(title, label, echo, text, flags, inputMethodHints)
 
 ##############################################################################################################################

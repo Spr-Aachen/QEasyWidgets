@@ -2,8 +2,9 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QResizeEvent
 from PySide6.QtWidgets import *
 
+from ..Common.Icon import *
+from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 from ..Components.Button import ButtonBase
 
 ##############################################################################################################################

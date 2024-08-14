@@ -7,7 +7,7 @@ from ..Common.QFunctions import *
 
 ##############################################################################################################################
 
-class ComboBoxBase(QComboBox):
+class GroupBoxBase(QGroupBox):
     '''
     '''
     def __init__(self,
@@ -15,14 +15,18 @@ class ComboBoxBase(QComboBox):
     ):
         super().__init__(parent)
 
-        self.setFocusPolicy(Qt.StrongFocus)
+        self.setCheckable(True)
+        self.toggled.connect(lambda isChecked: self.collapse() if isChecked else self.expand())
 
-        StyleSheetBase.ComboBox.Apply(self)
+        StyleSheetBase.GroupBox.Apply(self)
 
-    def wheelEvent(self, event: QWheelEvent) -> None:
-        event.ignore()
+    def expand(self):
+        Function_SetWidgetSizeAnimation(self, TargetHeight = self.minimumSizeHint().height()).start()
+
+    def collapse(self):
+        Function_SetWidgetSizeAnimation(self, TargetHeight = 0).start()
 
     def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ComboBox.Deregistrate(self)
+        StyleSheetBase.GroupBox.Deregistrate(self)
 
 ##############################################################################################################################

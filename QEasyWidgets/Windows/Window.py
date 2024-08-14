@@ -2,12 +2,12 @@ import win32gui
 import win32con
 from ctypes import Structure, c_int, POINTER, WinDLL, byref
 from ctypes.wintypes import UINT, HWND, RECT, MSG, LPRECT
-from PySide6.QtCore import Qt, QPoint, QEvent, QEventLoop
+from PySide6.QtCore import Qt, Signal, QPoint, QEvent, QEventLoop
 from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import QWidget, QMainWindow
 
+from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 from .Bar import TitleBarBase
 
 ##############################################################################################################################
@@ -245,6 +245,7 @@ class WindowBase:
             self.Mask.clear()
             self.Mask.hide()
 
+##############################################################################################################################
 
 class MainWindowBase(WindowBase, QMainWindow):
     '''
