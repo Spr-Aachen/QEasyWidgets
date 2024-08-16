@@ -1,5 +1,4 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QResizeEvent
 from PySide6.QtWidgets import *
 
 from ..Common.Icon import *
@@ -48,9 +47,6 @@ class TitleBarBase(QWidget):
         if 0 < event.position().y() < self.height() and event.buttons() == Qt.MouseButton.LeftButton:
             self.setMaximizeEvent()
     '''
-
-    def resizeEvent(self, event: QResizeEvent):
-        self.resize(self.Window.width(), self.DEFAULT_TITILE_BAR_HEIGHT)
 
     def setCloseEvent(self):
         self.Window.close()

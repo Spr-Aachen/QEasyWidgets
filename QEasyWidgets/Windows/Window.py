@@ -85,8 +85,6 @@ class WindowBase:
         min_width = 630, # 窗体的最小宽度
         min_height = 420, # 窗体的最小高度
     ):
-        self.resize(min_width, min_height)
-
         self.TitleBar = TitleBarBase(self)
 
         self.Mask = QLabel(self)
@@ -97,6 +95,8 @@ class WindowBase:
         self.Mask.hide()
 
         self.System = platform.system()
+
+        self.resize(min_width, min_height)
 
     def _check_ifdraggable(self, pos) -> bool:
         return (0 < pos.x() < self.width() and 0 < pos.y() < self.TitleBar.height()) if self.TitleBar is not None else False
@@ -153,6 +153,7 @@ class WindowBase:
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.rectChanged.emit(self.rect())
+        self.TitleBar.resize(self.width(), self.TitleBar.height()) if isinstance(self.TitleBar, TitleBarBase) else None
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def nativeEvent(self, eventType, message):
