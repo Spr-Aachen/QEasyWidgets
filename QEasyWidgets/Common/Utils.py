@@ -724,7 +724,7 @@ def BootWithBat(
 
 ##############################################################################################################################
 
-def CheckUpdate(
+def CheckUpdateFromGithub(
     AccessToken: Optional[str] = None,
     RepoOwner: str = ...,
     RepoName: str = ...,

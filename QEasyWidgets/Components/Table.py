@@ -101,9 +101,17 @@ class TableBase(QTableView):
     def setHorizontalHeaderItem(self, column: int, item: QStandardItem) -> None:
         self.model().setHorizontalHeaderItem(column + 1, item)
 
-    def SetIndex(self) -> None:
-        for Index in range(self.model().rowCount()):
-            self.model().setItem(Index, 0, QStandardItem(f"{Index + 1}"))
+    def setHorizontalHeaderLabels(self, Headers: list[str]) -> None:
+        for Index, Header in enumerate(Headers):
+            if Index == 1 + self.columnCount():
+                return print("Maximum headers reached")
+            self.setHorizontalHeaderItem(Index, QStandardItem(Header))
+
+    def horizontalHeaderItem(self, column: int) -> QStandardItem:
+        return self.model().horizontalHeaderItem(column)
+
+    def horizontalHeaderLabels(self) -> list[str]:
+        return [self.horizontalHeaderItem(column).text() for column in range(self.columnCount())]
 
     def SetIndexHeaderVisible(self, ShowIndexHeader: bool = True) -> None:
         if ShowIndexHeader and not self.IsIndexShown:
@@ -113,11 +121,9 @@ class TableBase(QTableView):
             super().hideColumn(0)
             self.IsIndexShown = False
 
-    def SetHorizontalHeaders(self, Headers: list[str]) -> None:
-        for Index, Header in enumerate(Headers):
-            if Index == 1 + self.columnCount():
-                return print("Maximum headers reached")
-            self.setHorizontalHeaderItem(Index, QStandardItem(Header))
+    def SetIndex(self) -> None:
+        for Index in range(self.model().rowCount()):
+            self.model().setItem(Index, 0, QStandardItem(f"{Index + 1}"))
 
     def SetSectionVerticalResizeMode(self, row: int, mode: QHeaderView.ResizeMode) -> None:
         super().verticalHeader().setSectionResizeMode(row, mode)
