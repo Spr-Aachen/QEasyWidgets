@@ -690,37 +690,56 @@ def GetFileInfo(
 
 #############################################################################################################
 
-def RunBat(
+def RunScript(
     CommandList: list[str],
-    BatFilePath: Optional[str]
+    ScriptPath: Optional[str]
 ):
     '''
     '''
-    BatFilePath = Path.cwd().joinpath('Bat.bat') if BatFilePath is None else NormPath(BatFilePath)
-    with open(BatFilePath, 'w') as BatFile:
-        Commands = "\n".join(CommandList)
-        BatFile.write(Commands)
-    subprocess.Popen([BatFilePath], creationflags = subprocess.CREATE_NEW_CONSOLE)
+    if platform.system() == 'Linux':
+        ScriptPath = Path.cwd().joinpath('Bash.sh') if ScriptPath is None else NormPath(ScriptPath)
+        with open(ScriptPath, 'w') as BashFile:
+            Commands = "\n".join(CommandList)
+            BashFile.write(Commands)
+        os.chmod(ScriptPath, 0o755) # 给予可执行权限
+        subprocess.Popen(['bash', ScriptPath])
+    if platform.system() == 'Windows':
+        ScriptPath = Path.cwd().joinpath('Bat.bat') if ScriptPath is None else NormPath(ScriptPath)
+        with open(ScriptPath, 'w') as BatFile:
+            Commands = "\n".join(CommandList)
+            BatFile.write(Commands)
+        subprocess.Popen([ScriptPath], creationflags = subprocess.CREATE_NEW_CONSOLE)
 
 
-def BootWithBat(
+def BootWithScript(
     ProgramPath: str = ...,
     DelayTime: int = 3,
-    BatFilePath: Optional[str] = None
+    ScriptPath: Optional[str] = None
 ):
     '''
-    subprocess.call([ProgramPath] if GetFileInfo(ProgramPath)[1] else ['python.exe', ProgramPath])
     '''
-    _, IsFileCompiled = GetFileInfo(ProgramPath)
-    RunBat(
-        CommandList = [
-            '@echo off',
-            f'ping 127.0.0.1 -n {DelayTime + 1} > nul',
-            f'start "Programm Running" "{ProgramPath}"' if IsFileCompiled else f'python "{ProgramPath}"',
-            'del "%~f0"'
-        ],
-        BatFilePath = BatFilePath
-    )
+    if platform.system() == 'Linux':
+        _, IsFileCompiled = GetFileInfo(ProgramPath)
+        RunScript(
+            CommandList = [
+                '#!/bin/bash',
+                f'sleep {DelayTime}',
+                f'./"{ProgramPath}"' if IsFileCompiled else f'python3 "{ProgramPath}"',
+                'rm -- "$0"'
+            ],
+            ScriptPath = ScriptPath
+        )
+    if platform.system() == 'Windows':
+        _, IsFileCompiled = GetFileInfo(ProgramPath)
+        RunScript(
+            CommandList = [
+                '@echo off',
+                f'ping 127.0.0.1 -n {DelayTime + 1} > nul',
+                f'start "Programm Running" "{ProgramPath}"' if IsFileCompiled else f'python "{ProgramPath}"',
+                'del "%~f0"'
+            ],
+            ScriptPath = ScriptPath
+        )
 
 ##############################################################################################################################
 
