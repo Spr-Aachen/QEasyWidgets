@@ -1,10 +1,12 @@
+import platform
 import win32gui
 import win32con
+from typing import Optional
 from ctypes import Structure, c_int, POINTER, WinDLL, byref
 from ctypes.wintypes import UINT, HWND, RECT, MSG, LPRECT
-from PySide6.QtCore import Qt, Signal, QPoint, QEvent, QEventLoop
+from PySide6.QtCore import Qt, Signal, QPoint, QRect, QEvent, QEventLoop
 from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
-from PySide6.QtWidgets import QWidget, QMainWindow
+from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QLabel
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
