@@ -575,17 +575,29 @@ def OccupationTerminator(
 
 #############################################################################################################
 
-def RenameFile(FilePath: str):
-    Directory, FileName = os.path.split(FilePath)
-    while Path(FilePath).exists():
-        pattern = r'(\d+)\)\.'
-        if re.search(pattern, FileName) is None:
-            FileName = FileName.replace('.', '(0).')
-        else:
-            CurrentNumber = int(re.findall(pattern, FileName)[-1])
-            FileName = FileName.replace(f'({CurrentNumber}).', f'({CurrentNumber + 1}).')
-        FilePath = Path(Directory).joinpath(FileName).as_posix()
-    return FilePath
+def RenameIfExists(PathStr: str):
+    ParentDirectory, Name = os.path.split(PathStr)
+    suffix = Path(Name).suffix
+    if len(suffix) > 0:
+        while Path(PathStr).exists():
+            pattern = r'(\d+)\)\.'
+            if re.search(pattern, Name) is None:
+                Name = Name.replace('.', '(0).')
+            else:
+                CurrentNumber = int(re.findall(pattern, Name)[-1])
+                Name = Name.replace(f'({CurrentNumber}).', f'({CurrentNumber + 1}).')
+            PathStr = Path(ParentDirectory).joinpath(Name).as_posix()
+    else:
+        while Path(PathStr).exists():
+            pattern = r'(\d+)\)'
+            match = re.search(pattern, Name)
+            if match is None:
+                Name += '(0)'
+            else:
+                CurrentNumber = int(match.group(1))
+                Name = Name[:match.start(1)] + f'({CurrentNumber + 1})'
+            PathStr = Path(ParentDirectory).joinpath(Name).as_posix()
+    return PathStr
 
 
 def CleanDirectory(
