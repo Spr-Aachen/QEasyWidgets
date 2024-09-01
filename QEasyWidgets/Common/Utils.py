@@ -700,6 +700,42 @@ def GetFileInfo(
 
     return FileName, IsFileCompiled
 
+
+#############################################################################################################
+
+def IsVersionSatisfied(CurrentVersion, VersionReqs):
+    if VersionReqs is None:
+        return True
+    VersionReqs = VersionReqs.split(',') if isinstance(VersionReqs, str) else list(VersionReqs)
+    Results = []
+    for VersionReq in VersionReqs:
+        SplitVersionReq = re.split('=|>|<', VersionReq)
+        RequiredVersion = SplitVersionReq[-1]
+        Req = VersionReq[:len(VersionReq) - len(RequiredVersion)]
+        if Req == "==":
+            Results.append(version.parse(CurrentVersion) == version.parse(RequiredVersion))
+        if Req == ">=":
+            Results.append(version.parse(CurrentVersion) >= version.parse(RequiredVersion))
+        if Req == "<=":
+            Results.append(version.parse(CurrentVersion) <= version.parse(RequiredVersion))
+        return True if False not in Results else False
+
+
+def IsSystemSatisfied(SystemReqs):
+    if SystemReqs is None:
+        return True
+    SystemReqs = SystemReqs.split(';') if isinstance(SystemReqs, str) else list(SystemReqs)
+    Results = []
+    for SystemReq in SystemReqs:
+        SplitSystemReq = re.split('=|>|<', SystemReq)
+        RequiredSystem = SplitSystemReq[-1]
+        Req = SystemReq[:len(SystemReq) - len(RequiredSystem)]
+        if Req == "==":
+            Results.append(sys.platform == RequiredSystem)
+        if Req == "!=":
+            Results.append(sys.platform != RequiredSystem)
+        return True if False not in Results else False
+
 #############################################################################################################
 
 def RunScript(
