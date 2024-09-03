@@ -17,10 +17,6 @@ import urllib
 import urllib.parse as urlparse
 import pandas
 import platform
-import win32gui
-import win32con
-import win32api
-import win32print
 import configparser
 from pathlib import Path
 from github import Github
@@ -253,6 +249,7 @@ def SetEnvVar(
     '''
     '''
     #Value = RawString(Value)
+    #Value = RawString(Value)
     EnvValue = os.environ.get(Variable)
 
     if EnvValue is not None and NormPath(Value, 'Posix') not in [NormPath(Value, 'Posix') for Value in EnvValue.split(os.pathsep)]:
@@ -300,49 +297,6 @@ def SetEnvVar(
         if Type == 'Temp' or AffectOS:
             EnvValue = Value
             os.environ[Variable] = EnvValue
-
-#############################################################################################################
-
-def IsWindowMaximized(hWnd: int):
-    WindowPlacement = win32gui.GetWindowPlacement(hWnd)
-
-    Result = WindowPlacement[1] == win32con.SW_MAXIMIZE if WindowPlacement else False
-
-    return Result
-
-
-def IsWindowFullScreen(hWnd: int):
-    hWnd = int(hWnd)
-
-    WindowRect = win32gui.GetWindowRect(hWnd)
-
-    hMonitor = win32api.MonitorFromWindow(hWnd, win32con.MONITOR_DEFAULTTOPRIMARY)
-    MonitorInfo = win32api.GetMonitorInfo(hMonitor)
-
-    Result = all(w == m for w, m in zip(WindowRect, MonitorInfo["Monitor"])) if WindowRect and MonitorInfo else False
-
-    return Result
-
-
-def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
-    if hasattr(windll.user32, 'GetSystemMetricsForDpi'):
-        if hasattr(windll.user32, 'GetDpiForWindow'):
-            dpi = windll.user32.GetDpiForWindow(hWnd)
-        else:
-            dpi = 96
-            hdc = win32gui.GetDC(hWnd)
-            if hdc:
-                dpiX = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSX)
-                dpiY = win32print.GetDeviceCaps(hdc, win32con.LOGPIXELSY)
-                if dpiX > 0 and dpiScaling:
-                    dpi = dpiX
-                if dpiY > 0 and not dpiScaling:
-                    dpi = dpiY
-                win32gui.ReleaseDC(hWnd, hdc)
-        return windll.user32.GetSystemMetricsForDpi(index, dpi)
-
-    else:
-        return win32api.GetSystemMetrics(index)
 
 #############################################################################################################
 
