@@ -11,15 +11,9 @@
 
 ### Overview
 
-A simple widget library based on PySide6, which is currently used to serve for [Easy Voice Toolkit](https://github.com/Spr-Aachen/Easy-Voice-Toolkit) and [LLM-PromptTest](https://github.com/Spr-Aachen/LLM-PromptTest).
-PS: The project was meant to be named as 'QSimpleWidgets', but sadly it has been registered:(
+A simple widget library based on PySide6, which is currently used to serve for [Easy Voice Toolkit](https://github.com/Spr-Aachen/Easy-Voice-Toolkit) and [LLM-PromptMaster](https://github.com/Spr-Aachen/LLM-PromptMaster).
 
-
-## Consideration
-
-### System
-
-Currently this project only supports Windows system
+Currently this project supports Windows&Linux system.
 
 
 ## Deployment

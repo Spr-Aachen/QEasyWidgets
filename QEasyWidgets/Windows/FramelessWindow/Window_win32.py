@@ -95,6 +95,7 @@ def IsWindowFullScreen(hWnd: int):
 
     return Result
 
+##############################################################################################################################
 
 def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
     if hasattr(windll.user32, 'GetSystemMetricsForDpi'):
@@ -115,6 +116,30 @@ def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
 
     else:
         return win32api.GetSystemMetrics(index)
+
+
+def GetMissingBorderPixels(hWnd: int):
+    MissingBorderSize = []
+
+    for QWindow in QGuiApplication.allWindows():
+        if QWindow.winId() == hWnd:
+            Window = QWindow
+            break
+
+    SIZEFRAME = {
+        win32con.SM_CXSIZEFRAME: True,
+        win32con.SM_CYSIZEFRAME: False
+    }
+    for BorderLengthIndex, dpiScaling in SIZEFRAME.items():
+        MissingBorderPixels = GetSystemMetrics(hWnd, BorderLengthIndex, dpiScaling) + GetSystemMetrics(hWnd, 92, dpiScaling) #MissingBorderPixels = win32api.GetSystemMetrics(MissingBorderLength) + win32api.GetSystemMetrics(win32con.SM_CXPADDEDBORDER)
+        if not MissingBorderPixels > 0:
+            def IsCompositionEnabled():
+                Result = windll.dwmapi.DwmIsCompositionEnabled(byref(c_int(0)))
+                return bool(Result.value)
+            MissingBorderPixels = round((6 if IsCompositionEnabled() else 3) * Window.devicePixelRatio())
+        MissingBorderSize.append(MissingBorderPixels)
+
+    return MissingBorderSize
 
 ##############################################################################################################################
 
