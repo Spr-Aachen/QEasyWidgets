@@ -249,54 +249,47 @@ def SetEnvVar(
     '''
     '''
     #Value = RawString(Value)
-    #Value = RawString(Value)
-    EnvValue = os.environ.get(Variable)
 
-    if EnvValue is not None and NormPath(Value, 'Posix') not in [NormPath(Value, 'Posix') for Value in EnvValue.split(os.pathsep)]:
-        if Type == 'Sys':
-            if Variable == 'PATH':
-                RunCMD(
-                    Args = [
-                        'for /f "usebackq tokens=2,*" %A in (`REG QUERY "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v PATH`) do set SYSPATH=%B',
-                        f'setx PATH "{Value}{os.pathsep}%SYSPATH%" /M' #f'setx PATH "%SYSPATH%{os.pathsep}{Value}" /M'
-                    ],
-                    CommunicateThroughConsole = True
-                )
+    if Type == 'Sys':
+        if platform.system() == 'Windows':
+            RunCMD(
+                f'reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v {Variable} /d {Value}{f'{os.pathsep}%{Variable}%' if Variable == 'PATH' else ""} /f',
+                CommunicateThroughConsole = True
+            )
+        if platform.system() == 'Linux':
+            '''
+            RunCMD(
+                f'echo {Variable}={Value} >> /etc/environment',
+                CommunicateThroughConsole = True
+            )
+            '''
+            with open('/etc/environment', 'a') as f:
+                f.write(f'\n{Variable}="{Value}"\n')
+
+    if Type == 'User':
+        if platform.system() == 'Windows':
+            RunCMD(
+                f'reg add "HKEY_CURRENT_USER\Environment" /v {Variable} /d {Value}{f'{os.pathsep}%{Variable}%' if Variable == 'PATH' else ""} /f',
+                CommunicateThroughConsole = True
+            )
+        if platform.system() == 'Linux':
+            shell = os.environ.get('SHELL', '/bin/bash')
+            if 'bash' in shell:
+                config_file = os.path.expanduser('~/.bashrc')
+            elif 'zsh' in shell:
+                config_file = os.path.expanduser('~/.zshrc')
             else:
-                pass
-        if Type == 'User':
-            if Variable == 'PATH':
-                RunCMD(
-                    Args = [
-                        'for /f "usebackq tokens=2,*" %A in (`reg query HKCU\Environment /v PATH`) do set userPATH=%B',
-                        f'setx PATH "{Value}{os.pathsep}%userPATH%"' #f'setx PATH "%userPATH%{os.pathsep}{Value}"'
-                    ],
-                    CommunicateThroughConsole = True
-                )
-            else:
-                pass
-        if Type == 'Temp' or AffectOS:
+                config_file = os.path.expanduser('~/.profile')
+            with open(config_file, 'a') as f:
+                f.write(f'\nexport {Variable}="{Value}"\n')
+
+    if Type == 'Temp' or AffectOS:
+        EnvValue = os.environ.get(Variable)
+        if EnvValue is not None and NormPath(Value, 'Posix') not in [NormPath(Value, 'Posix') for Value in EnvValue.split(os.pathsep)]:
             EnvValue = f'{Value}{os.pathsep}{EnvValue}' #EnvValue = f'{EnvValue}{os.pathsep}{Value}'
-            os.environ[Variable] = EnvValue
-
-    if EnvValue is None:
-        if Type == 'Sys':
-            RunCMD(
-                Args = [
-                    f'setx {Variable} "{Value}" /M'
-                ],
-                CommunicateThroughConsole = True
-            )
-        if Type == 'User':
-            RunCMD(
-                Args = [
-                    f'setx {Variable} "{Value}"'
-                ],
-                CommunicateThroughConsole = True
-            )
-        if Type == 'Temp' or AffectOS:
+        else:
             EnvValue = Value
-            os.environ[Variable] = EnvValue
+        os.environ[Variable] = EnvValue
 
 #############################################################################################################
 
@@ -425,7 +418,7 @@ def TaskAccelerating(
 
         if Type == None:
             pass
-        
+
         elif Type == 'MultiProcessing':
             Process = ProcessPool.submit(Target, *Args)
             print(
@@ -435,7 +428,7 @@ def TaskAccelerating(
                 "Please wait...\n"
             ) if ShowMessages == True else print('')
             Process.result() if Asynchronous == False else None
-        
+
         elif Type == 'MultiThreading':
             Thread = ThreadPool.submit(Target, *Args)
             print(
@@ -448,11 +441,11 @@ def TaskAccelerating(
 
         else:
             raise Exception(f"{Type} not found! Use 'MultiProcessing' or 'MultiThreading' instead.")
-        
+
         print(
             f"Task done ({Index + 1}/{len(TargetList)})\n"
         ) if ShowMessages == True and Asynchronous == False else print('')
-    
+
     ProcessPool.shutdown(
         wait = True,
         cancel_futures = True
@@ -682,12 +675,12 @@ def IsSystemSatisfied(SystemReqs):
     Results = []
     for SystemReq in SystemReqs:
         SplitSystemReq = re.split('=|>|<', SystemReq)
-        RequiredSystem = SplitSystemReq[-1]
-        Req = SystemReq[:len(SystemReq) - len(RequiredSystem)]
+        RequiredSystem = SplitSystemReq[-1].strip()
+        Req = SystemReq[len(SplitSystemReq[0]) : len(SystemReq) - len(RequiredSystem)].strip()
         if Req == "==":
-            Results.append(sys.platform == RequiredSystem)
+            Results.append(sys.platform == eval(RequiredSystem))
         if Req == "!=":
-            Results.append(sys.platform != RequiredSystem)
+            Results.append(sys.platform != eval(RequiredSystem))
         return True if False not in Results else False
 
 #############################################################################################################
