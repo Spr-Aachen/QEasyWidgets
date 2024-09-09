@@ -1,6 +1,6 @@
 import os
+from pathlib import Path
 from typing import Union, Optional
-from ctypes import c_int, byref, windll
 from PySide6.QtCore import Qt, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
 from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices
 from PySide6.QtWidgets import *

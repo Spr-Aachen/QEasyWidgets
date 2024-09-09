@@ -3,7 +3,7 @@ import win32con
 import win32api
 import win32print
 from typing import Optional
-from ctypes import Structure, c_int, POINTER, WinDLL, byref
+from ctypes import Structure, c_int, POINTER, WinDLL, byref, windll
 from ctypes.wintypes import UINT, HWND, RECT, MSG, LPRECT
 from PySide6.QtCore import Qt, Signal, QPoint, QRect, QEvent
 from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent

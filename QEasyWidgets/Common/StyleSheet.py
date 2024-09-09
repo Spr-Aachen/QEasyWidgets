@@ -2,7 +2,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Union, Optional
 from PySide6.QtCore import QFile
-from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QApplication, QWidget
 
 from .Signals import ComponentsSignals
 from .Theme import EasyTheme
