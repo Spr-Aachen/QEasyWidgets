@@ -15,7 +15,7 @@ import inspect
 import hashlib
 import urllib
 import urllib.parse as urlparse
-import pandas
+import polars
 import platform
 import configparser
 from pathlib import Path
@@ -247,12 +247,19 @@ def SetEnvVar(
 ):
     '''
     '''
-    #Value = RawString(Value)
+    Value = RawString(Value)
 
     if Type == 'Sys':
         if platform.system() == 'Windows':
             RunCMD(
-                f'reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v {Variable} /d {Value}{f'{os.pathsep}%{Variable}%' if Variable == 'PATH' else ""} /f',
+                # Args = [
+                #     f'set VAR={Value}{os.pathsep}%{Variable}%',
+                #     f'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
+                # ],
+                Args = [
+                    f'for /f "usebackq tokens=2,*" %A in (reg query "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}") do set sysVAR=%B',
+                    f'setx "{Variable}" "{Value}{os.pathsep}%sysVAR%" /m'
+                ],
                 CommunicateThroughConsole = True
             )
         if platform.system() == 'Linux':
@@ -268,7 +275,14 @@ def SetEnvVar(
     if Type == 'User':
         if platform.system() == 'Windows':
             RunCMD(
-                f'reg add "HKEY_CURRENT_USER\Environment" /v {Variable} /d {Value}{f'{os.pathsep}%{Variable}%' if Variable == 'PATH' else ""} /f',
+                # Args = [
+                #     f'set VAR={Value}{os.pathsep}%{Variable}%',
+                #     f'reg add "HKEY_CURRENT_USER\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
+                # ],
+                Args = [
+                    f'for /f "usebackq tokens=2,*" %A in (reg query "HKEY_CURRENT_USER\\Environment" /v "{Variable}") do set userVAR=%B',
+                    f'setx "{Variable}" "{Value}{os.pathsep}%userVAR%"'
+                ],
                 CommunicateThroughConsole = True
             )
         if platform.system() == 'Linux':
@@ -307,11 +321,20 @@ def isUrl(content: str):
         return False
 
 
+@polars.Config( 
+    tbl_formatting = "ASCII_MARKDOWN",        
+    tbl_hide_column_data_types = True,
+    tbl_hide_dataframe_shape = True,
+)
+def toMarkdown(df: polars.DataFrame) -> str:
+    return str(df)
+
+
 def ToMarkdown(content: str):
     if isUrl(content):
         content = f"[URL]({content})"
     if isJson(content):
-        content = pandas.DataFrame(json.loads(json.dumps(eval(content)))).to_markdown()
+        content = toMarkdown(polars.DataFrame(json.loads(json.dumps(eval(content)))))
     return content
 
 

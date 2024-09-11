@@ -136,8 +136,8 @@ class TableBase(QTableView):
         ModelIndex = self.indexAt(CellWidget.pos())
         self.selectRow(ModelIndex.row()) #if index.isValid() else None
 
-    def AddRow(self, Layouts: list[QLayout], ResizeModes: list[Optional[QHeaderView.ResizeMode]], ColumnWidth: list[Optional[int]], Height: Optional[int]) -> None:
-        TargetRow = self.currentRow() + 1
+    def AddRow(self, Layouts: list[QLayout], ResizeModes: list[Optional[QHeaderView.ResizeMode]], ColumnWidth: list[Optional[int]], Height: Optional[int], reverse: bool = False) -> None:
+        TargetRow = self.rowCount() if not reverse else 0
         ColumnCount = self.columnCount()
         self.insertRow(TargetRow)
         for ColumnCount in range(ColumnCount):
