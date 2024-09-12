@@ -1,7 +1,9 @@
 from pathlib import Path
 from typing import Union, Optional
 from PySide6.QtCore import QTranslator
+from PySide6.QtWidgets import QApplication
 
+from .Signals import ComponentsSignals
 from .Language import EasyLanguage
 
 ##############################################################################################################################
@@ -22,7 +24,6 @@ class TranslationBase(QTranslator):
         super().load(FilePath)
 
 
-"""
 def Function_UpdateLanguage(
     language: Optional[str] = None
 ):
@@ -37,6 +38,5 @@ def Function_UpdateLanguage(
 
 
 ComponentsSignals.Signal_SetLanguage.connect(Function_UpdateLanguage)
-"""
 
 ##############################################################################################################################
