@@ -24,16 +24,22 @@ class TranslationBase(QTranslator):
         super().load(FilePath)
 
 
+Translator = None
 def Function_UpdateLanguage(
     language: Optional[str] = None
 ):
     '''
     '''
+    global Translator
+
     QApplication.processEvents()
 
+    # Remove old translator
+    QApplication.instance().removeTranslator(Translator) if Translator is not None else None
+
+    # Install new translator
     Translator = TranslationBase()
     Translator.load(language)
-
     QApplication.instance().installTranslator(Translator)
 
 
