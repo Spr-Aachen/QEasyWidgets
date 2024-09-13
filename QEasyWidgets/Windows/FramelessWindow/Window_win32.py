@@ -149,6 +149,8 @@ class WindowBase:
     showed = Signal()
     closed = Signal()
 
+    langChanged = Signal()
+
     rectChanged = Signal(QRect)
 
     edge_size = 3 # 窗体边缘尺寸（出现缩放标记的范围）
@@ -186,6 +188,10 @@ class WindowBase:
 
     def _resize_window(self, pos, edges) -> None:
         self.windowHandle().startSystemResize(edges) if edges is not None else None
+
+    def event(self, event: QEvent) -> bool:
+        self.langChanged.emit() if event.type() == QEvent.LanguageChange else None
+        return super().event(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         if self._check_ifdraggable(event.position()) == True and event.buttons() == Qt.MouseButton.LeftButton:
