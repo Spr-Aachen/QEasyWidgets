@@ -14,9 +14,7 @@ class ButtonBase(QPushButton):
     '''
     _icon = None
 
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.setIconSize(QSize(16, 16))
@@ -59,9 +57,7 @@ class ButtonBase(QPushButton):
 class MenuButton(ButtonBase):
     '''
     '''
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.setIcon(IconBase.Ellipsis)
@@ -84,5 +80,12 @@ class MenuButton(ButtonBase):
             Menu.addAction(MenuAction)
             #Menu.addSeparator()
         self.setMenu(Menu)
+
+
+class EmbeddedButton(ButtonBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
 
 ##############################################################################################################################

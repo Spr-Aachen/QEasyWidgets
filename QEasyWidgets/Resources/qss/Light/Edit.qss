@@ -1,40 +1,36 @@
 LineEditBase, TextEditBase {
-	/*font-size: 12px;*/
-	text-align: left;
-	selection-background-color: darkgrey;
-    background-color: transparent;
+    background-color: rgba(54, 45, 33, 15);
     padding: 0px;
-    border-width: 1.2px;
-    border-style: solid;
-    border-color: rgba(54, 45, 33, 123);
+    border: 1.2px solid rgba(54, 45, 33, 12);
+    border-bottom: 1.2px solid rgba(54, 45, 33, 48);
+    outline: none;
 }
 LineEditBase:hover, TextEditBase:hover {
-    border-color: rgba(54, 45, 33, 210);
+	/*border-color: rgba(54, 45, 33, 210);*/
 }
 
 
-TextEditBase TextEdit {
+LineEditBase LineEdit, TextEditBase TextEdit {
+    color: rgb(45, 33, 21);
+	text-align: left;
+	selection-background-color: darkgrey;
 	background-color: transparent;
+    padding: 4.8px 12px 6px 12px;
     border: none;
 }
-
-
-LineEditBase LineEdit {
-	background-color: transparent;
-	padding-top: 3px;
-	padding-left: 6px;
-	padding-bottom: 3px;
-	padding-right: 6px;
-    border: none;
+LineEditBase LineEdit:pressed, TextEditBase TextEdit:pressed {
+}
+LineEditBase LineEdit:disabled, TextEditBase TextEdit:disabled {
+	color: rgba(45, 33, 21, 123);
 }
 
 
-LineEditBase ButtonBase {
+EmbeddedLineEdit {
 	background-color: transparent;
+    padding: 1.2px;
 	border: none;
 }
-LineEditBase ButtonBase:hover {
-	background-color: rgba(54, 45, 33, 33);
+EmbeddedLineEdit: hover {
 }
 
 
@@ -81,7 +77,7 @@ TextEditBase QScrollBar::handle:hover {
 
 QToolTip {
     color: rgb(45, 33, 21);
-    background-color: transparent;
+    background-color: rgba(54, 45, 33, 15);
 	border-width: 0px;
 	border-style: solid;
 }

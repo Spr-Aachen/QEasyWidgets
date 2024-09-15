@@ -12,9 +12,7 @@ class TableBase(QTableView):
     '''
     sorted = Signal()
 
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.StandardItemModel = QStandardItemModel(self)
@@ -23,7 +21,7 @@ class TableBase(QTableView):
         super().setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         super().verticalHeader().setStretchLastSection(False)
         super().verticalHeader().setResizeContentsPrecision(0)
-        super().verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        super().verticalHeader().setSectionResizeMode(QHeaderView.Interactive)
         super().horizontalHeader().setStretchLastSection(False)
         super().horizontalHeader().setResizeContentsPrecision(0)
         super().horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)

@@ -37,11 +37,11 @@ QScrollBar::sub-page, QScrollBar::add-page {
 }
 
 QScrollBar::handle {
-	background-color: rgba(120, 120, 120, 123);
+	background-color: rgba(123, 123, 123, 123);
 	border-width: 0px;
 	border-radius: 0px;
 	border-style: solid;
 }
 QScrollBar::handle:hover {
-	background-color: rgba(120, 120, 120, 210);
+	background-color: rgba(123, 123, 123, 210);
 }

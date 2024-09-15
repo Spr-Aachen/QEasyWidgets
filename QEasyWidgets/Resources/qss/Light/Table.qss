@@ -1,10 +1,12 @@
 QHeaderView {
+    height: 33px;
     background-color: transparent;
 }
 
 QHeaderView::section {
 	text-align: left;
 	background-color: transparent;
+    padding: 2.4px 4.8px;
     border-width: 1.2px;
 	border-style: solid;
 	border-color: rgba(54, 45, 33, 123);
@@ -14,15 +16,18 @@ QHeaderView::section {
 QTableView {
 	text-align: left;
 	background-color: transparent;
-    alternate-background-color: transparent;
+    /*alternate-background-color: transparent;*/
     selection-background-color: transparent;
     gridline-color: rgba(54, 45, 33, 123);
 	border-width: 1.2px;
 	border-style: solid;
 	border-color: rgba(54, 45, 33, 123);
+    outline: none;
 }
 
 QTableView::item {
+    height: 33px;
+    padding: 3px 6px;
     border-top-width: 0px;
     border-right-width: 0px;
 	border-bottom-width: 1.2px;

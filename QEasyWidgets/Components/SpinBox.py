@@ -10,9 +10,7 @@ from ..Common.QFunctions import *
 class SpinBoxBase(QSpinBox):
     '''
     '''
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
@@ -24,15 +22,20 @@ class SpinBoxBase(QSpinBox):
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
+
+
+class EmbeddedSpinBox(SpinBoxBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
 
 ##############################################################################################################################
 
 class DoubleSpinBoxBase(QDoubleSpinBox):
     '''
     '''
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
@@ -44,5 +47,12 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
+
+
+class EmbeddedDoubleSpinBox(DoubleSpinBoxBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
 
 ##############################################################################################################################

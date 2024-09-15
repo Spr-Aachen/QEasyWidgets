@@ -10,9 +10,7 @@ from ..Common.QFunctions import *
 class ComboBoxBase(QComboBox):
     '''
     '''
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
@@ -24,5 +22,12 @@ class ComboBoxBase(QComboBox):
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ComboBox.Deregistrate(self)
+
+
+class EmbeddedComboBox(ComboBoxBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
 
 ##############################################################################################################################

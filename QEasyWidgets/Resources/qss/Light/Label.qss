@@ -1,4 +1,5 @@
 LabelBase {
+    color: rgb(45, 33, 21);
     background-color: transparent;
     padding: 0px;
     border: none;

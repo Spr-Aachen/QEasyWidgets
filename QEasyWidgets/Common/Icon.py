@@ -46,6 +46,8 @@ class IconBase(Enum):
     '''
     Ellipsis = 'Ellipsis'
     OpenedFolder = 'OpenedFolder'
+    Clipboard = 'Clipboard'
+    Download = 'Download'
     Play = 'Play'
     Pause = 'Pause'
     Dash = 'Dash'

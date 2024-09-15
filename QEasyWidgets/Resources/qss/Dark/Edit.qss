@@ -1,40 +1,36 @@
 LineEditBase, TextEditBase {
-	/*font-size: 12px;*/
-	text-align: left;
-	selection-background-color: darkgrey;
-    background-color: transparent;
+    background-color: rgba(210, 222, 234, 15);
     padding: 0px;
-    border-width: 1.2px;
-    border-style: solid;
-    border-color: rgba(201, 210, 222, 123);
+    border: 1.2px solid rgba(210, 222, 234, 12);
+    border-bottom: 1.2px solid rgba(210, 222, 234, 48);
+    outline: none;
 }
 LineEditBase:hover, TextEditBase:hover {
-    border-color: rgba(201, 210, 222, 210);
+    /*border-color: rgba(201, 210, 222, 210);*/
 }
 
 
-TextEditBase TextEdit {
+LineEditBase LineEdit, TextEditBase TextEdit {
+    color: rgb(210, 222, 234);
+	text-align: left;
+	selection-background-color: darkgrey;
 	background-color: transparent;
+    padding: 4.8px 12px 6px 12px;
     border: none;
 }
-
-
-LineEditBase LineEdit {
-	background-color: transparent;
-	padding-top: 3px;
-	padding-left: 6px;
-	padding-bottom: 3px;
-	padding-right: 6px;
-    border: none;
+LineEditBase LineEdit:pressed, TextEditBase TextEdit:pressed {
+}
+LineEditBase LineEdit:disabled, TextEditBase TextEdit:disabled {
+	color: rgba(201, 210, 222, 123);
 }
 
 
-LineEditBase ButtonBase {
+EmbeddedLineEdit {
 	background-color: transparent;
+    padding: 1.2px;
 	border: none;
 }
-LineEditBase ButtonBase:hover {
-	background-color: rgba(201, 210, 222, 33);
+EmbeddedLineEdit: hover {
 }
 
 
@@ -69,19 +65,19 @@ TextEditBase QScrollBar::sub-page, TextEditBase QScrollBar::add-page {
 }
 
 TextEditBase QScrollBar::handle {
-	background-color: rgba(120, 120, 120, 123);
+	background-color: rgba(123, 123, 123, 123);
 	border-width: 0px;
 	border-radius: 0px;
 	border-style: solid;
 }
 TextEditBase QScrollBar::handle:hover {
-	background-color: rgba(120, 120, 120, 210);
+	background-color: rgba(123, 123, 123, 210);
 }
 
 
 QToolTip {
     color: rgb(210, 222, 234);
-    background-color: transparent;
+    background-color: rgba(210, 222, 234, 15);
 	border-width: 0px;
 	border-style: solid;
 }

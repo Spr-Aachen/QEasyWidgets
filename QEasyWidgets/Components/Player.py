@@ -64,4 +64,11 @@ class MediaPlayerBase(QWidget):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Player.Deregistrate(self)
 
+
+class EmbeddedMediaPlayer(MediaPlayerBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
 ##############################################################################################################################

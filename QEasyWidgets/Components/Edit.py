@@ -5,7 +5,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from .Button import ButtonBase
+from .Button import EmbeddedButton
 
 ##############################################################################################################################
 
@@ -67,7 +67,7 @@ class LineEditBase(QFrame):
         self.LineEdit.focusedIn.connect(self.focusInEvent)
         self.LineEdit.focusedOut.connect(self.focusOutEvent)
 
-        self.Button = ButtonBase()
+        self.Button = EmbeddedButton()
         self.Button.setIcon(IconBase.OpenedFolder)
         self.Button.clicked.connect(self.interacted.emit)
 
@@ -156,6 +156,13 @@ class LineEditBase(QFrame):
         StyleSheetBase.Edit.Apply(self)
         self.showToolTip(Content) if Enable else self.hideToolTip()
 
+
+class EmbeddedLineEdit(LineEditBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
 ##############################################################################################################################
 
 class TextEdit(QTextEdit):
@@ -188,6 +195,7 @@ class TextEditBase(QFrame):
         super().__init__(parent)
 
         self.TextEdit = TextEdit()
+        self.TextEdit.installEventFilter(self)
         self.TextEdit.textChanged.connect(lambda: self.textChanged.emit(self.toPlainText()))
         self.TextEdit.keyEnterPressed.connect(self.keyEnterPressed.emit)
 

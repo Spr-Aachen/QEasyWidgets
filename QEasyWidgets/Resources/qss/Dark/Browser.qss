@@ -1,5 +1,5 @@
 TextBrowserBase {
-	/*font-size: 12px;*/
+    color: rgb(210, 222, 234);
 	text-align: left;
 	selection-background-color: darkgrey;
     background-color: transparent;
@@ -14,7 +14,7 @@ TextBrowserBase:hover {
 
 
 TextBrowserBase QScrollBar {
-	background-color: rgba(210, 210, 210, 123);
+	background-color: rgba(54, 45, 33, 123);
 	border-width: 1.2px;
 	border-radius: 6px;
 	border-style: solid;
@@ -22,7 +22,7 @@ TextBrowserBase QScrollBar {
 	margin: 0px;
 }
 TextBrowserBase QScrollBar:hover {
-	background-color: rgba(210, 210, 210, 210);
+	background-color: rgba(54, 45, 33, 210);
 }
 
 TextBrowserBase QScrollBar::horizontal {
@@ -55,7 +55,7 @@ TextBrowserBase QScrollBar::handle:hover {
 
 
 QToolTip {
-    color: rgb(45, 33, 21);
+    color: rgb(210, 222, 234);
     background-color: transparent;
 	border-width: 0px;
 	border-style: solid;
