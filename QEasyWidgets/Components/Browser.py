@@ -19,4 +19,11 @@ class TextBrowserBase(QTextBrowser):
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Browser.Deregistrate(self)
 
+
+class EmbeddedTextBrowser(TextBrowserBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
 ##############################################################################################################################

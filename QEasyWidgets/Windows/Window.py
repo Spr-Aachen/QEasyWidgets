@@ -3,7 +3,6 @@ from PySide6.QtCore import Qt, QEvent, QEventLoop
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QWidget, QMainWindow
 
-from ..Common.StyleSheet import StyleSheetBase
 from ..Common.QFunctions import *
 from .FramelessWindow import WindowBase
 
@@ -25,18 +24,14 @@ class MainWindowBase(WindowBase, QMainWindow):
 
         self.CentralLayout = QGridLayout()
         self.CentralWidget = QWidget(self)
-        self.CentralWidget.setObjectName('CentralWidget')
         self.CentralWidget.setLayout(self.CentralLayout)
         self.setCentralWidget(self.CentralWidget)
-
-        StyleSheetBase.Window.Apply(self)
 
     def setCentralWidget(self, CentralWidget: Optional[QWidget]) -> None:
         try:
             super().takeCentralWidget(self.CentralWidget)
             self.CentralWidget.deleteLater()
             self.CentralWidget.hide()
-            self.ClearDefaultStyleSheet()
         except:
             pass
         if CentralWidget is not None:
@@ -46,12 +41,6 @@ class MainWindowBase(WindowBase, QMainWindow):
             self.CentralWidget.raise_() if self.CentralWidget.isHidden() else None
         else:
             self.CentralWidget = None
-
-    def setStyleSheet(self, styleSheet: str) -> None:
-        super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.CentralWidget.objectName()}'))
-
-    def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Window.Deregistrate(self)
 
 
 class ChildWindowBase(WindowBase, QWidget):
@@ -75,8 +64,6 @@ class ChildWindowBase(WindowBase, QWidget):
         self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
         self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
 
-        StyleSheetBase.Window.Apply(self)
-
     def exec(self) -> int:
         self.show()
         Result = self.EventLoop.exec()
@@ -86,11 +73,5 @@ class ChildWindowBase(WindowBase, QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         Result = self.EventLoop.exit()
         super().closeEvent(event)
-
-    def setStyleSheet(self, styleSheet: str) -> None:
-        super().setStyleSheet(styleSheet.replace('#CentralWidget', f'#{self.objectName()}'))
-
-    def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Window.Deregistrate(self)
 
 ##############################################################################################################################

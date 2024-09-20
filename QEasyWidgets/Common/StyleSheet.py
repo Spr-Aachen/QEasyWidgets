@@ -29,8 +29,6 @@ class StyleSheetBase(Enum):
     Table = 'Table'
 
     Bar = 'Bar'
-    Window = 'Window'
-    Dialog = 'Dialog'
     Menu = 'Menu'
 
     def Registrate(self, widget, value):

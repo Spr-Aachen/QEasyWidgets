@@ -3,10 +3,8 @@ ListBase {
 	text-align: center;*/
 	background-color: transparent;
     padding: 0px;
+    border: 1.2px solid rgba(201, 210, 222, 123);
     outline: none;
-    border-width: 1.2px;
-    border-style: solid;
-    border-color: rgba(201, 210, 222, 123);
 }
 ListBase:hover {
     border-color: rgba(201, 210, 222, 210);
@@ -15,9 +13,7 @@ ListBase:hover {
 ListBase::item {
     color: rgb(210, 222, 234);
 	background-color: transparent;
-    border-width: 2.4px;
-    border-style: solid;
-	border-color: transparent;
+    border: 2.4px solid transparent;
 	padding: 2.4px;
 }
 ListBase::item:hover {
@@ -32,10 +28,8 @@ ListBase::item:selected {
 
 QScrollBar {
 	background-color: transparent;
-	border-width: 1.2px;
+	border: 1.2px solid transparent;
 	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
 	margin: 0px;
 }
 QScrollBar:hover {
@@ -50,9 +44,8 @@ QScrollBar::vertical {
 
 QScrollBar::sub-line, QScrollBar::add-line {
 	background-color: transparent;
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 
 QScrollBar::sub-page, QScrollBar::add-page {
@@ -61,9 +54,8 @@ QScrollBar::sub-page, QScrollBar::add-page {
 
 QScrollBar::handle {
 	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);

@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -14,9 +15,7 @@ class LabelBase(QLabel):
 
     _pixmap = None
 
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    def __init__(self, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
         super().__init__(parent)
 
         StyleSheetBase.Label.Apply(self)

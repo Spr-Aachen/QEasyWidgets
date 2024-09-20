@@ -1,3 +1,4 @@
+from typing import Optional, Union, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -14,7 +15,7 @@ class ButtonBase(QPushButton):
     '''
     _icon = None
 
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
         self.setIconSize(QSize(16, 16))
@@ -82,10 +83,25 @@ class MenuButton(ButtonBase):
         self.setMenu(Menu)
 
 
-class EmbeddedButton(ButtonBase):
+class HollowButton(ButtonBase):
     '''
     '''
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
+
+
+class EmbeddedButton(ButtonBase):
+    '''
+    '''
+    _hoverBackgroundColor = QColor(0, 0, 0, 0)
+
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+    def setHoverBackgroundColor(self, color: QColor) -> None:
+        self._hoverBackgroundColor = color
+
+    def setStyleSheet(self, styleSheet: str) -> None:
+        super().setStyleSheet(styleSheet + "EmbeddedButton:hover {background-color: rgba%s;}" % self._hoverBackgroundColor.getRgb().__str__())
 
 ##############################################################################################################################

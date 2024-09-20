@@ -1,4 +1,9 @@
 import darkdetect
+from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
+from PySide6.QtGui import Qt, QColor, QPainter
+from PySide6.QtWidgets import QLineEdit
+
+from .Signals import ComponentsSignals
 
 ##############################################################################################################################
 
@@ -22,5 +27,125 @@ class ThemeBase:
 
 
 EasyTheme = ThemeBase()
+
+##############################################################################################################################
+
+class BackgroundColorObject(QObject):
+    """
+    Background color object
+    """
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._backgroundColor = parent._normalBackgroundColor()
+
+    @Property(QColor)
+    def backgroundColor(self):
+        return self._backgroundColor
+
+    @backgroundColor.setter
+    def backgroundColor(self, color: QColor):
+        self._backgroundColor = color
+        self.parent().update()
+
+
+class BackgroundColorAnimationBase:
+    """
+    Background color animation base for widgets
+    """
+    _lightBackgroundColor = QColor(246, 246, 246)
+    _darkBackgroundColor = QColor(24, 24, 24)
+
+    isHover = False
+    isPressed = False
+
+    def __init__(self, *args, **kwargs) -> None:
+        self.installEventFilter(self)
+
+        self.bgColorObject = BackgroundColorObject(self)
+
+        self.bgColorAnim = QPropertyAnimation(self.bgColorObject, b'backgroundColor', self)
+        self.bgColorAnim.setDuration(210)
+
+        ComponentsSignals.Signal_SetTheme.connect(self._updateBackgroundColor)
+
+    def _normalBackgroundColor(self):
+        return self._darkBackgroundColor if EasyTheme.THEME == Theme.Dark else self._lightBackgroundColor
+
+    def _hoverBackgroundColor(self):
+        return self._normalBackgroundColor()
+
+    def _pressedBackgroundColor(self):
+        return self._normalBackgroundColor()
+
+    def _focusInBackgroundColor(self):
+        return self._normalBackgroundColor()
+
+    def _disabledBackgroundColor(self):
+        return self._normalBackgroundColor()
+
+    def _updateBackgroundColor(self):
+        if not self.isEnabled():
+            color = self._disabledBackgroundColor()
+        elif isinstance(self, QLineEdit) and self.hasFocus():
+            color = self._focusInBackgroundColor()
+        elif self.isPressed:
+            color = self._pressedBackgroundColor()
+        elif self.isHover:
+            color = self._hoverBackgroundColor()
+        else:
+            color = self._normalBackgroundColor()
+
+        self.bgColorAnim.stop()
+        self.bgColorAnim.setEndValue(color)
+        self.bgColorAnim.start()
+
+    def setBackgroundColor(self, color: QColor):
+        self.bgColorObject.backgroundColor = color
+
+    def getBackgroundColor(self):
+        return self.bgColorObject.backgroundColor
+
+    @property
+    def backgroundColor(self):
+        return self.getBackgroundColor()
+
+    def eventFilter(self, obj, e):
+        if obj is self and e.type() == QEvent.Type.EnabledChange:
+            self.setBackgroundColor(self._normalBackgroundColor() if self.isEnabled() else self._disabledBackgroundColor())
+        return super().eventFilter(obj, e)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        painter = QPainter(self)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self.backgroundColor)
+        painter.drawRect(self.rect())
+
+    def mousePressEvent(self, e):
+        self.isPressed = True
+        self._updateBackgroundColor()
+        super().mousePressEvent(e)
+
+    def mouseReleaseEvent(self, e):
+        self.isPressed = False
+        self._updateBackgroundColor()
+        super().mouseReleaseEvent(e)
+
+    def enterEvent(self, e):
+        self.isHover = True
+        self._updateBackgroundColor()
+
+    def leaveEvent(self, e):
+        self.isHover = False
+        self._updateBackgroundColor()
+
+    def focusInEvent(self, e):
+        super().focusInEvent(e)
+        self._updateBackgroundColor()
+
+    def setCustomBackgroundColor(self, light, dark):
+        self._lightBackgroundColor = QColor(light)
+        self._darkBackgroundColor = QColor(dark)
+        self._updateBackgroundColor()
 
 ##############################################################################################################################

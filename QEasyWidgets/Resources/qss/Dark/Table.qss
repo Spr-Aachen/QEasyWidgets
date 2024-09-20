@@ -4,12 +4,11 @@ QHeaderView {
 }
 
 QHeaderView::section {
+    color: rgb(210, 222, 234);
 	text-align: left;
 	background-color: transparent;
     padding: 2.4px 4.8px;
-    border-width: 1.2px;
-	border-style: solid;
-	border-color: rgba(201, 210, 222, 123);
+    border: 1.2px solid rgba(201, 210, 222, 123);
 }
 
 
@@ -19,21 +18,16 @@ QTableView {
     /*alternate-background-color: transparent;*/
     selection-background-color: transparent;
     gridline-color: rgba(201, 210, 222, 123);
-	border-width: 1.2px;
-	border-style: solid;
-	border-color: rgba(201, 210, 222, 123);
+	border: 1.2px solid rgba(201, 210, 222, 123);
     outline: none;
 }
 
 QTableView::item {
     height: 33px;
+    color: rgb(210, 222, 234);
     padding: 3px 6px;
-    border-top-width: 0px;
-    border-right-width: 0px;
+    border: 0px solid rgba(201, 210, 222, 123);
 	border-bottom-width: 1.2px;
-    border-left-width: 0px;
-	border-style: solid;
-	border-color: rgba(201, 210, 222, 123);
 }
 QTableView::item::selected {
 	border-color: rgba(201, 210, 222, 210);
@@ -45,10 +39,8 @@ QTableView::item:!alternate:!selected {
 
 QScrollBar {
 	background-color: rgba(54, 45, 33, 123);
-	border-width: 1.2px;
+	border: 1.2px solid transparent;
 	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
 	margin: 0px;
 }
 QScrollBar:hover {
@@ -64,9 +56,8 @@ QScrollBar::vertical {
 
 QScrollBar::sub-line, QScrollBar::add-line {
 	background-color: transparent;
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 
 QScrollBar::sub-page, QScrollBar::add-page {
@@ -75,18 +66,9 @@ QScrollBar::sub-page, QScrollBar::add-page {
 
 QScrollBar::handle {
 	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);
-}
-
-
-QToolTip {
-    color: rgb(210, 222, 234);
-    background-color: transparent;
-	border-width: 0px;
-	border-style: solid;
 }

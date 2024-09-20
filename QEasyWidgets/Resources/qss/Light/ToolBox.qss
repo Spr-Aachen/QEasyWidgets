@@ -10,7 +10,7 @@ ToolPage {
 }
 
 ToolPage QPushButton {
-	/*font-size: 12px;*/
+    color: rgb(45, 33, 21);
 	text-align: left;
 	background-color: transparent;
 	padding-top: 3px;

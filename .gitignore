@@ -1,8 +1,12 @@
 # 
-**/__pycache__/
-**/*.ipynb
-
-# 
 **/*.ui
 **/*.qrc
 **/*.png
+
+# Generated contents
+**/__pycache__/
+**/build/
+**/dist/
+
+# Others
+**/*.ipynb

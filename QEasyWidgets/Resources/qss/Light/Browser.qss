@@ -4,9 +4,7 @@ TextBrowserBase {
 	selection-background-color: darkgrey;
     background-color: transparent;
     padding: 0px;
-    border-width: 1.2px;
-    border-style: solid;
-    border-color: rgba(54, 45, 33, 123);
+    border: 1.2px solid rgba(54, 45, 33, 123);
 }
 TextBrowserBase:hover {
     border-color: rgba(54, 45, 33, 210);
@@ -15,10 +13,8 @@ TextBrowserBase:hover {
 
 TextBrowserBase QScrollBar {
 	background-color: rgba(210, 210, 210, 123);
-	border-width: 1.2px;
+	border: 1.2px solid transparent;
 	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
 	margin: 0px;
 }
 TextBrowserBase QScrollBar:hover {
@@ -34,9 +30,8 @@ TextBrowserBase QScrollBar::vertical {
 
 TextBrowserBase QScrollBar::sub-line, TextBrowserBase QScrollBar::add-line {
 	background-color: transparent;
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 
 TextBrowserBase QScrollBar::sub-page, TextBrowserBase QScrollBar::add-page {
@@ -45,12 +40,20 @@ TextBrowserBase QScrollBar::sub-page, TextBrowserBase QScrollBar::add-page {
 
 TextBrowserBase QScrollBar::handle {
 	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 TextBrowserBase QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);
+}
+
+
+EmbeddedTextBrowser {
+	background-color: transparent;
+    padding: 1.2px;
+	border: none;
+}
+EmbeddedTextBrowser:hover {
 }
 
 

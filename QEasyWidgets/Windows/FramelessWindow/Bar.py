@@ -1,9 +1,11 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QWidget, QMainWindow, QDialog, QLabel, QHBoxLayout, QSizePolicy
 
 from ...Common.Icon import IconBase
 from ...Common.StyleSheet import StyleSheetBase
-from ...Components.Button import ButtonBase
+from ...Components.Button import EmbeddedButton
+from ...Components.Label import LabelBase
 
 ##############################################################################################################################
 
@@ -18,7 +20,7 @@ class TitleBarBase(QWidget):
         super().__init__(parent)
 
         self.Window = parent if isinstance(parent, (QMainWindow, QDialog)) else parent.window()
-        self.Window.installEventFilter(self)
+        #self.Window.installEventFilter(self)
 
         self.setFixedHeight(self.DEFAULT_TITILE_BAR_HEIGHT)
         self.setGeometry(0, 0, self.Window.width(), self.height())
@@ -57,65 +59,33 @@ class TitleBarBase(QWidget):
         self.Window.showMinimized()
 
     def setCloseButton(self, parent):
-        CloseButton = ButtonBase(parent)
+        CloseButton = EmbeddedButton(parent)
         CloseButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        CloseButton.ClearDefaultStyleSheet()
-        CloseButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(210, 123, 123, 210);"
-            "}"
-        )
+        CloseButton.setHoverBackgroundColor(QColor(210, 123, 123, 210))
         CloseButton.setIcon(IconBase.X)
         CloseButton.setCursor(Qt.PointingHandCursor)
         return CloseButton
 
     def setMaximizeButton(self, parent):
-        MaximizeButton = ButtonBase(parent)
+        MaximizeButton = EmbeddedButton(parent)
         MaximizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        MaximizeButton.ClearDefaultStyleSheet()
-        MaximizeButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(123, 123, 123, 123);"
-            "}"
-        )
+        MaximizeButton.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         MaximizeButton.setIcon(IconBase.FullScreen)
         MaximizeButton.setCursor(Qt.PointingHandCursor)
         return MaximizeButton
 
     def setMinimizeButton(self, parent):
-        MinimizeButton = ButtonBase(parent)
+        MinimizeButton = EmbeddedButton(parent)
         MinimizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
-        MinimizeButton.ClearDefaultStyleSheet()
-        MinimizeButton.setStyleSheet(
-            "ButtonBase {"
-            "   background-color: transparent;"
-            "}"
-            "ButtonBase:hover {"
-            "   background-color: rgba(123, 123, 123, 123);"
-            "}"
-        )
+        MinimizeButton.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         MinimizeButton.setIcon(IconBase.Dash)
         MinimizeButton.setCursor(Qt.PointingHandCursor)
         return MinimizeButton
 
     def setTitle(self, Text: str, parent):
-        TitleLabel = QLabel(Text, parent)
+        TitleLabel = LabelBase(parent)
+        TitleLabel.setText(Text)
         TitleLabel.setGeometry(0 + 33, 0 + self.height() / 5, self.width() / 2, self.height())
-        TitleLabel.setStyleSheet(
-            "QLabel {"
-            "   color: rgba(210, 210, 210, 210);"
-            "   background-color: transparent;"
-            "   padding: 3.3px;"
-            "   border-width: 0px;"
-            "   border-style: solid;"
-            "}"
-        )
         #TitleLabel.setFont(QFont("Microsoft YaHei", 11.1, QFont.Normal))
         TitleLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 

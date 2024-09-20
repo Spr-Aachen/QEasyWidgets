@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -56,7 +57,7 @@ class LineEditBase(QFrame):
 
     rectChanged = Signal(QRect)
 
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
         self.LineEdit = LineEdit()
@@ -223,5 +224,12 @@ class TextEditBase(QFrame):
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
+
+
+class EmbeddedTextEdit(TextEditBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
 
 ##############################################################################################################################

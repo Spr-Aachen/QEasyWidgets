@@ -1,12 +1,12 @@
 LineEditBase, TextEditBase {
-    background-color: rgba(210, 222, 234, 15);
+    background-color: rgba(246, 246, 246, 18);
     padding: 0px;
     border: 1.2px solid rgba(210, 222, 234, 12);
     border-bottom: 1.2px solid rgba(210, 222, 234, 48);
     outline: none;
 }
 LineEditBase:hover, TextEditBase:hover {
-    /*border-color: rgba(201, 210, 222, 210);*/
+	background-color: rgba(246, 246, 246, 24);
 }
 
 
@@ -21,16 +21,16 @@ LineEditBase LineEdit, TextEditBase TextEdit {
 LineEditBase LineEdit:pressed, TextEditBase TextEdit:pressed {
 }
 LineEditBase LineEdit:disabled, TextEditBase TextEdit:disabled {
-	color: rgba(201, 210, 222, 123);
+	color: rgba(201, 210, 222, 90);
 }
 
 
-EmbeddedLineEdit {
+EmbeddedLineEdit, EmbeddedTextEdit {
 	background-color: transparent;
     padding: 1.2px;
 	border: none;
 }
-EmbeddedLineEdit: hover {
+EmbeddedLineEdit:hover, EmbeddedTextEdit:hover {
 }
 
 

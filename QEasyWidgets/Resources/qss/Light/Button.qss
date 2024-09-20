@@ -1,14 +1,14 @@
 ButtonBase {
     color: rgb(45, 33, 21);
 	/*text-align: center;*/
-	background-color: rgba(54, 45, 33, 15);
+	background-color: rgba(24, 24, 24, 6);
     padding: 4.8px 12px 6px 12px;
     border: 1.2px solid rgba(54, 45, 33, 12);
-    border-bottom: 1.2px solid rgba(54, 45, 33, 48);
+    border-bottom-color: rgba(54, 45, 33, 48);
     outline: none;
 }
 ButtonBase:hover {
-	/*border-color: rgba(54, 45, 33, 210);*/
+	background-color: rgba(24, 24, 24, 12);
 }
 ButtonBase:pressed, ButtonBase:checked {
 	color: rgba(45, 33, 21, 123);
@@ -18,13 +18,13 @@ ButtonBase:disabled {
 }
 
 
-MenuButton {
+MenuButton, HollowButton {
 	background-color: transparent;
 	border-width: 1.2px;
 	border-style: solid;
 	border-color: rgba(54, 45, 33, 123);
 }
-MenuButton:hover {
+MenuButton:hover, HollowButton:hover {
 	border-color: rgba(54, 45, 33, 210);
 }
 
@@ -52,7 +52,7 @@ EmbeddedButton {
     padding: 1.2px;
 	border: none;
 }
-EmbeddedButton: hover {
+EmbeddedButton:hover {
 }
 
 

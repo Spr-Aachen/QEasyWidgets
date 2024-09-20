@@ -3,13 +3,14 @@ from PySide6.QtCore import Qt, Signal, QPoint, QRect, QEvent
 from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 
+from ...Common.Theme import BackgroundColorAnimationBase
 from ...Common.StyleSheet import StyleSheetBase
 from ...Common.QFunctions import *
 from .Bar import TitleBarBase
 
 ##############################################################################################################################
 
-class WindowBase:
+class WindowBase(BackgroundColorAnimationBase):
     '''
     '''
     showed = Signal()
@@ -24,7 +25,10 @@ class WindowBase:
     def __init__(self,
         min_width = 630, # 窗体的最小宽度
         min_height = 420, # 窗体的最小高度
+        *args, **kwargs
     ):
+        super().__init__(*args, **kwargs)
+
         self.TitleBar = TitleBarBase(self)
 
         self.Mask = QLabel(self)

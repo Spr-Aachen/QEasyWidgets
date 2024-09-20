@@ -9,8 +9,8 @@ QTreeView {
 QTreeView::item {
     color: rgb(210, 222, 234);
 	background-color: transparent;
-	border: none;
 	padding: 3px;
+	border: none;
 }
 QTreeView::item:hover {
 	background-color: rgba(201, 210, 222, 33);
@@ -34,10 +34,8 @@ QTreeView::branch:closed:has-children {
 
 QScrollBar {
 	background-color: transparent;
-	border-width: 1.2px;
+	border: 1.2px solid transparent;
 	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
 	margin: 0px;
 }
 QScrollBar:hover {
@@ -52,9 +50,8 @@ QScrollBar::vertical {
 
 QScrollBar::sub-line, QScrollBar::add-line {
 	background-color: transparent;
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 
 QScrollBar::sub-page, QScrollBar::add-page {
@@ -63,9 +60,8 @@ QScrollBar::sub-page, QScrollBar::add-page {
 
 QScrollBar::handle {
 	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);

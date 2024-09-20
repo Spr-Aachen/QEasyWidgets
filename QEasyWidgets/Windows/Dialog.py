@@ -2,9 +2,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QIcon, QMouseEvent
 from PySide6.QtWidgets import *
 
-from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .Window import WindowBase
+from ..Components.Label import LabelBase
+from ..Components.Edit import LineEditBase
 
 ##############################################################################################################################
 
@@ -30,8 +31,6 @@ class DialogBase(WindowBase, QDialog):
         self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
         self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
 
-        StyleSheetBase.Dialog.Apply(self)
-
     def exec(self) -> int:
         Result = super().exec()
         self.closed.emit()
@@ -39,9 +38,6 @@ class DialogBase(WindowBase, QDialog):
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         return
-
-    def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Dialog.Deregistrate(self)
 
 ##############################################################################################################################
 
@@ -86,7 +82,7 @@ class MessageBoxBase(DialogBase):
 
         self.PicLabel = QLabel()
         self.PicLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.TextLabel = QLabel()
+        self.TextLabel = LabelBase()
         self.TextLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         PicTextLayout = QHBoxLayout()
         PicTextLayout.setContentsMargins(0, 0, 0, 0)
@@ -155,9 +151,9 @@ class MessageBoxBase(DialogBase):
     def getText(self, title: str, label: str, echo: QLineEdit.EchoMode = None, text: str = None, flags: Qt.WindowType = Qt.Dialog, inputMethodHints: Qt.InputMethodHint = None):
         self.setWindowFlags(flags)
         self.setText(title) #self.setWindowTitle(title)
-        InputLabel = QLabel()
+        InputLabel = LabelBase()
         InputLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        InputArea = QLineEdit()
+        InputArea = LineEditBase()
         InputArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         InputLayout = QHBoxLayout()
         InputLayout.setContentsMargins(0, 0, 0, 0)

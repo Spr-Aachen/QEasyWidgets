@@ -8,10 +8,8 @@ QScrollArea:hover {
 
 QScrollBar {
 	background-color: rgba(210, 210, 210, 123);
-	border-width: 1.2px;
+	border: 1.2px solid transparent;
 	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
 	margin: 0px;
 }
 QScrollBar:hover {
@@ -27,9 +25,8 @@ QScrollBar::vertical {
 
 QScrollBar::sub-line, QScrollBar::add-line {
 	background-color: transparent;
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 
 QScrollBar::sub-page, QScrollBar::add-page {
@@ -38,9 +35,8 @@ QScrollBar::sub-page, QScrollBar::add-page {
 
 QScrollBar::handle {
 	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
+	border: none;
 	border-radius: 0px;
-	border-style: solid;
 }
 QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);
