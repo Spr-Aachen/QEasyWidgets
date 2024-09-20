@@ -4,6 +4,7 @@ QTreeView {
 	background-color: transparent;
     outline: none;
 	border: none;
+	border-radius: 3px;
 }
 
 QTreeView::item {
@@ -11,6 +12,7 @@ QTreeView::item {
 	background-color: transparent;
 	padding: 3px;
 	border: none;
+	border-radius: 3px;
 }
 QTreeView::item:hover {
 	background-color: rgba(201, 210, 222, 33);

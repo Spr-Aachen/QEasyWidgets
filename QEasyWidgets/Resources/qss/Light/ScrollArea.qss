@@ -1,6 +1,13 @@
 QScrollArea {
-	border-width: 0px;
-	border-style: solid;
+	border: 0px solid;
+	border-radius: 3px;
+}
+QScrollArea[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+QScrollArea[isTransparent=true] {
+	background-color: transparent;
 }
 QScrollArea:hover {
 }

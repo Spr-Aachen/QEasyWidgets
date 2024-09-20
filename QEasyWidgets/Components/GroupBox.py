@@ -26,6 +26,12 @@ class GroupBoxBase(QGroupBox):
     def collapse(self):
         Function_SetWidgetSizeAnimation(self, TargetHeight = 0).start()
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.GroupBox.Deregistrate(self)
 

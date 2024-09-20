@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget, QMainWindow, QDialog, QLabel, QHBoxLayout
 
 from ...Common.Icon import IconBase
 from ...Common.StyleSheet import StyleSheetBase
-from ...Components.Button import EmbeddedButton
+from ...Components.Button import ButtonBase
 from ...Components.Label import LabelBase
 
 ##############################################################################################################################
@@ -59,7 +59,9 @@ class TitleBarBase(QWidget):
         self.Window.showMinimized()
 
     def setCloseButton(self, parent):
-        CloseButton = EmbeddedButton(parent)
+        CloseButton = ButtonBase(parent)
+        CloseButton.setBorderless(True)
+        CloseButton.setTransparent(True)
         CloseButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         CloseButton.setHoverBackgroundColor(QColor(210, 123, 123, 210))
         CloseButton.setIcon(IconBase.X)
@@ -67,7 +69,9 @@ class TitleBarBase(QWidget):
         return CloseButton
 
     def setMaximizeButton(self, parent):
-        MaximizeButton = EmbeddedButton(parent)
+        MaximizeButton = ButtonBase(parent)
+        MaximizeButton.setBorderless(True)
+        MaximizeButton.setTransparent(True)
         MaximizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         MaximizeButton.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         MaximizeButton.setIcon(IconBase.FullScreen)
@@ -75,7 +79,9 @@ class TitleBarBase(QWidget):
         return MaximizeButton
 
     def setMinimizeButton(self, parent):
-        MinimizeButton = EmbeddedButton(parent)
+        MinimizeButton = ButtonBase(parent)
+        MinimizeButton.setBorderless(True)
+        MinimizeButton.setTransparent(True)
         MinimizeButton.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         MinimizeButton.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         MinimizeButton.setIcon(IconBase.Dash)

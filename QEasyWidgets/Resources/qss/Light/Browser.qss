@@ -5,6 +5,14 @@ TextBrowserBase {
     background-color: transparent;
     padding: 0px;
     border: 1.2px solid rgba(54, 45, 33, 123);
+	border-radius: 3px;
+}
+TextBrowserBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+TextBrowserBase[isTransparent=true] {
+	background-color: transparent;
 }
 TextBrowserBase:hover {
     border-color: rgba(54, 45, 33, 210);
@@ -45,15 +53,6 @@ TextBrowserBase QScrollBar::handle {
 }
 TextBrowserBase QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);
-}
-
-
-EmbeddedTextBrowser {
-	background-color: transparent;
-    padding: 1.2px;
-	border: none;
-}
-EmbeddedTextBrowser:hover {
 }
 
 

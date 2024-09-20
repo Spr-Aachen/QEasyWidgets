@@ -6,7 +6,15 @@ ComboBoxBase {
     padding: 4.8px 12px 6px 12px;
     border: 1.2px solid rgba(210, 222, 234, 12);
     border-bottom: 1.2px solid rgba(210, 222, 234, 48);
+	border-radius: 3px;
     outline: none;
+}
+ComboBoxBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+ComboBoxBase[isTransparent=true] {
+	background-color: transparent;
 }
 ComboBoxBase:hover {
 	background-color: rgba(246, 246, 246, 24);
@@ -38,6 +46,13 @@ ComboBoxBase QAbstractItemView {
 	background-color: black;
 	border: 1.2px solid rgba(201, 210, 222, 123);
 	outline: none;
+}
+ComboBoxBase QAbstractItemView[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+ComboBoxBase QAbstractItemView[isTransparent=true] {
+	background-color: transparent;
 }
 
 ComboBoxBase QAbstractItemView::item {
@@ -88,15 +103,6 @@ ComboBoxBase QAbstractScrollArea QScrollBar::handle {
 }
 ComboBoxBase QAbstractScrollArea QScrollBar::handle:hover {
 	background-color: rgba(123, 123, 123, 210);
-}
-
-
-EmbeddedComboBox {
-	background-color: transparent;
-    padding: 1.2px;
-	border: none;
-}
-EmbeddedComboBox: hover {
 }
 
 

@@ -6,7 +6,15 @@ SpinBoxBase, DoubleSpinBoxBase {
     padding: 4.8px 12px 6px 12px;
     border: 1.2px solid rgba(201, 210, 222, 12);
     border-bottom: 1.2px solid rgba(201, 210, 222, 48);
+	border-radius: 3px;
     outline: none;
+}
+SpinBoxBase[isBorderless=true] DoubleSpinBoxBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+SpinBoxBase[isTransparent=true] DoubleSpinBoxBase[isBorderless=true] {
+	background-color: transparent;
 }
 SpinBoxBase:hover, DoubleSpinBoxBase:hover {
 	background-color: rgba(246, 246, 246, 24);
@@ -39,15 +47,6 @@ SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
 }
 SpinBoxBase::down-arrow, DoubleSpinBoxBase::down-arrow {
 	border-image: url(:/(Double)SpinBox_Icon/Icons/DownArrow.png);
-}
-
-
-EmbeddedSpinBox, EmbeddedDoubleSpinBox {
-	background-color: transparent;
-    padding: 1.2px;
-	border: none;
-}
-EmbeddedSpinBox: hover, EmbeddedDoubleSpinBox: hover {
 }
 
 

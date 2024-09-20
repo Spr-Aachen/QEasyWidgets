@@ -122,6 +122,12 @@ class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
     def indexOf(self, widget: QWidget) -> int:
         return self.Pages.index(widget if isinstance(widget, ToolPage) else Function_FindParentUI(widget, ToolPage))
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ToolBox.Deregistrate(self)
 

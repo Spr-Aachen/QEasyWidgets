@@ -16,14 +16,13 @@ class TextBrowserBase(QTextBrowser):
 
         StyleSheetBase.Browser.Apply(self)
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Browser.Deregistrate(self)
-
-
-class EmbeddedTextBrowser(TextBrowserBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################

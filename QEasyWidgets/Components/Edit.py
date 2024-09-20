@@ -6,7 +6,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from .Button import EmbeddedButton
+from .Button import ButtonBase
 
 ##############################################################################################################################
 
@@ -68,7 +68,8 @@ class LineEditBase(QFrame):
         self.LineEdit.focusedIn.connect(self.focusInEvent)
         self.LineEdit.focusedOut.connect(self.focusOutEvent)
 
-        self.Button = EmbeddedButton()
+        self.Button = ButtonBase()
+        self.Button.setBorderless(True)
         self.Button.setIcon(IconBase.OpenedFolder)
         self.Button.clicked.connect(self.interacted.emit)
 
@@ -145,6 +146,12 @@ class LineEditBase(QFrame):
         self.Button.deleteLater()
         self.Button.hide()
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
 
@@ -156,13 +163,6 @@ class LineEditBase(QFrame):
         self.IsAlerted = Enable
         StyleSheetBase.Edit.Apply(self)
         self.showToolTip(Content) if Enable else self.hideToolTip()
-
-
-class EmbeddedLineEdit(LineEditBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################
 
@@ -177,12 +177,12 @@ class TextEdit(QTextEdit):
         super().__init__(parent)
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
-        if e.key() == Qt.Key_Return and not self.keyEnterBlocked:
+        if e.key() in (Qt.Key_Enter, Qt.Key_Return) and not (e.modifiers() == Qt.ShiftModifier) and not self.keyEnterBlocked:
             self.keyEnterPressed.emit()
         super().keyPressEvent(e)
 
     def blockKeyEnter(self, block: bool) -> None:
-        self.keyEnterBlocked = not block
+        self.keyEnterBlocked = block
 
 
 class TextEditBase(QFrame):
@@ -222,14 +222,13 @@ class TextEditBase(QFrame):
     def blockKeyEnter(self, block: bool) -> None:
         self.TextEdit.blockKeyEnter(block)
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
-
-
-class EmbeddedTextEdit(TextEditBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################

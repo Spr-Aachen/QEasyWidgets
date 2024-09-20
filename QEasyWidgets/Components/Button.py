@@ -13,6 +13,8 @@ from ..Resources.Sources import *
 class ButtonBase(QPushButton):
     '''
     '''
+    _hoverBackgroundColor = QColor(0, 0, 0, 0)
+
     _icon = None
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -51,6 +53,18 @@ class ButtonBase(QPushButton):
         Painter.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
         self._drawIcon(self._icon, Painter, QRectF(LeftX, TopY, Width, Height))
 
+    def setStyleSheet(self, styleSheet: str) -> None:
+        super().setStyleSheet(styleSheet + "ButtonBase:hover {background-color: rgba%s;}" % self._hoverBackgroundColor.getRgb().__str__())
+
+    def setHoverBackgroundColor(self, color: QColor) -> None:
+        self._hoverBackgroundColor = color
+
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Button.Deregistrate(self)
 
@@ -88,20 +102,5 @@ class HollowButton(ButtonBase):
     '''
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
-
-
-class EmbeddedButton(ButtonBase):
-    '''
-    '''
-    _hoverBackgroundColor = QColor(0, 0, 0, 0)
-
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
-
-    def setHoverBackgroundColor(self, color: QColor) -> None:
-        self._hoverBackgroundColor = color
-
-    def setStyleSheet(self, styleSheet: str) -> None:
-        super().setStyleSheet(styleSheet + "EmbeddedButton:hover {background-color: rgba%s;}" % self._hoverBackgroundColor.getRgb().__str__())
 
 ##############################################################################################################################

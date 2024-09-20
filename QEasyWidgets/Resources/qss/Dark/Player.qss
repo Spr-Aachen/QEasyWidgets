@@ -1,6 +1,13 @@
 MediaPlayerBase {
     padding: 4.8px 12px 6px 12px;
 }
+MediaPlayerBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+MediaPlayerBase[isTransparent=true] {
+	background-color: transparent;
+}
 
 MediaPlayerBase ButtonBase {
     background-color: transparent;

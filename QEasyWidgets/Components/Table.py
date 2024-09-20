@@ -152,6 +152,12 @@ class TableBase(QTableView):
         while self.rowCount() > 0:
             self.removeRow(0)
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Table.Deregistrate(self)
 

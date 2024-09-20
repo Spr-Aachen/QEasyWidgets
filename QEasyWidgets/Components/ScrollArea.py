@@ -17,6 +17,12 @@ class ScrollAreaBase(QScrollArea):
 
         StyleSheetBase.ScrollArea.Apply(self)
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ScrollArea.Deregistrate(self)
 

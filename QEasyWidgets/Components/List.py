@@ -69,6 +69,12 @@ class ListBase(QListView):
         item = self.model().itemFromIndex(index)
         self.itemClicked.emit(item) # Emit the custom signal with the QStandardItem
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.List.Deregistrate(self)
 

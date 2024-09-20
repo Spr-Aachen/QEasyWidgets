@@ -61,14 +61,13 @@ class MediaPlayerBase(QWidget):
         self.MediaPlayer.setSource('')
         #self.MediaPlayer.deleteLater()
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Player.Deregistrate(self)
-
-
-class EmbeddedMediaPlayer(MediaPlayerBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################

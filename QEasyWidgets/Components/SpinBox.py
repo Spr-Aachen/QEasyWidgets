@@ -20,15 +20,14 @@ class SpinBoxBase(QSpinBox):
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
-
-
-class EmbeddedSpinBox(SpinBoxBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################
 
@@ -45,14 +44,13 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
 
+    def setBorderless(self, borderless: bool) -> None:
+        self.setProperty("isBorderless", borderless)
+
+    def setTransparent(self, transparent: bool) -> None:
+        self.setProperty("isTransparent", transparent)
+
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
-
-
-class EmbeddedDoubleSpinBox(DoubleSpinBoxBase):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
-        super().__init__(parent)
 
 ##############################################################################################################################

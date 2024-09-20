@@ -5,12 +5,21 @@ ButtonBase {
     padding: 4.8px 12px 6px 12px;
     border: 1.2px solid rgba(210, 222, 234, 12);
     border-bottom-color: rgba(210, 222, 234, 48);
+	border-radius: 3px;
     outline: none;
+}
+ButtonBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+ButtonBase[isTransparent=true] {
+	background-color: transparent;
 }
 ButtonBase:hover {
 	background-color: rgba(246, 246, 246, 24);
 }
 ButtonBase:pressed, ButtonBase:checked {
+	color: rgba(210, 222, 234, 123);
 }
 ButtonBase:disabled {
 	color: rgba(210, 222, 234, 90);
@@ -43,15 +52,6 @@ MenuButton QMenu::item:hover {
 }
 MenuButton QMenu::item:selected {
 	background-color: rgba(120, 120, 120, 120);
-}
-
-
-EmbeddedButton {
-	background-color: transparent;
-    padding: 1.2px;
-	border: none;
-}
-EmbeddedButton:hover {
 }
 
 
