@@ -1,4 +1,5 @@
 import darkdetect
+from typing import Union
 from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
 from PySide6.QtGui import Qt, QColor, QPainter
 from PySide6.QtWidgets import QLineEdit
@@ -36,6 +37,7 @@ class BackgroundColorObject(QObject):
     """
     def __init__(self, parent):
         super().__init__(parent)
+
         self._backgroundColor = parent._normalBackgroundColor()
 
     @Property(QColor)
@@ -86,7 +88,7 @@ class BackgroundColorAnimationBase:
     def _updateBackgroundColor(self):
         if not self.isEnabled():
             color = self._disabledBackgroundColor()
-        elif isinstance(self, QLineEdit) and self.hasFocus():
+        elif hasattr(self, 'hasFocus') and self.hasFocus():
             color = self._focusInBackgroundColor()
         elif self.isPressed:
             color = self._pressedBackgroundColor()
@@ -94,13 +96,12 @@ class BackgroundColorAnimationBase:
             color = self._hoverBackgroundColor()
         else:
             color = self._normalBackgroundColor()
-
         self.bgColorAnim.stop()
         self.bgColorAnim.setEndValue(color)
         self.bgColorAnim.start()
 
-    def setBackgroundColor(self, color: QColor):
-        self.bgColorObject.backgroundColor = color
+    def setBackgroundColor(self, color: Union[QColor, str, int]):
+        self.bgColorObject.backgroundColor = QColor(color)
 
     def getBackgroundColor(self):
         return self.bgColorObject.backgroundColor
@@ -143,7 +144,7 @@ class BackgroundColorAnimationBase:
         super().focusInEvent(e)
         self._updateBackgroundColor()
 
-    def setCustomBackgroundColor(self, light, dark):
+    def setCustomBackgroundColor(self, light: Union[QColor, str, int], dark: Union[QColor, str, int]):
         self._lightBackgroundColor = QColor(light)
         self._darkBackgroundColor = QColor(dark)
         self._updateBackgroundColor()

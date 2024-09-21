@@ -47,6 +47,8 @@ class LineEdit(QLineEdit):
 class LineEditBase(QFrame):
     '''
     '''
+    _button = None
+
     textChanged = Signal(str)
     cursorPositionChanged = Signal(int, int)
 
@@ -68,16 +70,10 @@ class LineEditBase(QFrame):
         self.LineEdit.focusedIn.connect(self.focusInEvent)
         self.LineEdit.focusedOut.connect(self.focusOutEvent)
 
-        self.Button = ButtonBase()
-        self.Button.setBorderless(True)
-        self.Button.setIcon(IconBase.OpenedFolder)
-        self.Button.clicked.connect(self.interacted.emit)
-
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
         HBoxLayout.setContentsMargins(0, 0, 0, 0)
         HBoxLayout.addWidget(self.LineEdit)
-        HBoxLayout.addWidget(self.Button, alignment = Qt.AlignRight)
 
         self.ToolTip = QToolTip()
         self.IsAlerted = False
@@ -130,7 +126,22 @@ class LineEditBase(QFrame):
     def setPlaceholderText(self, arg__1: str) -> None:
         self.LineEdit.setPlaceholderText(arg__1)
 
+    @property
+    def Button(self):
+        if self._button is None:
+            self.Button = ButtonBase()
+        return self._button
+
+    @Button.setter
+    def Button(self, Button: ButtonBase):
+        Button.setBorderless(True)
+        Button.setTransparent(True)
+        Button.clicked.connect(self.interacted.emit)
+        self.layout().addWidget(Button, alignment = Qt.AlignRight)
+        self._button = Button
+
     def SetFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse"):
+        self.Button.setIcon(IconBase.OpenedFolder)
         self.Button.clicked.connect(
             lambda: self.LineEdit.setText(
                 Function_GetFileDialog(
@@ -141,10 +152,6 @@ class LineEditBase(QFrame):
             )
         )
         self.Button.setToolTip(ButtonTooltip)
-
-    def RemoveFileDialogButton(self):
-        self.Button.deleteLater()
-        self.Button.hide()
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
