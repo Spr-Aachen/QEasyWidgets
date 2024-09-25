@@ -58,7 +58,7 @@ TextBrowserBase QScrollBar::handle:hover {
 
 QToolTip {
     color: rgb(210, 222, 234);
-    background-color: transparent;
+    background-color: black;
 	border-width: 0px;
 	border-style: solid;
 }

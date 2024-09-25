@@ -108,7 +108,7 @@ ComboBoxBase QAbstractScrollArea QScrollBar::handle:hover {
 
 QToolTip {
     color: rgb(45, 33, 21);
-    background-color: rgba(54, 45, 33, 15);
+    background-color: white;
 	border-width: 0px;
 	border-style: solid;
 }

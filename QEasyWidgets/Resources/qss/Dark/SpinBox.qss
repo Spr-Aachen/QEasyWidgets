@@ -51,8 +51,8 @@ SpinBoxBase::down-arrow, DoubleSpinBoxBase::down-arrow {
 
 
 QToolTip {
-    color: rgb(45, 33, 21);
-    background-color: rgba(54, 45, 33, 15);
+    color: rgb(210, 222, 234);
+    background-color: black;
 	border-width: 0px;
 	border-style: solid;
 }

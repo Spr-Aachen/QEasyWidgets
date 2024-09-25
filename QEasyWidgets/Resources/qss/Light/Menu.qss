@@ -9,6 +9,6 @@ MenuBase {
 
 QToolTip {
     color: rgb(45, 33, 21);
-    background-color: transparent;
+    background-color: white;
     border: none;
 }

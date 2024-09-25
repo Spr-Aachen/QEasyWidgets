@@ -57,7 +57,7 @@ MenuButton QMenu::item:selected {
 
 QToolTip {
     color: rgb(210, 222, 234);
-    background-color: rgba(210, 222, 234, 15);
+    background-color: black;
 	border-width: 0px;
 	border-style: solid;
 }

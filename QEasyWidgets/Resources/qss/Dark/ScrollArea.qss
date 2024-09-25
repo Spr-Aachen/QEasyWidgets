@@ -1,15 +1,15 @@
-QScrollArea {
+ScrollAreaBase {
 	border: 0px solid;
 	border-radius: 3px;
 }
-QScrollArea[isBorderless=true] {
+ScrollAreaBase[isBorderless=true] {
     padding: 1.2px;
 	border: none;
 }
-QScrollArea[isTransparent=true] {
+ScrollAreaBase[isTransparent=true] {
 	background-color: transparent;
 }
-QScrollArea:hover {
+ScrollAreaBase:hover {
 }
 
 

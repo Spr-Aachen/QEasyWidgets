@@ -27,6 +27,7 @@ class StyleSheetBase(Enum):
     Browser = 'Browser'
     Player = 'Player'
     Table = 'Table'
+    ChatWidget = 'ChatWidget'
 
     Bar = 'Bar'
     Menu = 'Menu'

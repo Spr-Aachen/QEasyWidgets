@@ -1,7 +1,7 @@
 from .Widget import WidgetBase
 from .Label import LabelBase
 from .Button import ButtonBase, MenuButton, HollowButton
-from .ScrollArea import ScrollAreaBase
+from .ScrollArea import ScrollAreaBase, VerticalScrollArea
 from .Tree import TreeWidgetBase
 from .List import ListBase
 from .ToolBox import ToolBoxBase
@@ -12,3 +12,4 @@ from .Edit import LineEditBase, TextEditBase
 from .Browser import TextBrowserBase
 from .Player import MediaPlayerBase
 from .Table import TableBase
+from .ChatWidget import ChatWidgetBase
