@@ -13,3 +13,4 @@ from .Browser import TextBrowserBase
 from .Player import MediaPlayerBase
 from .Table import TableBase
 from .ChatWidget import ChatWidgetBase
+from .StatusWidget import StatusWidgetBase

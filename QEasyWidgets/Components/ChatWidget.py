@@ -3,12 +3,13 @@ from PySide6.QtGui import QPainter, QFont, QColor, QPixmap, QPolygon, QPaintEven
 from PySide6.QtWidgets import QWidget, QFrame, QLabel, QLayout, QHBoxLayout, QSizePolicy, QVBoxLayout, QSpacerItem
 
 from ..Common.StyleSheet import *
+from .StatusWidget import StatusWidgetBase
 from .ScrollArea import VerticalScrollArea
 
 ##############################################################################################################################
 
 class Notice(QLabel):
-    def __init__(self, text, parent = None):
+    def __init__(self, text: str, parent = None):
         super().__init__(text, parent)
 
         self.setFont(QFont('微软雅黑', 12))
@@ -19,7 +20,7 @@ class Notice(QLabel):
 ##############################################################################################################################
 
 class Message(QLabel):
-    def __init__(self, text, isSent = False, parent = None):
+    def __init__(self, text: str, isSent: bool = False, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.isSent = isSent
@@ -42,13 +43,13 @@ class Message(QLabel):
         '''
         super().paintEvent(arg__1)
 
-    def setMarkdown(self, text):
+    def setMarkdown(self, text: str):
         self.setTextFormat(Qt.MarkdownText)
         self.setText(text)
 
 
-class Triangle(QLabel):
-    def __init__(self, isSent = False, size = QSize(6, 45), parent = None):
+class Triangle(QWidget):
+    def __init__(self, isSent: bool = False, size: QSize = QSize(6, 45), parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.isSent = isSent
@@ -64,19 +65,19 @@ class Triangle(QLabel):
 
 
 class Avatar(QLabel):
-    def __init__(self, avatar = None, size = QSize(45, 45), parent = None):
+    def __init__(self, avatar: Union[str, QPixmap] = None, size: QSize = QSize(45, 45), parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         if isinstance(avatar, str):
             self.setPixmap(QPixmap(avatar).scaled(size))
-            self.image_path = avatar
         elif isinstance(avatar, QPixmap):
             self.setPixmap(avatar.scaled(size))
+
         self.setFixedSize(size)
 
 
 class MessageLayout(QHBoxLayout):
-    def __init__(self, str_content, isSent, parent = None):
+    def __init__(self, str_content, isSent, status, parent = None):
         super().__init__(parent)
 
         self.setSpacing(0)
@@ -85,10 +86,12 @@ class MessageLayout(QHBoxLayout):
         self.avatar = Avatar(None)
         self.triangle = Triangle(isSent)
         self.message = Message(str_content, isSent)
+        self.status = StatusWidgetBase(status)
         self.spacer = QSpacerItem(self.avatar.sizeHint().width()+self.triangle.sizeHint().width(), 0, QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
 
         if isSent:
             self.addSpacerItem(self.spacer)
+            self.addWidget(self.status, 0, Qt.AlignTop) if status is not None else None
             self.addWidget(self.message)
             self.addWidget(self.triangle, 0, Qt.AlignTop)
             self.addWidget(self.avatar, 0, Qt.AlignTop)
@@ -96,15 +99,8 @@ class MessageLayout(QHBoxLayout):
             self.addWidget(self.avatar, 0, Qt.AlignTop)
             self.addWidget(self.triangle, 0, Qt.AlignTop)
             self.addWidget(self.message)
+            self.addWidget(self.status, 0, Qt.AlignTop) if status is not None else None
             self.addSpacerItem(self.spacer)
-
-    def setParent(self, parent: QWidget) -> None:
-        if isinstance(parent, QWidget):
-            self.avatar.setParent(parent)
-            self.triangle.setParent(parent)
-            self.message.setParent(parent)
-        if parent.layout() is None:
-            super().setParent(parent)
 
 ##############################################################################################################################
 
@@ -158,13 +154,14 @@ class ChatWidgetBase(QFrame):
         self.scrollAreaContentLayout.insertWidget(self.scrollAreaContentLayout.indexOf(self.scrollAreaContentSpacer), self.notice)
         self.update()
 
-    def addMessage(self, str_content, isSent, stream = False):
+    def addMessage(self, str_content, isSent, status, stream = False):
         if stream and hasattr(self, "messageLayout") and hasattr(self, 'role') and self.role == isSent:
             self.messageLayout.message.setMarkdown(str_content)
+            self.messageLayout.status.setStatus(status)
             self.update()
             return
         self.role = isSent
-        self.messageLayout = MessageLayout(str_content, isSent)
+        self.messageLayout = MessageLayout(str_content, isSent, status)
         self.scrollAreaContentLayout.insertLayout(self.scrollAreaContentLayout.indexOf(self.scrollAreaContentSpacer), self.messageLayout)
         self.update()
 

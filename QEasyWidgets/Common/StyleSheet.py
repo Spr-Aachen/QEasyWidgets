@@ -39,8 +39,6 @@ class StyleSheetBase(Enum):
         RegistratedWidgets.pop(widget)
 
     def Apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
-        QApplication.processEvents()
-
         EasyTheme.Update(theme) if theme is not None else None
 
         Prefix = 'QSS'

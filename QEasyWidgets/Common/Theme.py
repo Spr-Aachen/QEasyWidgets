@@ -116,11 +116,11 @@ class BackgroundColorAnimationBase:
         return super().eventFilter(obj, e)
 
     def paintEvent(self, e):
-        super().paintEvent(e)
         painter = QPainter(self)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self.backgroundColor)
         painter.drawRect(self.rect())
+        super().paintEvent(e)
 
     def mousePressEvent(self, e):
         self.isPressed = True
