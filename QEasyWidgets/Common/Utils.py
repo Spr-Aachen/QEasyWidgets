@@ -257,7 +257,7 @@ def SetEnvVar(
                 #     f'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
                 # ],
                 Args = [
-                    f'for /f "usebackq tokens=2,*" %A in (reg query "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}") do set sysVAR=%B',
+                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}"`) do set sysVAR=%B',
                     f'setx "{Variable}" "{Value}{os.pathsep}%sysVAR%" /m'
                 ],
                 CommunicateThroughConsole = True
@@ -280,7 +280,7 @@ def SetEnvVar(
                 #     f'reg add "HKEY_CURRENT_USER\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
                 # ],
                 Args = [
-                    f'for /f "usebackq tokens=2,*" %A in (reg query "HKEY_CURRENT_USER\\Environment" /v "{Variable}") do set userVAR=%B',
+                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_CURRENT_USER\\Environment" /v "{Variable}"`) do set userVAR=%B',
                     f'setx "{Variable}" "{Value}{os.pathsep}%userVAR%"'
                 ],
                 CommunicateThroughConsole = True

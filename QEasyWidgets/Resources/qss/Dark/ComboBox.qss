@@ -20,6 +20,7 @@ ComboBoxBase:hover {
 	background-color: rgba(246, 246, 246, 24);
 }
 ComboBoxBase:pressed {
+    border-bottom-color: rgba(120, 180, 240, 246);
 }
 ComboBoxBase:disabled {
 	color: rgba(210, 222, 234, 90);

@@ -20,6 +20,7 @@ ButtonBase:hover {
 }
 ButtonBase:pressed, ButtonBase:checked {
 	color: rgba(45, 33, 21, 123);
+    border-bottom-color: rgba(120, 180, 240, 246);
 }
 ButtonBase:disabled {
 	color: rgba(45, 33, 21, 90);

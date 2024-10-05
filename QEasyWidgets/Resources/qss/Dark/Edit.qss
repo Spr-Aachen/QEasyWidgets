@@ -1,6 +1,9 @@
 LineEditBase, TextEditBase {
+    color: rgb(210, 222, 234);
+	text-align: left;
+	selection-background-color: darkgrey;
     background-color: rgba(246, 246, 246, 18);
-    padding: 0px;
+    padding: 4.8px 12px 6px 12px;
     border: 1.2px solid rgba(210, 222, 234, 12);
     border-bottom: 1.2px solid rgba(210, 222, 234, 48);
 	border-radius: 3px;
@@ -16,19 +19,10 @@ LineEditBase[isTransparent=true], TextEditBase[isTransparent=true] {
 LineEditBase:hover, TextEditBase:hover {
 	background-color: rgba(246, 246, 246, 24);
 }
-
-
-LineEditBase LineEdit, TextEditBase TextEdit {
-    color: rgb(210, 222, 234);
-	text-align: left;
-	selection-background-color: darkgrey;
-	background-color: transparent;
-    padding: 4.8px 12px 6px 12px;
-    border: none;
+LineEditBase:focus, TextEditBase:focus {
+    border-bottom-color: rgba(120, 180, 240, 246);
 }
-LineEditBase LineEdit:pressed, TextEditBase TextEdit:pressed {
-}
-LineEditBase LineEdit:disabled, TextEditBase TextEdit:disabled {
+LineEditBase:disabled, TextEditBase:disabled {
 	color: rgba(201, 210, 222, 90);
 }
 

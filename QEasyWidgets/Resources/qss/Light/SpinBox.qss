@@ -19,7 +19,8 @@ SpinBoxBase[isTransparent=true] DoubleSpinBoxBase[isBorderless=true] {
 SpinBoxBase:hover, DoubleSpinBoxBase:hover {
 	background-color: rgba(24, 24, 24, 12);
 }
-SpinBoxBase:pressed, DoubleSpinBoxBase:pressed {
+SpinBoxBase:focus, DoubleSpinBoxBase:focus {
+    border-bottom-color: rgba(120, 180, 240, 246);
 }
 SpinBoxBase:disabled, DoubleSpinBoxBase:disabled {
 	color: rgba(45, 33, 21, 90);
