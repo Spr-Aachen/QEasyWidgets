@@ -1,3 +1,5 @@
+from typing import Optional, overload
+#from functools import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -8,8 +10,16 @@ from ..Common.QFunctions import *
 ##############################################################################################################################
 
 class ScrollBar(QScrollBar):
-    def __init__(self):
-        super().__init__()
+    '''
+    '''
+    @singledispatchmethod
+    def __init__(self, parent: Optional[QWidget] = None)-> None:
+        super().__init__(parent)
+
+    @__init__.register
+    def _(self, arg__1: Qt.Orientation, parent: Optional[QWidget] = ...) -> None:
+        self.__init__(parent)
+        self.setOrientation(arg__1)
 
 
 class ScrollAreaBase(QScrollArea):

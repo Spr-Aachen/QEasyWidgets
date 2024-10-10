@@ -1,4 +1,5 @@
 from typing import Optional, Union, overload
+#from functools import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -17,6 +18,7 @@ class ButtonBase(QPushButton):
 
     _icon = None
 
+    @singledispatchmethod
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
@@ -25,6 +27,17 @@ class ButtonBase(QPushButton):
         Function_SetFont(self)
 
         StyleSheetBase.Button.Apply(self)
+
+    @__init__.register
+    def _(self, text: str, parent: Optional[QWidget] = None) -> None:
+        self.__init__(parent)
+        self.setText(text)
+
+    @__init__.register
+    def _(self, icon: Union[QIcon, QPixmap], text: str, parent: Optional[QWidget] = None) -> None:
+        self.__init__(parent)
+        self.setIcon(icon)
+        self.setText(text)
 
     def setIcon(self, icon: Optional[Union[QIcon, QPixmap, IconBase]]) -> None:
         if icon is not None:

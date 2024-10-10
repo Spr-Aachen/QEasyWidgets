@@ -1,4 +1,5 @@
 from typing import Optional, overload
+#from functools import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -15,10 +16,16 @@ class LabelBase(QLabel):
 
     _pixmap = None
 
+    @singledispatchmethod
     def __init__(self, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
         super().__init__(parent)
 
         StyleSheetBase.Label.Apply(self)
+
+    @__init__.register
+    def _(self, text: str, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
+        self.__init__(parent)
+        self.setText(text)
 
     def scalePixmap(self, pixmap: QPixmap):
         Length = max(self.width(), self.height())

@@ -1,0 +1,21 @@
+GroupBoxBase {
+	font-size: 15px;
+    color: rgb(210, 222, 234);
+	margin-top: 1.5ex;
+	background-color: transparent;
+	border: 1.2px solid transparent;
+	border-radius: 3px;
+}
+
+GroupBoxBase::title {
+	subcontrol-origin: margin;
+	subcontrol-position: top left;
+	padding: 3px 9px 3px 6px;
+}
+
+GroupBoxBase::indicator:checked {
+	border-image: url(:/GroupBox_Icon/Icons/DownArrow.png);
+}
+GroupBoxBase::indicator:unchecked {
+	border-image: url(:/GroupBox_Icon/Icons/UpArrow.png);
+}

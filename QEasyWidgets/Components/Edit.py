@@ -1,4 +1,5 @@
 from typing import Optional, overload
+#from functools import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -15,7 +16,6 @@ class LineEditBase(QLineEdit):
     '''
     _button = None
 
-    textChanged = Signal(str)
     cursorPositionChanged = Signal(int, int)
 
     focusedIn = Signal()
@@ -25,6 +25,7 @@ class LineEditBase(QLineEdit):
 
     rectChanged = Signal(QRect)
 
+    @singledispatchmethod
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
@@ -40,6 +41,11 @@ class LineEditBase(QLineEdit):
         self.IsAlerted = False
 
         StyleSheetBase.Edit.Apply(self)
+
+    @__init__.register
+    def _(self, arg__1: str, parent: Optional[QWidget] = None) -> None:
+        self.__init__(parent)
+        self.setText(arg__1)
 
     def focusInEvent(self, arg__1: QFocusEvent) -> None:
         self.focusedIn.emit()
@@ -132,17 +138,15 @@ class LineEditBase(QLineEdit):
 class TextEditBase(QTextEdit):
     '''
     '''
-    _textChanged = Signal(str)
-
     keyEnterPressed = Signal()
 
     keyEnterBlocked = False
 
-    def __init__(self, parent: QWidget = None):
+    @singledispatchmethod
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
         #self.installEventFilter(self)
-        self.textChanged.connect(self._onTextChanged)
 
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
@@ -150,10 +154,10 @@ class TextEditBase(QTextEdit):
 
         StyleSheetBase.Edit.Apply(self)
 
-    def _onTextChanged(self):
-        self.textChanged = self._textChanged
-        self.textChanged.emit(self.toPlainText())
-        self.textChanged = super().textChanged
+    @__init__.register
+    def _(self, text: str, parent: Optional[QWidget] = None) -> None:
+        self.__init__(parent)
+        self.setText(text)
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
         if e.key() in (Qt.Key_Enter, Qt.Key_Return) and not (e.modifiers() == Qt.ShiftModifier) and not self.keyEnterBlocked:
