@@ -2,10 +2,36 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
+from ..Common.Theme import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 
 ##############################################################################################################################
+
+class ItemDelegate(QStyledItemDelegate):
+    '''
+    '''
+    _margin = 3
+
+    def sizeHint(self, option, index):
+        size = super().sizeHint(option, index)
+        #size.setHeight(33)
+        size = size.grownBy(QMargins(self._margin, 2 * self._margin, self._margin, 2 * self._margin))
+        return size
+
+    def initStyleOption(self, option: QStyleOptionViewItem, index: QModelIndex):
+        super().initStyleOption(option, index)
+        # get text color
+        textBrush = index.data(Qt.ForegroundRole)
+        textColor = (Qt.white if EasyTheme.THEME == Theme.Dark else Qt.black) if textBrush is None else textBrush.color()
+        '''
+        # set font
+        option.font = index.data(Qt.FontRole)
+        '''
+        # set text color
+        option.palette.setColor(QPalette.Text, textColor)
+        option.palette.setColor(QPalette.HighlightedText, textColor)
+
 
 class TableBase(QTableView):
     '''
@@ -40,6 +66,8 @@ class TableBase(QTableView):
 
         self.IsIndexShown = False
         self.SetIndexHeaderVisible(True)
+
+        self.setItemDelegate(ItemDelegate(self))
 
         StyleSheetBase.Table.Apply(self)
 
@@ -154,9 +182,6 @@ class TableBase(QTableView):
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
-
-    def setTransparent(self, transparent: bool) -> None:
-        self.setProperty("isTransparent", transparent)
 
     def ClearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Table.Deregistrate(self)

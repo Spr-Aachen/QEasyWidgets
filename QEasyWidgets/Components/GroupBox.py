@@ -19,6 +19,8 @@ class GroupBoxBase(QGroupBox):
         self.setCheckable(True)
         self.toggled.connect(lambda isChecked: self.collapse() if isChecked else self.expand())
 
+        Function_SetFont(self, 15)
+
         StyleSheetBase.GroupBox.Apply(self)
 
     @__init__.register

@@ -8,18 +8,21 @@ from ..Resources.Sources import *
 
 ##############################################################################################################################
 
-class TextBrowserBase(QTextBrowser):
+class TabWidgetBase(QTabWidget):
     '''
     '''
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
-        StyleSheetBase.Browser.Apply(self)
+        self.tabBar().setMinimumSize(84, 42)
+        Function_SetFont(self, 21)
+
+        StyleSheetBase.Tab.Apply(self)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 
     def ClearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Browser.Deregistrate(self)
+        StyleSheetBase.Tab.Deregistrate(self)
 
 ##############################################################################################################################

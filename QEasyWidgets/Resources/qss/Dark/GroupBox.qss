@@ -1,5 +1,4 @@
 GroupBoxBase {
-	font-size: 15px;
     color: rgb(210, 222, 234);
 	margin-top: 1.5ex;
 	background-color: transparent;

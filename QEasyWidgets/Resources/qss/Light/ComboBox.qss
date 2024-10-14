@@ -19,7 +19,7 @@ ComboBoxBase[isTransparent=true] {
 ComboBoxBase:hover {
 	background-color: rgba(24, 24, 24, 12);
 }
-ComboBoxBase:pressed {
+ComboBoxBase:focus {
     border-bottom-color: rgba(120, 180, 240, 246);
 }
 ComboBoxBase:disabled {

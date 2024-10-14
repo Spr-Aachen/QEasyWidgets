@@ -1,18 +1,10 @@
 QHeaderView {
-    height: 33px;
     background-color: transparent;
-}
-QHeaderView[isBorderless=true] {
-    padding: 1.2px;
-	border: none;
-}
-QHeaderView[isTransparent=true] {
-	background-color: transparent;
 }
 
 QHeaderView::section {
     color: rgb(210, 222, 234);
-	text-align: left;
+	/*text-align: left;*/
 	background-color: transparent;
     padding: 2.4px 4.8px;
     border: 1.2px solid rgba(201, 210, 222, 123);
@@ -20,7 +12,7 @@ QHeaderView::section {
 
 
 QTableView {
-	text-align: left;
+	/*text-align: left;*/
 	background-color: transparent;
     /*alternate-background-color: transparent;*/
     selection-background-color: transparent;
@@ -33,12 +25,8 @@ QTableView[isBorderless=true] {
     padding: 1.2px;
 	border: none;
 }
-QTableView[isTransparent=true] {
-	background-color: transparent;
-}
 
 QTableView::item {
-    height: 33px;
     color: rgb(210, 222, 234);
     padding: 3px 6px;
     border: 0px solid rgba(201, 210, 222, 123);

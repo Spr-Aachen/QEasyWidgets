@@ -2,20 +2,16 @@ TextBrowserBase {
     color: rgb(210, 222, 234);
 	text-align: left;
 	selection-background-color: darkgrey;
-    background-color: transparent;
-    padding: 0px;
-    border: 1.2px solid rgba(201, 210, 222, 123);
-	border-radius: 3px;
-}
-TextBrowserBase[isBorderless=true] {
+	background-color: transparent;
     padding: 1.2px;
 	border: none;
+	border-radius: 3px;
 }
-TextBrowserBase[isTransparent=true] {
-	background-color: transparent;
+TextBrowserBase[isBorderless=false] {
+    padding: 0px;
+    border: 1.2px solid rgba(201, 210, 222, 123);
 }
 TextBrowserBase:hover {
-    border-color: rgba(201, 210, 222, 210);
 }
 
 

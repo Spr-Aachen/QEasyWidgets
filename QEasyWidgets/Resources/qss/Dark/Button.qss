@@ -56,6 +56,26 @@ MenuButton QMenu::item:selected {
 }
 
 
+NavigationButton {
+	/*text-align: left;*/
+	background-color: transparent;
+    padding: 0px;
+    border: 0px solid transparent;
+	border-radius: 0px;
+}
+NavigationButton:hover {
+	background-color: qlineargradient(spread: pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(120, 180, 240, 123), stop:1 transparent);
+}
+NavigationButton:checked {
+	background-color: transparent;
+	border-left: 3px solid rgba(120, 180, 240, 246);
+}
+NavigationButton[isHorizontal=true]:checked {
+    border: 0px solid transparent;
+	border-bottom: 3px solid rgba(120, 180, 240, 246);
+}
+
+
 QToolTip {
     color: rgb(210, 222, 234);
     background-color: black;
