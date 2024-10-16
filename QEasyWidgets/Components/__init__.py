@@ -6,6 +6,7 @@ from .Tree import TreeWidgetBase
 from .List import ListBase
 from .ToolBox import ToolBoxBase
 from .GroupBox import GroupBoxBase
+from .Slider import SliderBase
 from .SpinBox import SpinBoxBase, DoubleSpinBoxBase
 from .ComboBox import ComboBoxBase
 from .Edit import LineEditBase, TextEditBase

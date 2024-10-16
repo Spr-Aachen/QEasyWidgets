@@ -44,15 +44,15 @@ class ToolPage(WidgetBase):
         self.Widget.setLayout(widgetlayout)
         self.Widget.resized.connect(self._resizeHeight)
 
-        self.Layout = QVBoxLayout(self)
-        self.Layout.setContentsMargins(0, 0, 0, 0)
-        self.Layout.setSpacing(0)
-        self.Layout.addWidget(self.FolderButton)
-        self.Layout.addWidget(self.Widget)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(self.FolderButton)
+        layout.addWidget(self.Widget)
 
     def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
         ButtonHeight = self.FolderButtonHeight
-        LayoutSpacing = self.Layout.spacing()
+        LayoutSpacing = self.layout().spacing()
         WidgetLayoutMargins = self.Widget.layout().contentsMargins().top() + self.Widget.layout().contentsMargins().bottom()
         WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.Widget.height()
         AdjustedHeight = ButtonHeight + LayoutSpacing + WidgetHeight if WidgetHeight >=0 else 0
@@ -80,7 +80,7 @@ class ToolPage(WidgetBase):
         self.FolderButton.setText(text)
 
 
-class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
+class ToolBoxBase(QFrame):
     '''
     '''
     def __init__(self,
@@ -90,17 +90,16 @@ class ToolBoxBase(QFrame): #class ToolBoxBase(ScrollAreaBase):
 
         self.Pages = []
 
-        self.Layout = QVBoxLayout(self)
-        self.Layout.setContentsMargins(0, 0, 0, 0)
-        self.Layout.setSpacing(12)
-        #self.Layout.addStretch(1)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(12)
 
         StyleSheetBase.ToolBox.Apply(self)
 
     def addItem(self, widget: QWidget, text: str):
         page = ToolPage(self)
         page.addWidget(widget, text)
-        self.Layout.addWidget(page)
+        self.layout().addWidget(page)
         self.Pages.append(page)
         def resizeHeight():
             AdjustedHeight = page.height()

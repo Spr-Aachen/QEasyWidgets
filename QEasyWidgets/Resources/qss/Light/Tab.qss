@@ -14,8 +14,11 @@ QTabBar::tab[isBorderless=true] {
     padding: 3.6px 6.0px;
 	border: none;
 }
-QTabBar::tab:hover, QTabBar::tab:selected {
+QTabBar::tab:hover {
 	background-color: rgba(24, 24, 24, 12);
+}
+QTabBar::tab:selected {
+	background-color: rgba(24, 24, 24, 18);
 }
 
 

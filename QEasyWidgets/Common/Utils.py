@@ -26,6 +26,7 @@ from typing import Union, Optional, Type, Tuple, Callable, Any
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from threading import currentThread
 from functools import singledispatch, wraps
+from decimal import Decimal
 
 #############################################################################################################
 
@@ -392,6 +393,11 @@ def FindURL(
     URL = URLList[0]
 
     return URL
+
+#############################################################################################################
+
+def Function_getDecimalPlaces(number):
+    return abs(Decimal(str(number)).as_tuple().exponent)
 
 #############################################################################################################
 

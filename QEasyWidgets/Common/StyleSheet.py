@@ -22,6 +22,7 @@ class StyleSheetBase(Enum):
     List = 'List'
     ToolBox = 'ToolBox'
     GroupBox = 'GroupBox'
+    Slider = 'Slider'
     SpinBox = 'SpinBox'
     ComboBox = 'ComboBox'
     Edit = 'Edit'

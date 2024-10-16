@@ -7,6 +7,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from ..Windows.Menu import *
 from ..Resources.Sources import *
 
 ##############################################################################################################################
@@ -147,7 +148,7 @@ class MenuButton(ButtonBase):
         self.clicked.connect(ShowMenu)
 
     def SetMenu(self, ActionEvents: dict) -> None:
-        Menu = QMenu(self)
+        Menu = MenuBase(self)
         for Action in ActionEvents.keys():
             if not isinstance(Action, str):
                 continue
