@@ -7,14 +7,17 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from .Button import ButtonBase
+from .Button import ClearButton, FileButton
 
 ##############################################################################################################################
 
 class LineEditBase(QLineEdit):
     '''
     '''
-    _button = None
+    _clearButton = None
+    _isClearButtonEnabled = True
+
+    _fileButton = None
 
     cursorPositionChanged = Signal(int, int)
 
@@ -35,9 +38,12 @@ class LineEditBase(QLineEdit):
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
         HBoxLayout.setContentsMargins(0, 0, 0, 0)
-        #HBoxLayout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        HBoxLayout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        self.ToolTip = QToolTip()
+        self.ToolTip = QToolTip() # TODO Change it to a custom tooltip
+
+        self.setClearButtonEnabled(True)
+
         self.IsAlerted = False
 
         StyleSheetBase.Edit.Apply(self)
@@ -89,31 +95,41 @@ class LineEditBase(QLineEdit):
         return super().eventFilter(watched, event)
 
     @property
-    def Button(self):
-        if self._button is None:
-            self.Button = ButtonBase()
-        return self._button
+    def clearButton(self):
+        if self._clearButton is None:
+            self.clearButton = ClearButton()
+        return self._clearButton
 
-    @Button.setter
-    def Button(self, Button: ButtonBase):
-        Button.setBorderless(True)
-        Button.setTransparent(True)
-        Button.clicked.connect(self.interacted.emit)
-        self.layout().addWidget(Button, alignment = Qt.AlignRight)
-        self._button = Button
+    @clearButton.setter
+    def clearButton(self, clearButton: ClearButton):
+        clearButton.setBorderless(True)
+        clearButton.clicked.connect(self.clear)
+        clearButton.clicked.connect(self.interacted.emit)
+        self.layout().addWidget(clearButton, alignment = Qt.AlignRight)
+        self._clearButton = clearButton
 
-    def SetFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse"):
-        self.Button.setIcon(IconBase.OpenedFolder)
-        self.Button.clicked.connect(
-            lambda: self.setText(
-                Function_GetFileDialog(
-                    Mode = Mode,
-                    FileType = FileType,
-                    Directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if Directory is None else Directory
-                )
-            )
-        )
-        self.Button.setToolTip(ButtonTooltip)
+    def setClearButtonEnabled(self, enable: bool) -> None:
+        self._isClearButtonEnabled = enable
+        self.clearButton.setVisible(True if enable else False)
+
+    def isClearButtonEnabled(self) -> bool:
+        return self._isClearButtonEnabled
+
+    @property
+    def fileButton(self):
+        if self._fileButton is None:
+            self.fileButton = FileButton()
+        return self._fileButton
+
+    @fileButton.setter
+    def fileButton(self, fileButton: FileButton):
+        fileButton.setBorderless(True)
+        fileButton.clicked.connect(self.interacted.emit)
+        self.layout().addWidget(fileButton, alignment = Qt.AlignRight)
+        self._fileButton = fileButton
+
+    def setFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse"):
+        self.fileButton.setFileDialog(Mode, FileType, Directory, ButtonTooltip)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

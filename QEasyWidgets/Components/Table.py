@@ -60,12 +60,12 @@ class TableBase(QTableView):
         self.model().insertColumn(0)
         self.model().setHorizontalHeaderItem(0, QStandardItem('Index'))
         super().horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.model().rowsInserted.connect(self.SetIndex)
-        self.model().rowsRemoved.connect(self.SetIndex)
-        self.sorted.connect(self.SetIndex)
+        self.model().rowsInserted.connect(self.setIndex)
+        self.model().rowsRemoved.connect(self.setIndex)
+        self.sorted.connect(self.setIndex)
 
         self.IsIndexShown = False
-        self.SetIndexHeaderVisible(True)
+        self.setIndexHeaderVisible(True)
 
         self.setItemDelegate(ItemDelegate(self))
 
@@ -139,7 +139,7 @@ class TableBase(QTableView):
     def horizontalHeaderLabels(self) -> list[str]:
         return [self.horizontalHeaderItem(column).text() for column in range(self.columnCount())]
 
-    def SetIndexHeaderVisible(self, ShowIndexHeader: bool = True) -> None:
+    def setIndexHeaderVisible(self, ShowIndexHeader: bool = True) -> None:
         if ShowIndexHeader and not self.IsIndexShown:
             super().showColumn(0)
             self.IsIndexShown = True
@@ -147,36 +147,36 @@ class TableBase(QTableView):
             super().hideColumn(0)
             self.IsIndexShown = False
 
-    def SetIndex(self) -> None:
+    def setIndex(self) -> None:
         for Index in range(self.model().rowCount()):
             self.model().setItem(Index, 0, QStandardItem(f"{Index + 1}"))
 
-    def SetSectionVerticalResizeMode(self, row: int, mode: QHeaderView.ResizeMode) -> None:
+    def setSectionVerticalResizeMode(self, row: int, mode: QHeaderView.ResizeMode) -> None:
         super().verticalHeader().setSectionResizeMode(row, mode)
 
-    def SetSectionHorizontalResizeMode(self, column: int, mode: QHeaderView.ResizeMode) -> None:
+    def setSectionHorizontalResizeMode(self, column: int, mode: QHeaderView.ResizeMode) -> None:
         super().horizontalHeader().setSectionResizeMode(column + 1, mode)
 
-    def SelectOuterRow(self, InnerWidget: QWidget) -> None:
+    def selectOuterRow(self, InnerWidget: QWidget) -> None:
         CellWidget = InnerWidget.parent()
         ModelIndex = self.indexAt(CellWidget.pos())
         self.selectRow(ModelIndex.row()) #if index.isValid() else None
 
-    def AddRow(self, Layouts: list[QLayout], ResizeModes: list[Optional[QHeaderView.ResizeMode]], ColumnWidth: list[Optional[int]], Height: Optional[int], reverse: bool = False) -> None:
+    def addRow(self, Layouts: list[QLayout], ResizeModes: list[Optional[QHeaderView.ResizeMode]], ColumnWidth: list[Optional[int]], Height: Optional[int], reverse: bool = False) -> None:
         TargetRow = self.rowCount() if not reverse else 0
         ColumnCount = self.columnCount()
         self.insertRow(TargetRow)
         for ColumnCount in range(ColumnCount):
             self.setCellWidget(TargetRow, ColumnCount, QWidget())
             self.cellWidget(TargetRow, ColumnCount).setLayout(Layouts[ColumnCount])
-            self.SetSectionHorizontalResizeMode(ColumnCount, ResizeModes[ColumnCount]) if ResizeModes[ColumnCount] is not None else None
+            self.setSectionHorizontalResizeMode(ColumnCount, ResizeModes[ColumnCount]) if ResizeModes[ColumnCount] is not None else None
             self.setColumnWidth(ColumnCount, ColumnWidth[ColumnCount]) if ColumnWidth[ColumnCount] is not None else None
         self.setRowHeight(TargetRow, Height) if Height is not None else None
 
-    def DelRow(self) -> None:
+    def delRow(self) -> None:
         self.removeRow(self.currentRow()) if self.rowCount() > 1 else None
 
-    def ClearRows(self):
+    def clearRows(self):
         while self.rowCount() > 0:
             self.removeRow(0)
 

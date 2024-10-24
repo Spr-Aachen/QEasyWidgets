@@ -131,6 +131,56 @@ class ButtonBase(QPushButton):
         StyleSheetBase.Button.Deregistrate(self)
 
 
+class ClearButton(ButtonBase):
+    '''
+    '''
+    isPressed = False
+
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+        self.setIcon(IconBase.X)
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+    def mousePressEvent(self, e):
+        self.isPressed = True
+        super().mousePressEvent(e)
+
+    def mouseReleaseEvent(self, e):
+        self.isPressed = False
+        super().mouseReleaseEvent(e)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        painter = QPainter(self)
+        painter.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
+        painter.setOpacity(0.75 if self.isPressed else 1)
+
+
+class FileButton(ButtonBase):
+    '''
+    '''
+    def __init__(self, parent: QWidget = None):
+        super().__init__(parent)
+
+        self.setIcon(IconBase.OpenedFolder)
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+    def setFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse") -> None:
+        self.clicked.connect(
+            lambda: self.setText(
+                Function_GetFileDialog(
+                    Mode = Mode,
+                    FileType = FileType,
+                    Directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if Directory is None else Directory
+                )
+            )
+        )
+        self.setToolTip(ButtonTooltip)
+
+
 class MenuButton(ButtonBase):
     '''
     '''

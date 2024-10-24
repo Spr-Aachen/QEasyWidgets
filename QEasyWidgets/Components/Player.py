@@ -7,6 +7,7 @@ from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .Button import ButtonBase
+from .Slider import SliderBase
 
 ##############################################################################################################################
 
@@ -21,7 +22,11 @@ class MediaPlayerBase(QWidget):
         self.StackedWidget.setContentsMargins(0, 0, 0, 0)
         self.PlayButton = ButtonBase()
         self.PlayButton.setIcon(IconBase.Play)
+        self.PlayButton.setBorderless(True)
+        self.PlayButton.setTransparent(True)
         self.PauseButton = ButtonBase()
+        self.PauseButton.setBorderless(True)
+        self.PauseButton.setTransparent(True)
         self.PauseButton.setIcon(IconBase.Pause)
         self.PauseButton.clicked.connect(lambda: self.StackedWidget.setCurrentWidget(self.PlayButton))
         self.PlayButton.clicked.connect(lambda: self.StackedWidget.setCurrentWidget(self.PauseButton))
@@ -29,8 +34,7 @@ class MediaPlayerBase(QWidget):
         self.StackedWidget.addWidget(self.PauseButton)
         self.StackedWidget.setCurrentWidget(self.PlayButton)
 
-        self.Slider = QSlider()
-        self.Slider.setOrientation(Qt.Horizontal)
+        self.Slider = SliderBase(Qt.Horizontal)
 
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(12)
