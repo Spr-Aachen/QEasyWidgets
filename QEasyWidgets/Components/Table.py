@@ -15,7 +15,7 @@ class ItemDelegate(QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         size = super().sizeHint(option, index)
-        #size.setHeight(33)
+        size.setHeight(33)
         size = size.grownBy(QMargins(self._margin, 2 * self._margin, self._margin, 2 * self._margin))
         return size
 

@@ -96,9 +96,13 @@ class ToolBoxBase(QFrame):
 
         StyleSheetBase.ToolBox.Apply(self)
 
-    def addItem(self, widget: QWidget, text: str):
-        page = ToolPage(self)
-        page.addWidget(widget, text)
+    def addItem(self, widget: Union[QWidget, ToolPage], text: str):
+        if isinstance(widget, ToolPage):
+            page = widget
+            page.setText(text)
+        else:
+            page = ToolPage(self)
+            page.addWidget(widget, text)
         self.layout().addWidget(page)
         self.Pages.append(page)
         def resizeHeight():

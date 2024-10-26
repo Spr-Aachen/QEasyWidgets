@@ -34,6 +34,7 @@ class LineEditBase(QLineEdit):
 
         self.installEventFilter(self)
         self.textChanged.connect(lambda: self.interacted.emit())
+        self.textChanged.connect(lambda: self.setClearButtonEnabled(True if len(self.text()) > 0 else False))
 
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
@@ -41,8 +42,6 @@ class LineEditBase(QLineEdit):
         HBoxLayout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
         self.ToolTip = QToolTip() # TODO Change it to a custom tooltip
-
-        self.setClearButtonEnabled(True)
 
         self.IsAlerted = False
 

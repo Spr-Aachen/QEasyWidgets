@@ -11,6 +11,7 @@ from .SpinBox import SpinBoxBase, DoubleSpinBoxBase
 from .ComboBox import ComboBoxBase
 from .Edit import LineEditBase, TextEditBase
 from .Browser import TextBrowserBase
+from .ProgressBar import ProgressBarBase
 from .Player import MediaPlayerBase
 from .Tab import TabWidgetBase
 from .Table import TableBase

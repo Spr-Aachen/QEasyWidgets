@@ -934,7 +934,7 @@ class ManageSQL:
             f"SELECT * FROM {self.historydbTableName} WHERE file_hash = '{file_hash}'",
             connection = self.historyEngine
         )
-        filedb_name = df.row(0)["filedb_name"] if len(df) > 0 else None
+        filedb_name = df.row(0, named = True)["filedb_name"] if len(df) > 0 else None
         print(f'filedb name found: {filedb_name}')
         return filedb_name
 

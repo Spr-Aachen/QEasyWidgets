@@ -9,6 +9,13 @@ QHeaderView::section {
     padding: 2.4px 4.8px;
     border: 1.2px solid rgba(54, 45, 33, 123);
 }
+QHeaderView::section:horizontal {
+    border-top: none;
+    border-left: none;
+}
+QHeaderView::section:vertical {
+    border-top: none;
+}
 
 
 QTableView {

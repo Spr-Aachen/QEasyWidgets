@@ -27,6 +27,7 @@ class StyleSheetBase(Enum):
     ComboBox = 'ComboBox'
     Edit = 'Edit'
     Browser = 'Browser'
+    ProgressBar = 'ProgressBar'
     Player = 'Player'
     Tab = 'Tab'
     Table = 'Table'
