@@ -17,6 +17,7 @@ class StyleSheetBase(Enum):
     '''
     Label = 'Label'
     Button = 'Button'
+    CheckBox = 'CheckBox'
     ScrollArea = 'ScrollArea'
     Tree = 'Tree'
     List = 'List'

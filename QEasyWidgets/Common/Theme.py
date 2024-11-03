@@ -1,8 +1,8 @@
 import darkdetect
+from enum import Enum
 from typing import Union
 from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
 from PySide6.QtGui import Qt, QColor, QPainter
-from PySide6.QtWidgets import QLineEdit
 
 from .Signals import ComponentsSignals
 
@@ -31,6 +31,22 @@ EasyTheme = ThemeBase()
 
 ##############################################################################################################################
 
+class ThemeColor(Enum):
+    """
+    """
+    Default = 'DefaultThemeColor'
+    Light = 'LightThemeColor'
+    Dark = 'DarkThemeColor'
+
+    def color(self):
+        if self == self.Light:
+            return QColor(246, 246, 246)
+        elif self == self.Dark:
+            return QColor(24, 24, 24)
+        return QColor(120, 180, 240, 123)
+
+##############################################################################################################################
+
 class BackgroundColorObject(QObject):
     """
     Background color object
@@ -54,8 +70,8 @@ class BackgroundColorAnimationBase:
     """
     Background color animation base for widgets
     """
-    _lightBackgroundColor = QColor(246, 246, 246)
-    _darkBackgroundColor = QColor(24, 24, 24)
+    _lightBackgroundColor = ThemeColor.Light.color()
+    _darkBackgroundColor = ThemeColor.Dark.color()
 
     isHover = False
     isPressed = False

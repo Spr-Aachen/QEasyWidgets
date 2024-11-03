@@ -1,6 +1,7 @@
 from .Widget import WidgetBase
 from .Label import LabelBase
 from .Button import ButtonBase, MenuButton, NavigationButton, HollowButton
+from .CheckBox import CheckBoxBase
 from .ScrollArea import ScrollAreaBase, VerticalScrollArea
 from .Tree import TreeWidgetBase
 from .List import ListBase

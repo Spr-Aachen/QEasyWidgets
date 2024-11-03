@@ -32,7 +32,7 @@ def Function_UpdateLanguage(
     '''
     global Translator
 
-    QApplication.processEvents()
+    QApplication.instance().processEvents()
 
     # Remove old translator
     QApplication.instance().removeTranslator(Translator) if Translator is not None else None

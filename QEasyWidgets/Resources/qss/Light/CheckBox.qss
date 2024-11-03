@@ -1,0 +1,16 @@
+CheckBoxBase {
+    background-color: transparent;
+}
+CheckBoxBase::indicator {
+    background-color: transparent;
+    border: none;
+}
+
+CheckBoxBase QLabel {
+    color: black;
+    background-color: transparent;
+    border: none;
+}
+CheckBoxBase QLabel:disabled {
+    color: grey;
+}
