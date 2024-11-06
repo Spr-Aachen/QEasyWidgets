@@ -5,13 +5,14 @@ from PySide6.QtWidgets import *
 from ..Common.QFunctions import *
 from .Window import WindowBase
 from ..Components.Label import LabelBase
+from ..Components.Browser import TextBrowserBase
 from ..Components.Edit import LineEditBase
 
 ##############################################################################################################################
 
 class DialogBase(WindowBase, QDialog):
-    '''
-    '''
+    """
+    """
     def __init__(self,
         parent: Optional[QWidget] = None,
         f: Qt.WindowType = Qt.Dialog,
@@ -32,9 +33,9 @@ class DialogBase(WindowBase, QDialog):
         self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
 
     def exec(self) -> int:
-        Result = super().exec()
+        result = super().exec()
         self.closed.emit()
-        return Result
+        return result
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         return
@@ -42,9 +43,11 @@ class DialogBase(WindowBase, QDialog):
 ##############################################################################################################################
 
 class MessageBoxBase(DialogBase):
-    '''
-    '''
-    StandardButtonDict = {
+    """
+    """
+    _detailedTextBrowser = None
+
+    standardButtonDict = {
         QMessageBox.NoButton:        QDialogButtonBox.NoButton,
         QMessageBox.Ok:              QDialogButtonBox.Ok,
         QMessageBox.Cancel:          QDialogButtonBox.Cancel,
@@ -58,15 +61,9 @@ class MessageBoxBase(DialogBase):
         QMessageBox.Discard:         QDialogButtonBox.Discard,
         QMessageBox.Apply:           QDialogButtonBox.Apply,
         QMessageBox.RestoreDefaults: QDialogButtonBox.RestoreDefaults,
-        QMessageBox.Ok | QMessageBox.Cancel:             QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
-        QMessageBox.Yes | QMessageBox.No:                QDialogButtonBox.Yes | QDialogButtonBox.No,
-        QMessageBox.Retry | QMessageBox.Ignore:          QDialogButtonBox.Retry | QDialogButtonBox.Ignore,
-        QMessageBox.Open | QMessageBox.Close:            QDialogButtonBox.Open | QDialogButtonBox.Close,
-        QMessageBox.Save | QMessageBox.Discard:          QDialogButtonBox.Save | QDialogButtonBox.Discard,
-        QMessageBox.Apply | QMessageBox.RestoreDefaults: QDialogButtonBox.Apply | QDialogButtonBox.RestoreDefaults
     }
 
-    StandardIconDict = {
+    standardIconDict = {
         QMessageBox.Question:    QStyle.SP_MessageBoxQuestion,
         QMessageBox.Information: QStyle.SP_MessageBoxInformation,
         QMessageBox.Warning:     QStyle.SP_MessageBoxWarning,
@@ -80,45 +77,49 @@ class MessageBoxBase(DialogBase):
     ):  
         super().__init__(parent, Qt.Dialog, min_width, min_height)
 
-        self.PicLabel = QLabel()
-        self.PicLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.TextLabel = LabelBase()
-        self.TextLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        PicTextLayout = QHBoxLayout()
-        PicTextLayout.setContentsMargins(0, 0, 0, 0)
-        PicTextLayout.setSpacing(12)
-        PicTextLayout.addWidget(self.PicLabel, stretch = 0)
-        PicTextLayout.addWidget(self.TextLabel, stretch = 1)
+        self.iconLabel = QLabel()
+        self.iconLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.textLabel = LabelBase()
+        self.textLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        labelLayout = QHBoxLayout()
+        labelLayout.setContentsMargins(0, 0, 0, 0)
+        labelLayout.setSpacing(12)
+        labelLayout.addWidget(self.iconLabel, stretch = 0)
+        labelLayout.addWidget(self.textLabel, stretch = 1)
 
-        self.ButtonBox = QDialogButtonBox()
-        self.ButtonBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.ButtonBox.clicked.connect(self.updateClickedButton)
-        self.ButtonBox.accepted.connect(self.accept)
-        self.ButtonBox.rejected.connect(self.reject)
-        self.ButtonBox.setOrientation(Qt.Horizontal)
-        self.ButtonBox.setStyleSheet("padding: 6px 18px 6px 18px;")
+        self.buttonBox = QDialogButtonBox()
+        self.buttonBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.buttonBox.clicked.connect(self.updateClickedButton)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.setOrientation(Qt.Horizontal)
+        self.buttonBox.setStyleSheet("padding: 6px 18px 6px 18px;")
 
-        self.Layout = QVBoxLayout(self)
-        self.Layout.setContentsMargins(21, 12, 21, 12)
-        self.Layout.setSpacing(12)
-        self.Layout.addLayout(PicTextLayout)
-        self.Layout.addWidget(self.ButtonBox)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(21, 12, 21, 12)
+        layout.setSpacing(12)
+        layout.addLayout(labelLayout)
+        layout.addWidget(self.buttonBox)
 
     def updateClickedButton(self, button: QAbstractButton):
-        self.ClickedButton = FindKey(self.StandardButtonDict, self.ButtonBox.standardButton(button))
+        self.clickedButton = QMessageBox.NoButton
+        for messageBoxButton, dialogBoxButton in self.standardButtonDict.items():
+            if self.buttonBox.standardButton(button) & dialogBoxButton:
+                self.clickedButton |= messageBoxButton
 
     def exec(self) -> int:
-        Result = super().exec()
-        return self.ClickedButton if hasattr(self, 'ClickedButton') else Result
+        result = super().exec()
+        return self.clickedButton if hasattr(self, 'clickedButton') else result
 
     def setStandardButtons(self, buttons: QMessageBox.StandardButton) -> None:
-        buttons = self.StandardButtonDict.get(buttons, buttons)
-        if isinstance(buttons, QMessageBox.StandardButton):
-            pass
-        self.ButtonBox.setStandardButtons(buttons)
+        standardButtons = QDialogButtonBox.NoButton
+        for messageBoxButton, dialogBoxButton in self.standardButtonDict.items():
+            if buttons & messageBoxButton:
+                standardButtons |= dialogBoxButton
+        self.buttonBox.setStandardButtons(standardButtons)
 
     def setWindowIcon(self, icon: Union[QIcon, QPixmap, QStyle.StandardPixmap]) -> None:
-        icon = self.StandardIconDict.get(icon, icon)
+        icon = self.standardIconDict.get(icon, icon)
         if isinstance(icon, QStyle.StandardPixmap):
             icon = QApplication.style().standardIcon(icon)
         if isinstance(icon, (QIcon, QPixmap)):
@@ -126,7 +127,7 @@ class MessageBoxBase(DialogBase):
         super().setWindowIcon(icon)
 
     def setIcon(self, icon: Union[QIcon, QPixmap, QStyle.StandardPixmap]) -> None:
-        icon = self.StandardIconDict.get(icon, icon)
+        icon = self.standardIconDict.get(icon, icon)
         Length = int(min(self.width(), self.height()) / 6)
         if isinstance(icon, QStyle.StandardPixmap):
             standardIcon = QApplication.style().standardIcon(icon)
@@ -135,11 +136,11 @@ class MessageBoxBase(DialogBase):
             icon = icon.pixmap(icon.actualSize(QSize(Length, Length)))
         if isinstance(icon, QPixmap):
             pass
-        self.PicLabel.setPixmap(icon)
+        self.iconLabel.setPixmap(icon)
 
     def setText(self, text: str, textsize: float = 11.1, textweight: int = 420):
         Function_SetText(
-            Widget = self.TextLabel,
+            Widget = self.textLabel,
             Text = SetRichText(
                 Title = text,
                 TitleSize = textsize,
@@ -148,26 +149,41 @@ class MessageBoxBase(DialogBase):
             )
         )
 
+    @property
+    def detailedTextBrowser(self):
+        if self._detailedTextBrowser is None:
+            self.detailedTextBrowser = TextBrowserBase()
+        return self._detailedTextBrowser
+
+    @detailedTextBrowser.setter
+    def detailedTextBrowser(self, detailedTextBrowser: TextBrowserBase):
+        detailedTextBrowser.setBorderless(False)
+        self.layout().insertWidget(self.layout().indexOf(self.buttonBox), detailedTextBrowser, stretch = 1)
+        self._detailedTextBrowser = detailedTextBrowser
+
+    def setDetailedText(self, text: str):
+        self.detailedTextBrowser.setMarkdown(text)
+
     def getText(self, title: str, label: str, echo: QLineEdit.EchoMode = None, text: str = None, flags: Qt.WindowType = Qt.Dialog, inputMethodHints: Qt.InputMethodHint = None):
         self.setWindowFlags(flags)
         self.setText(title) #self.setWindowTitle(title)
-        InputLabel = LabelBase()
-        InputLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        InputArea = LineEditBase()
-        InputArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        InputLayout = QHBoxLayout()
-        InputLayout.setContentsMargins(0, 0, 0, 0)
-        InputLayout.setSpacing(12)
-        InputLayout.addWidget(InputLabel, stretch = 0)
-        InputLayout.addWidget(InputArea, stretch = 1)
-        InputLabel.setText(label)
-        InputArea.setEchoMode(echo) if echo else None
-        InputArea.setText(text) if text else None
-        InputArea.setInputMethodHints(inputMethodHints) if inputMethodHints else None
-        self.Layout.insertLayout(1, InputLayout, stretch = 1)
+        inputLabel = LabelBase()
+        inputLabel.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        inputArea = LineEditBase()
+        inputArea.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        inputLayout = QHBoxLayout()
+        inputLayout.setContentsMargins(0, 0, 0, 0)
+        inputLayout.setSpacing(12)
+        inputLayout.addWidget(inputLabel, stretch = 0)
+        inputLayout.addWidget(inputArea, stretch = 1)
+        inputLabel.setText(label)
+        inputArea.setEchoMode(echo) if echo else None
+        inputArea.setText(text) if text else None
+        inputArea.setInputMethodHints(inputMethodHints) if inputMethodHints else None
+        self.layout().insertLayout(1, inputLayout, stretch = 1)
         self.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        Result = self.exec()
-        return InputArea.text(), True if Result == QMessageBox.Ok else False
+        result = self.exec()
+        return inputArea.text(), True if result == QMessageBox.Ok else False
 
     @staticmethod
     def pop(
@@ -175,29 +191,32 @@ class MessageBoxBase(DialogBase):
         MessageType: object = QMessageBox.Information,
         WindowTitle: str = ...,
         Text: str = ...,
+        DetailedText: Optional[str] = None,
         Buttons: object = QMessageBox.Ok,
         ButtonEvents: dict = {}
     ):
-        '''
+        """
         Function to pop up a msgbox
-        '''
-        MsgBox = MessageBoxBase(WindowToMask)
+        """
+        msgBox = MessageBoxBase(WindowToMask)
 
-        MsgBox.setIcon(MessageType)
-        MsgBox.setWindowTitle(WindowTitle)
-        MsgBox.setText(Text)
-        MsgBox.setStandardButtons(Buttons)
+        msgBox.setIcon(MessageType)
+        msgBox.setWindowTitle(WindowTitle)
+        msgBox.setText(Text)
+        msgBox.setDetailedText(DetailedText) if DetailedText else None
+        msgBox.setStandardButtons(Buttons)
 
-        Result = MsgBox.exec()
+        result = msgBox.exec()
 
-        ButtonEvents[Result]() if Result in list(ButtonEvents.keys()) else None
+        ButtonEvents[result]() if result in list(ButtonEvents.keys()) else None
 
-        return Result
+        return result
 
 ##############################################################################################################################
 
 class InputDialogBase(MessageBoxBase):
-
+    """
+    """
     def __init__(self,
         parent: Optional[QWidget] = None,
         min_width = 360,
@@ -207,7 +226,7 @@ class InputDialogBase(MessageBoxBase):
 
     @staticmethod
     def getText(parent: QWidget, title: str, label: str, echo: QLineEdit.EchoMode = None, text: str = None, flags: Qt.WindowType = Qt.Dialog, inputMethodHints: Qt.InputMethodHint = None):
-        MessageBox = MessageBoxBase(parent, 420, 210)
-        return MessageBox.getText(title, label, echo, text, flags, inputMethodHints)
+        msgBox = MessageBoxBase(parent, 420, 210)
+        return msgBox.getText(title, label, echo, text, flags, inputMethodHints)
 
 ##############################################################################################################################

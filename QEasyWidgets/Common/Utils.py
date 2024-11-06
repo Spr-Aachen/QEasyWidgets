@@ -788,7 +788,8 @@ def CheckUpdateFromGithub(
             if Asset.name == f"{FileName}.{FileFormat}":
                 IsUpdateNeeded = True if version.parse(Version_Current) < version.parse(Version_Latest) else False
                 DownloadURL = Asset.browser_download_url #DownloadURL = f"https://github.com/{RepoOwner}/{RepoName}/releases/download/{Version_Latest}/{FileName}.{FileFormat}"
-                return IsUpdateNeeded, DownloadURL
+                VersionInfo = LatestRelease.body
+                return IsUpdateNeeded, DownloadURL, VersionInfo
             elif Index + 1 == len(LatestRelease.assets):
                 raise Exception(f"No file found with name {FileName}.{FileFormat} in the latest release")
 
