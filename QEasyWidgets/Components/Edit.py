@@ -55,12 +55,6 @@ class LineEditBase(QLineEdit):
         self.__init__(parent)
         self.setText(arg__1)
 
-    def focusInEvent(self, arg__1: QFocusEvent) -> None:
-        self.focusedIn.emit()
-
-    def focusOutEvent(self, arg__1: QFocusEvent) -> None:
-        self.focusedOut.emit()
-
     def showToolTip(self, Content: Optional[str] = None) -> None:
         XPos = 0
         YPos = 0 - self.height()
@@ -73,6 +67,7 @@ class LineEditBase(QLineEdit):
         position = event.position()
         self.cursorPositionChanged.emit(position.x(), position.y())
         self.interacted.emit()
+        super().mouseMoveEvent(event)
 
     def moveEvent(self, event: QMoveEvent) -> None:
         self.rectChanged.emit(self.rect())
@@ -90,10 +85,11 @@ class LineEditBase(QLineEdit):
             self.setText(paths[0] if len(paths) == 1 else ", ".join(paths))
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if event.type() in (QEvent.DragEnter, QEvent.Drop):
-            mime_data = event.mimeData()
-            if mime_data.hasUrls():
-                event.acceptProposedAction()
+        if watched is self:
+            if event.type() in (QEvent.DragEnter, QEvent.Drop):
+                mime_data = event.mimeData()
+                if mime_data.hasUrls():
+                    event.acceptProposedAction()
         return super().eventFilter(watched, event)
 
     @property
@@ -114,10 +110,20 @@ class LineEditBase(QLineEdit):
 
     def setClearButtonEnabled(self, enable: bool) -> None:
         self._isClearButtonEnabled = enable
-        self.clearButton.setVisible(True if enable else False)
+        self.clearButton.setVisible(True if enable and self.hasFocus() else False)
 
     def isClearButtonEnabled(self) -> bool:
         return self._isClearButtonEnabled
+
+    def focusInEvent(self, arg__1: QFocusEvent) -> None:
+        self.focusedIn.emit()
+        self.clearButton.show() if self.isClearButtonEnabled() else None
+        super().focusInEvent(arg__1)
+
+    def focusOutEvent(self, arg__1: QFocusEvent) -> None:
+        self.focusedOut.emit()
+        #self.clearButton.hide() if self.isClearButtonEnabled() else None
+        super().focusOutEvent(arg__1)
 
     @property
     def fileButton(self):

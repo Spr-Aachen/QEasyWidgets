@@ -427,71 +427,36 @@ def RunEvents(
 
 #############################################################################################################
 
-def TaskAccelerating(
-    TargetList: list,
-    ArgsList: list = [(), ],
-    TypeList: list = ['MultiProcessing', ],
-    Workers: Optional[int] = None,
-    Asynchronous: bool = False,
-    ShowMessages: bool = True
+def MultiThreading(
+    funcDict: dict,
+    maxWorkers: Optional[int] = None,
+    asynchronous: bool = True
 ):
     '''
-    Function to create pool for multiprocessing/multithreading to accelerate tasks
+    Function to create pool for multithreading to accelerate tasks
     '''
-    #StartTime = int(time.time())
+    threadPoolExecutor = ThreadPoolExecutor(max_workers = maxWorkers)
 
-    ProcessPool = ProcessPoolExecutor(max_workers = Workers)
-    ThreadPool = ThreadPoolExecutor(max_workers = Workers)
+    with threadPoolExecutor as executor:
+        for func, args in funcDict.items():
+            thread = executor.submit(func, *args)
+            thread.result() if asynchronous == False else None
 
-    for Index, Target in enumerate(TargetList):
-        Args = ArgsList[Index]
-        Type = TypeList[Index]
 
-        if Type == None:
-            pass
+def MultiProcessing(
+    funcDict: dict,
+    maxWorkers: Optional[int] = None,
+    asynchronous: bool = True
+):
+    '''
+    Function to create pool for multiprocessing to accelerate tasks
+    '''
+    processPooExecutor = ProcessPoolExecutor(max_workers = maxWorkers)
 
-        elif Type == 'MultiProcessing':
-            Process = ProcessPool.submit(Target, *Args)
-            print(
-                "Task start\n" if Asynchronous == True else f"Task start ({Index + 1}/{len(TargetList)})\n"
-                f"Name : {Target.__name__}\n"
-                f"PID  : {os.getpid()}\n"
-                "Please wait...\n"
-            ) if ShowMessages == True else print('')
-            Process.result() if Asynchronous == False else None
-
-        elif Type == 'MultiThreading':
-            Thread = ThreadPool.submit(Target, *Args)
-            print(
-                "Task start\n" if Asynchronous == True else f"Task start ({Index + 1}/{len(TargetList)})\n"
-                f"Name : {Target.__name__}\n"
-                f"TID  : {currentThread().ident}\n"
-                "Please wait...\n"
-            ) if ShowMessages == True else print('')
-            Thread.result() if Asynchronous == False else None
-
-        else:
-            raise Exception(f"{Type} not found! Use 'MultiProcessing' or 'MultiThreading' instead.")
-
-        print(
-            f"Task done ({Index + 1}/{len(TargetList)})\n"
-        ) if ShowMessages == True and Asynchronous == False else print('')
-
-    ProcessPool.shutdown(
-        wait = True,
-        cancel_futures = True
-    )
-    ThreadPool.shutdown(
-        wait = True,
-        cancel_futures = True
-    )
-
-    print(
-        "All done\n"
-        "全部完成\n"
-    ) if ShowMessages == True else print('')
-
-    #Endtime = int(time.time())
+    with processPooExecutor as executer:
+        for func, args in funcDict.items():
+            process = executer.submit(func, *args)
+            process.result() if asynchronous == False else None
 
 
 def ProcessTerminator(

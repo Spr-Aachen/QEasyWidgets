@@ -44,6 +44,12 @@ class IconEngine(QIconEngine):
 class IconBase(Enum):
     '''
     '''
+    Chevron_Left = 'Chevron-Left'
+    CompactChevron_Left = 'CompactChevron-Left'
+    Chevron_Right = 'Chevron-Right'
+    CompactChevron_Right = 'CompactChevron-Right'
+    Chevron_Top = 'Chevron-Top'
+    Chevron_Down = 'Chevron-Down'
     Ellipsis = 'Ellipsis'
     OpenedFolder = 'OpenedFolder'
     Clipboard = 'Clipboard'

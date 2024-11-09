@@ -187,28 +187,28 @@ class MessageBoxBase(DialogBase):
 
     @staticmethod
     def pop(
-        WindowToMask: Optional[WindowBase] = None,
-        MessageType: object = QMessageBox.Information,
-        WindowTitle: str = ...,
-        Text: str = ...,
-        DetailedText: Optional[str] = None,
-        Buttons: object = QMessageBox.Ok,
-        ButtonEvents: dict = {}
+        windowToMask: Optional[WindowBase] = None,
+        messageType: object = QMessageBox.Information,
+        windowTitle: str = ...,
+        text: str = ...,
+        detailedText: Optional[str] = None,
+        buttons: object = QMessageBox.Ok,
+        buttonEvents: dict = {}
     ):
         """
         Function to pop up a msgbox
         """
-        msgBox = MessageBoxBase(WindowToMask)
+        msgBox = MessageBoxBase(windowToMask)
 
-        msgBox.setIcon(MessageType)
-        msgBox.setWindowTitle(WindowTitle)
-        msgBox.setText(Text)
-        msgBox.setDetailedText(DetailedText) if DetailedText else None
-        msgBox.setStandardButtons(Buttons)
+        msgBox.setIcon(messageType)
+        msgBox.setWindowTitle(windowTitle)
+        msgBox.setText(text)
+        msgBox.setDetailedText(detailedText) if detailedText else None
+        msgBox.setStandardButtons(buttons)
 
         result = msgBox.exec()
 
-        ButtonEvents[result]() if result in list(ButtonEvents.keys()) else None
+        buttonEvents[result]() if result in list(buttonEvents.keys()) else None
 
         return result
 
