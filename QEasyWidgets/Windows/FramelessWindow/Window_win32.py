@@ -76,7 +76,7 @@ class NCCALCSIZE_PARAMS(Structure):
 
 ##############################################################################################################################
 
-def IsWindowMaximized(hWnd: int):
+def isWindowMaximized(hWnd: int):
     WindowPlacement = win32gui.GetWindowPlacement(hWnd)
 
     Result = WindowPlacement[1] == win32con.SW_MAXIMIZE if WindowPlacement else False
@@ -84,7 +84,7 @@ def IsWindowMaximized(hWnd: int):
     return Result
 
 
-def IsWindowFullScreen(hWnd: int):
+def isWindowFullScreen(hWnd: int):
     hWnd = int(hWnd)
 
     WindowRect = win32gui.GetWindowRect(hWnd)
@@ -98,7 +98,7 @@ def IsWindowFullScreen(hWnd: int):
 
 ##############################################################################################################################
 
-def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
+def getSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
     if hasattr(windll.user32, 'GetSystemMetricsForDpi'):
         if hasattr(windll.user32, 'GetDpiForWindow'):
             dpi = windll.user32.GetDpiForWindow(hWnd)
@@ -116,10 +116,10 @@ def GetSystemMetrics(hWnd: int, index: int, dpiScaling: bool):
         return windll.user32.GetSystemMetricsForDpi(index, dpi)
 
     else:
-        return win32api.GetSystemMetrics(index)
+        return win32api.getSystemMetrics(index)
 
 
-def GetMissingBorderPixels(hWnd: int):
+def getMissingBorderPixels(hWnd: int):
     MissingBorderSize = []
 
     for QWindow in QGuiApplication.allWindows():
@@ -132,7 +132,7 @@ def GetMissingBorderPixels(hWnd: int):
         win32con.SM_CYSIZEFRAME: False
     }
     for BorderLengthIndex, dpiScaling in SIZEFRAME.items():
-        MissingBorderPixels = GetSystemMetrics(hWnd, BorderLengthIndex, dpiScaling) + GetSystemMetrics(hWnd, 92, dpiScaling) #MissingBorderPixels = win32api.GetSystemMetrics(MissingBorderLength) + win32api.GetSystemMetrics(win32con.SM_CXPADDEDBORDER)
+        MissingBorderPixels = getSystemMetrics(hWnd, BorderLengthIndex, dpiScaling) + getSystemMetrics(hWnd, 92, dpiScaling) #MissingBorderPixels = win32api.getSystemMetrics(MissingBorderLength) + win32api.getSystemMetrics(win32con.SM_CXPADDEDBORDER)
         if not MissingBorderPixels > 0:
             def IsCompositionEnabled():
                 Result = windll.dwmapi.DwmIsCompositionEnabled(byref(c_int(0)))
@@ -235,7 +235,7 @@ class WindowBase(BackgroundColorAnimationBase):
         if Message.message == win32con.WM_NCCALCSIZE:
             if Message.wParam != 0:
                 Rect = NCCALCSIZE_PARAMS.from_address(Message.lParam).rgrc[0]
-                MissingHBorderPixels, MissingVBorderPixels = GetMissingBorderPixels(Message.hWnd) if IsWindowMaximized(Message.hWnd) and not IsWindowFullScreen(Message.hWnd) else (0, 0)
+                MissingHBorderPixels, MissingVBorderPixels = getMissingBorderPixels(Message.hWnd) if isWindowMaximized(Message.hWnd) and not isWindowFullScreen(Message.hWnd) else (0, 0)
                 Rect.left += MissingHBorderPixels
                 Rect.top += MissingVBorderPixels
                 Rect.right -= MissingHBorderPixels
@@ -245,7 +245,7 @@ class WindowBase(BackgroundColorAnimationBase):
                 Rect = LPRECT.from_address(Message.lParam)
                 return True, 0
         if Message.message == win32con.WM_NCHITTEST:
-            border_width = self.edge_size if not IsWindowMaximized(Message.hWnd) and not IsWindowFullScreen(Message.hWnd) else 0
+            border_width = self.edge_size if not isWindowMaximized(Message.hWnd) and not isWindowFullScreen(Message.hWnd) else 0
             left   = QCursor.pos().x() - self.x() < border_width
             top    = QCursor.pos().y() - self.y() < border_width
             right  = QCursor.pos().x() - self.x() > self.frameGeometry().width() - border_width
@@ -297,10 +297,10 @@ class WindowBase(BackgroundColorAnimationBase):
         else:
             self.TitleBar = None
 
-    def ShowMask(self, SetVisible: bool, MaskContent: Optional[str] = None) -> None:
-        if SetVisible:
+    def showMask(self, setVisible: bool, maskContent: Optional[str] = None) -> None:
+        if setVisible:
             self.Mask.raise_() if self.Mask.isHidden() else None
-            self.Mask.setText(MaskContent) if MaskContent is not None else self.Mask.clear()
+            self.Mask.setText(maskContent) if maskContent is not None else self.Mask.clear()
             self.Mask.show()
         else:
             self.Mask.clear()

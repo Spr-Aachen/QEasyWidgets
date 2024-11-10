@@ -34,7 +34,7 @@ class SliderBase(QSlider):
         self.setOrientation(arg__1)
 
     def _updateTimes(self, key, value):
-        Time = 10 ** Function_getDecimalPlaces(value)
+        Time = 10 ** getDecimalPlaces(value)
         for time in self._times.values():
             if time > Time:
                 Time = time
@@ -94,7 +94,7 @@ class SliderBase(QSlider):
             self.valueChanged.emit(self.value())
         super().sliderChange(change)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Slider.Deregistrate(self)
 
 ##############################################################################################################################

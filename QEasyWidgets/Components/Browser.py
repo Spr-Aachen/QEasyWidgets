@@ -19,7 +19,7 @@ class TextBrowserBase(QTextBrowser):
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Browser.Deregistrate(self)
 
 ##############################################################################################################################

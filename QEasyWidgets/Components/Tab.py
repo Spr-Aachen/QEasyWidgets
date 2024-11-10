@@ -15,14 +15,14 @@ class TabWidgetBase(QTabWidget):
         super().__init__(parent)
 
         self.tabBar().setMinimumSize(84, 42)
-        Function_SetFont(self, 21)
+        setFont(self, 21)
 
         StyleSheetBase.Tab.Apply(self)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Tab.Deregistrate(self)
 
 ##############################################################################################################################

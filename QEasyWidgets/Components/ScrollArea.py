@@ -48,7 +48,7 @@ class ScrollAreaBase(QScrollArea):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ScrollArea.Deregistrate(self)
 
 

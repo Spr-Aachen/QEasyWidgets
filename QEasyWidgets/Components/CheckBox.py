@@ -89,7 +89,7 @@ class CheckBoxBase(QCheckBox):
     def __init__(self, parent: QWidget = None):
         super().__init__(parent = parent)
 
-        Function_SetFont(self, 15)
+        setFont(self, 15)
 
         self.indicator = Indicator(self)
         self.indicator.toggled.connect(self.toggled.emit)

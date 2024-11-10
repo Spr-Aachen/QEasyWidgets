@@ -26,7 +26,7 @@ class SpinBoxBase(QSpinBox):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
 
 ##############################################################################################################################
@@ -50,7 +50,7 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.SpinBox.Deregistrate(self)
 
 ##############################################################################################################################

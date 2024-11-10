@@ -19,7 +19,7 @@ class GroupBoxBase(QGroupBox):
         self.setCheckable(True)
         self.toggled.connect(lambda isChecked: self.collapse() if isChecked else self.expand())
 
-        Function_SetFont(self, 15)
+        setFont(self, 15)
 
         StyleSheetBase.GroupBox.Apply(self)
 
@@ -29,10 +29,10 @@ class GroupBoxBase(QGroupBox):
         self.setTitle(title)
 
     def expand(self):
-        Function_SetWidgetSizeAnimation(self, TargetHeight = self.minimumSizeHint().height()).start()
+        setWidgetSizeAnimation(self, targetHeight = self.minimumSizeHint().height()).start()
 
     def collapse(self):
-        Function_SetWidgetSizeAnimation(self, TargetHeight = 0).start()
+        setWidgetSizeAnimation(self, targetHeight = 0).start()
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
@@ -40,7 +40,7 @@ class GroupBoxBase(QGroupBox):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.GroupBox.Deregistrate(self)
 
 ##############################################################################################################################

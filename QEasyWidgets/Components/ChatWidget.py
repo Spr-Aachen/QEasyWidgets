@@ -170,7 +170,7 @@ class ChatWidgetBase(QFrame):
         for message in messages:
             self.addMessage(*message, False)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ChatWidget.Deregistrate(self)
 
 ##############################################################################################################################

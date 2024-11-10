@@ -46,7 +46,7 @@ class LabelBase(QLabel):
         super().setPixmap(self.scalePixmap(self._pixmap)) if not self._pixmap is None else None
         super().resizeEvent(event)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Label.Deregistrate(self)
 
 ##############################################################################################################################

@@ -34,7 +34,7 @@ class ToolPage(WidgetBase):
         self.FolderButton.setFixedHeight(self.FolderButtonHeight)
         self.FolderButton.setLayout(layout)
         self.FolderButton.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
-        Function_SetFont(self.FolderButton, self.FontSize)
+        setFont(self.FolderButton, self.FontSize)
 
         widgetlayout = QGridLayout()
         widgetlayout.setContentsMargins(0, 0, 0, 0)
@@ -67,12 +67,12 @@ class ToolPage(WidgetBase):
         widget.resized.connect(resizeWidgetHeight) if hasattr(widget, 'resized') else None
 
     def expand(self):
-        Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = self.Widget.minimumSizeHint().height()).start()
+        setWidgetSizeAnimation(self.Widget, targetHeight = self.Widget.minimumSizeHint().height()).start()
         self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/DownArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.IsExpanded = True
 
     def collapse(self):
-        Function_SetWidgetSizeAnimation(self.Widget, TargetHeight = 0).start()
+        setWidgetSizeAnimation(self.Widget, targetHeight = 0).start()
         self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/LeftArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         self.IsExpanded = False
 
@@ -123,7 +123,7 @@ class ToolBoxBase(QFrame):
         ''''''
 
     def indexOf(self, widget: QWidget) -> int:
-        return self.Pages.index(widget if isinstance(widget, ToolPage) else Function_FindParentUI(widget, ToolPage))
+        return self.Pages.index(widget if isinstance(widget, ToolPage) else findParentUI(widget, ToolPage))
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
@@ -131,7 +131,7 @@ class ToolBoxBase(QFrame):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ToolBox.Deregistrate(self)
 
 ##############################################################################################################################

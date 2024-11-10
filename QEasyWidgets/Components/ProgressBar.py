@@ -23,7 +23,7 @@ class ProgressBarBase(QProgressBar):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ProgressBar.Deregistrate(self)
 
 ##############################################################################################################################

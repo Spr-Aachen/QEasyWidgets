@@ -183,7 +183,7 @@ class TableBase(QTableView):
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Table.Deregistrate(self)
 
 ##############################################################################################################################

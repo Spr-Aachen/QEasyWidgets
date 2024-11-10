@@ -61,8 +61,8 @@ class ChildWindowBase(WindowBase, QWidget):
 
         self.EventLoop = QEventLoop(self)
 
-        self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
-        self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
+        self.showed.connect(lambda: parent.showMask(True)) if isinstance(parent, WindowBase) else None
+        self.closed.connect(lambda: parent.showMask(False)) if isinstance(parent, WindowBase) else None
 
     def exec(self) -> int:
         self.show()

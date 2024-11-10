@@ -10,66 +10,66 @@ from ..Resources.Sources import *
 
 ##############################################################################################################################
 
-def Function_FindChildUI(
-    ParentUI: QWidget,
-    ChildType: object
+def findChildUI(
+    parentUI: QWidget,
+    childType: object
 ):
-    '''
+    """
     Function to find child UI
-    '''
-    ParentUI_Children = ParentUI.children()
+    """
+    parentUI_Children = parentUI.children()
 
-    for ParentUI_Child in ParentUI_Children:
-        if isinstance(ParentUI_Child, ChildType):
-            return ParentUI_Child
+    for parentUI_Child in parentUI_Children:
+        if isinstance(parentUI_Child, childType):
+            return parentUI_Child
 
 
-def Function_FindParentUI(
-    ChildUI: QWidget,
-    ParentType: object
+def findParentUI(
+    childUI: QWidget,
+    parentType: object
 ):
-    '''
+    """
     Function to find parent UI
-    '''
-    ChildUI_Parent = ChildUI.parent()
+    """
+    childUI_Parent = childUI.parent()
 
-    while not isinstance(ChildUI_Parent, ParentType):
+    while not isinstance(childUI_Parent, parentType):
         try:
-            ChildUI_Parent = ChildUI_Parent.parent()
+            childUI_Parent = childUI_Parent.parent()
         except:
-            raise Exception(f"{ChildUI}'s parent UI not found! Please check if the layout is correct.")
+            raise Exception(f"{childUI}'s parent UI not found! Please check if the layout is correct.")
 
-    return ChildUI_Parent
+    return childUI_Parent
 
 ##############################################################################################################################
 
-def Function_SetFont(
-    Widget: QWidget,
-    FontSize:int = 12,
-    Weight = QFont.Normal
+def setFont(
+    widget: QWidget,
+    fontSize:int = 12,
+    weight = QFont.Normal
 ):
-    '''
+    """
     Set the font of widget
-    '''
+    """
     Font = QFont()
     Font.setFamilies(['Microsoft YaHei'])
-    Font.setPixelSize(FontSize)
-    Font.setWeight(Weight)
-    Widget.setFont(Font)
+    Font.setPixelSize(fontSize)
+    Font.setWeight(weight)
+    widget.setFont(Font)
 
 ##############################################################################################################################
 
-def Function_SetRetainSizeWhenHidden(
-    Widget: QWidget,
-    RetainSize: bool = True
+def setRetainSizeWhenHidden(
+    widget: QWidget,
+    retainSize: bool = True
 ):
-    sizePolicy = Widget.sizePolicy()
-    sizePolicy.setRetainSizeWhenHidden(RetainSize)
-    Widget.setSizePolicy(sizePolicy)
+    sizePolicy = widget.sizePolicy()
+    sizePolicy.setRetainSizeWhenHidden(retainSize)
+    widget.setSizePolicy(sizePolicy)
 
 
-def Function_SetDropShadowEffect(
-    Widget: QWidget,
+def setDropShadowEffect(
+    widget: QWidget,
     Radius: float = 3.,
     Color: Union[QColor, QRgba64] = Qt.gray
 ):
@@ -77,173 +77,173 @@ def Function_SetDropShadowEffect(
     DropShadowEffect.setOffset(0, 0)
     DropShadowEffect.setBlurRadius(Radius)
     DropShadowEffect.setColor(Color)
-    Widget.setGraphicsEffect(DropShadowEffect)
+    widget.setGraphicsEffect(DropShadowEffect)
 
 ##############################################################################################################################
 
-def Function_SetAnimation(
-    Animation: QPropertyAnimation,
-    StartValue,
-    EndValue,
-    Duration: int
+def setAnimation(
+    animation: QPropertyAnimation,
+    startValue,
+    endValue,
+    duration: int
 ):
-    Animation.setStartValue(StartValue)
-    Animation.setEndValue(EndValue)
-    Animation.setDuration(Duration)
-    Animation.setEasingCurve(QEasingCurve.InOutQuart)
-    return Animation
+    animation.setStartValue(startValue)
+    animation.setEndValue(endValue)
+    animation.setDuration(duration)
+    animation.setEasingCurve(QEasingCurve.InOutQuart)
+    return animation
 
 
-def Function_SetWidgetPosAnimation(
-    Widget: QWidget,
-    Duration: int = 99
+def setWidgetPosAnimation(
+    widget: QWidget,
+    duration: int = 99
 ):
-    OriginalGeometry = Widget.geometry()
-    AlteredGeometry = QRect(OriginalGeometry.left(), OriginalGeometry.top() + OriginalGeometry.height() / Duration, OriginalGeometry.width(), OriginalGeometry.height())
+    OriginalGeometry = widget.geometry()
+    AlteredGeometry = QRect(OriginalGeometry.left(), OriginalGeometry.top() + OriginalGeometry.height() / duration, OriginalGeometry.width(), OriginalGeometry.height())
 
-    WidgetAnimation = QPropertyAnimation(Widget, b"geometry", Widget)
+    WidgetAnimation = QPropertyAnimation(widget, b"geometry", widget)
 
-    return Function_SetAnimation(WidgetAnimation, OriginalGeometry, AlteredGeometry, Duration)
+    return setAnimation(WidgetAnimation, OriginalGeometry, AlteredGeometry, duration)
 
 
-def Function_SetWidgetSizeAnimation(
-    Frame: QWidget,
-    TargetWidth: Optional[int] = None,
-    TargetHeight: Optional[int] = None,
-    Duration: int = 210,
-    SupportSplitter: bool = False
+def setWidgetSizeAnimation(
+    frame: QWidget,
+    targetWidth: Optional[int] = None,
+    targetHeight: Optional[int] = None,
+    duration: int = 210,
+    supportSplitter: bool = False
 ):
-    '''
+    """
     Function to animate widget size
-    '''
-    CurrentWidth = Frame.geometry().width() if Frame.size() == QSize(100, 30) else Frame.width()
-    CurrentHeight = Frame.geometry().height() if Frame.size() == QSize(100, 30) else Frame.height()
+    """
+    CurrentWidth = frame.geometry().width() if frame.size() == QSize(100, 30) else frame.width()
+    CurrentHeight = frame.geometry().height() if frame.size() == QSize(100, 30) else frame.height()
 
-    FrameAnimationMinWidth = QPropertyAnimation(Frame, b"minimumWidth", Frame)
-    FrameAnimationMaxWidth = QPropertyAnimation(Frame, b"maximumWidth", Frame)
-    FrameAnimationMinHeight = QPropertyAnimation(Frame, b"minimumHeight", Frame)
-    FrameAnimationMaxHeight = QPropertyAnimation(Frame, b"maximumHeight", Frame)
+    FrameAnimationMinWidth = QPropertyAnimation(frame, b"minimumWidth", frame)
+    FrameAnimationMaxWidth = QPropertyAnimation(frame, b"maximumWidth", frame)
+    FrameAnimationMinHeight = QPropertyAnimation(frame, b"minimumHeight", frame)
+    FrameAnimationMaxHeight = QPropertyAnimation(frame, b"maximumHeight", frame)
 
-    AnimationGroup = QParallelAnimationGroup(Frame)
+    AnimationGroup = QParallelAnimationGroup(frame)
 
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinWidth, CurrentWidth, TargetWidth, Duration)) if TargetWidth is not None and not SupportSplitter else None
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMaxWidth, CurrentWidth, TargetWidth, Duration)) if TargetWidth is not None else None
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMinHeight, CurrentHeight, TargetHeight, Duration)) if TargetHeight is not None and not SupportSplitter else None
-    AnimationGroup.addAnimation(Function_SetAnimation(FrameAnimationMaxHeight, CurrentHeight, TargetHeight, Duration)) if TargetHeight is not None else None
+    AnimationGroup.addAnimation(setAnimation(FrameAnimationMinWidth, CurrentWidth, targetWidth, duration)) if targetWidth is not None and not supportSplitter else None
+    AnimationGroup.addAnimation(setAnimation(FrameAnimationMaxWidth, CurrentWidth, targetWidth, duration)) if targetWidth is not None else None
+    AnimationGroup.addAnimation(setAnimation(FrameAnimationMinHeight, CurrentHeight, targetHeight, duration)) if targetHeight is not None and not supportSplitter else None
+    AnimationGroup.addAnimation(setAnimation(FrameAnimationMaxHeight, CurrentHeight, targetHeight, duration)) if targetHeight is not None else None
 
     return AnimationGroup
 
 
-def Function_SetWidgetOpacityAnimation(
-    Widget: QWidget,
-    OriginalOpacity: float,
-    TargetOpacity: float,
-    Duration: int = 99
+def setWidgetOpacityAnimation(
+    widget: QWidget,
+    originalOpacity: float,
+    targetOpacity: float,
+    duration: int = 99
 ):
     OpacityEffect = QGraphicsOpacityEffect()
-    Widget.setGraphicsEffect(OpacityEffect)
+    widget.setGraphicsEffect(OpacityEffect)
 
-    OriginalOpacity = OriginalOpacity
-    AlteredOpacity = TargetOpacity
+    originalOpacity = originalOpacity
+    AlteredOpacity = targetOpacity
 
-    WidgetAnimation = QPropertyAnimation(OpacityEffect, b"opacity", Widget)
+    WidgetAnimation = QPropertyAnimation(OpacityEffect, b"opacity", widget)
 
-    return Function_SetAnimation(WidgetAnimation, OriginalOpacity, AlteredOpacity, Duration)
-
-##############################################################################################################################
-
-def Function_SetNoContents(
-    Widget: QWidget
-):
-    if isinstance(Widget, QStackedWidget):
-        while Widget.count():
-            Widget.removeWidget(Widget.widget(0))
+    return setAnimation(WidgetAnimation, originalOpacity, AlteredOpacity, duration)
 
 ##############################################################################################################################
 
-def Function_SetText(
-    Widget: QWidget,
-    Text: str,
-    SetHtml: bool = True,
-    SetPlaceholderText: bool = False,
-    PlaceholderText: Optional[str] = None
+def setNoContents(
+    widget: QWidget
 ):
-    if hasattr(Widget, 'setText'):
-        Widget.setText(Text)
-    if hasattr(Widget, 'setPlainText'):
-        Widget.setPlainText(Text)
-    if hasattr(Widget, 'setHtml') and SetHtml:
-        Widget.setHtml(Text)
-    if hasattr(Widget, 'setPlaceholderText') and SetPlaceholderText:
-        Widget.setPlaceholderText(str(PlaceholderText) if Text.strip() in ('', str(None)) else Text)
-
-
-def Function_GetText(
-    Widget: QWidget,
-    GetHtml: bool = False,
-    GetPlaceholderText: bool = False
-):
-    if hasattr(Widget, 'text'):
-        Text = Widget.text()
-    if hasattr(Widget, 'toPlainText'):
-        Text = Widget.toPlainText()
-    if hasattr(Widget, 'toHtml') and GetHtml:
-        Text = Widget.toHtml()
-    if hasattr(Widget, 'placeholderText') and GetPlaceholderText:
-        Text = Widget.placeholderText() if Text.strip() in ('', str(None)) else Text
-    return Text
+    if isinstance(widget, QStackedWidget):
+        while widget.count():
+            widget.removeWidget(widget.widget(0))
 
 ##############################################################################################################################
 
-def Function_GetFileDialog(
-    Mode: str,
-    FileType: Optional[str] = None,
-    Directory: Optional[str] = None
+def setText(
+    widget: QWidget,
+    text: str,
+    setHtml: bool = True,
+    setPlaceholderText: bool = False,
+    placeholderText: Optional[str] = None
 ):
-    os.makedirs(Directory, exist_ok = True) if Directory is not None and Path(Directory).exists() == False else None
-    if Mode == 'SelectFolder':
+    if hasattr(widget, 'setText'):
+        widget.setText(text)
+    if hasattr(widget, 'setPlainText'):
+        widget.setPlainText(text)
+    if hasattr(widget, 'setHtml') and setHtml:
+        widget.setHtml(text)
+    if hasattr(widget, 'setPlaceholderText') and setPlaceholderText:
+        widget.setPlaceholderText(str(placeholderText) if text.strip() in ('', str(None)) else text)
+
+
+def getText(
+    widget: QWidget,
+    getHtml: bool = False,
+    getPlaceholderText: bool = False
+):
+    if hasattr(widget, 'text'):
+        text = widget.text()
+    if hasattr(widget, 'toPlainText'):
+        text = widget.toPlainText()
+    if hasattr(widget, 'toHtml') and getHtml:
+        text = widget.toHtml()
+    if hasattr(widget, 'placeholderText') and getPlaceholderText:
+        text = widget.placeholderText() if text.strip() in ('', str(None)) else text
+    return text
+
+##############################################################################################################################
+
+def getFileDialog(
+    mode: str,
+    fileType: Optional[str] = None,
+    directory: Optional[str] = None
+):
+    os.makedirs(directory, exist_ok = True) if directory is not None and Path(directory).exists() == False else None
+    if mode == 'SelectFolder':
         DisplayText = QFileDialog.getExistingDirectory(
             caption = "选择文件夹",
-            dir = Directory if Directory is not None else os.getcwd()
+            dir = directory if directory is not None else os.getcwd()
         )
-    if Mode == 'SelectFile':
+    if mode == 'SelectFile':
         DisplayText, _ = QFileDialog.getOpenFileName(
             caption = "选择文件",
-            dir = Directory if Directory is not None else os.getcwd(),
-            filter = FileType if FileType is not None else '任意类型 (*.*)'
+            dir = directory if directory is not None else os.getcwd(),
+            filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
-    if Mode == 'SaveFile':
+    if mode == 'SaveFile':
         DisplayText, _ = QFileDialog.getSaveFileName(
             caption = "保存文件",
-            dir = Directory if Directory is not None else os.getcwd(),
-            filter = FileType if FileType is not None else '任意类型 (*.*)'
+            dir = directory if directory is not None else os.getcwd(),
+            filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
     return DisplayText
 
 ##############################################################################################################################
 
-def Function_OpenURL(
-    URL: Union[str, list],
-    CreateIfNotExist: bool = False
+def openURL(
+    url: Union[str, list],
+    createIfNotExist: bool = False
 ):
-    '''
-    Function to open web/local URL
-    '''
-    def OpenURL(URL):
-        QURL = QUrl().fromLocalFile(NormPath(URL))
+    """
+    Function to open web/local url
+    """
+    def OpenURL(url):
+        QURL = QUrl().fromLocalFile(normPath(url))
         if QURL.isValid():
-            os.makedirs(NormPath(URL), exist_ok = True) if CreateIfNotExist else None
+            os.makedirs(normPath(url), exist_ok = True) if createIfNotExist else None
             IsSucceeded = QDesktopServices.openUrl(QURL)
-            RunCMD([f'start {URL}']) if not IsSucceeded else None
+            runCMD([f'start {url}']) if not IsSucceeded else None
         else:
-            print(f"Invalid URL: {URL} !")
+            print(f"Invalid url: {url} !")
 
-    if isinstance(URL, str):
-        OpenURL(URL)
+    if isinstance(url, str):
+        OpenURL(url)
     else:
-        URLList = ToIterable(URL)
-        for Index, URL in enumerate(URLList):
-            #URL = Function_ParamsChecker(URLList)[Index] if isinstance(URL, QObject) else URL
-            OpenURL(URL)
+        URLList = toIterable(url)
+        for Index, url in enumerate(URLList):
+            #url = Function_ParamsChecker(URLList)[Index] if isinstance(url, QObject) else url
+            OpenURL(url)
 
 ##############################################################################################################################

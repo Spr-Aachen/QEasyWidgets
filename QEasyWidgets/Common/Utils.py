@@ -23,95 +23,99 @@ from pathlib import Path
 from github import Github
 from packaging import version
 from tqdm import tqdm
+from enum import Enum
 from typing import Union, Optional, Type, Tuple, Callable, Any
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from threading import currentThread
 from functools import singledispatch, wraps
 from decimal import Decimal
 from datetime import datetime
 
 #############################################################################################################
 
-def ToIterable(
-    Items,
-    IgnoreStr: bool = True
+def toIterable(
+    items,
+    ignoreString: bool = True
 ):
     '''
     Function to make item iterable
     '''
-    if isinstance(Items, collections.Iterable) or hasattr(Items, '__iter__'):
-        ItemList = [Items] if isinstance(Items, (str, bytes)) and IgnoreStr else Items
+    if isinstance(items, collections.Iterable) or hasattr(items, '__iter__'):
+        ItemList = [items] if isinstance(items, (str, bytes)) and ignoreString else items
     else:
-        ItemList = [Items]
+        ItemList = [items]
 
     return ItemList
 
 
-def ItemReplacer(
-    Dict: dict,
-    Items: object
+def itemReplacer(
+    dict: dict,
+    items: object
 ):
     '''
     Function to replace item using dictionary lookup
     '''
-    ItemList = ToIterable(Items, IgnoreStr = False)
+    ItemList = toIterable(items, ignoreString = False)
 
-    ItemList_New = [Dict.get(Item, Item) for Item in ItemList]
+    ItemList_New = [dict.get(Item, Item) for Item in ItemList]
 
-    if isinstance(Items, list):
+    if isinstance(items, list):
         return ItemList_New
-    if isinstance(Items, tuple):
+    if isinstance(items, tuple):
         return tuple(ItemList_New)
-    if isinstance(Items, (int, float, bool)):
+    if isinstance(items, (int, float, bool)):
         return ItemList_New[0]
-    if isinstance(Items, str):
+    if isinstance(items, str):
         return str().join(ItemList_New)
 
 
-def FindKey(
-    Dict: dict,
-    TargetValue
+def findKey(
+    dict: dict,
+    targetValue
 ):
-    for Key, Value in Dict.items():
-        if Value == TargetValue:
+    """
+     Find key from dictionary
+     """
+    for Key, value in dict.items():
+        if value == targetValue:
             return Key
 
 #############################################################################################################
 
-def NormPath(
-    String: Union[str, Path],
-    PathType: Optional[str] = None,
-    TrailingSlash: Optional[bool] = None
+def normPath(
+    string: Union[str, Path],
+    pathType: Optional[str] = None,
+    trailingSlash: Optional[bool] = None
 ):
-    '''
-    '''
+    """
+    Normalize path string
+    """
     try:
-        if str(String).strip() == '':
+        if str(string).strip() == '':
             raise
-        PathString = Path(String)#.resolve()
+        PathString = Path(string)#.resolve()
 
     except:
         return None
 
-    else: #if re.search(r':[/\\\\]', str(String)) or re.search(r'\./', str(String)):
-        if TrailingSlash is None:
-            TrailingSlash = True if str(String).endswith(('/', '\\')) else False
-        if platform.system() == 'Windows' or PathType == 'Win32':
-            String = PathString.as_posix().replace(r'/', '\\')
-            String += '\\' if TrailingSlash else ''
-        if platform.system() == 'Linux' or PathType == 'Posix':
-            String = PathString.as_posix()
-            String += '/' if TrailingSlash else ''
-        return String
+    else: #if re.search(r':[/\\\\]', str(string)) or re.search(r'\./', str(string)):
+        if trailingSlash is None:
+            trailingSlash = True if str(string).endswith(('/', '\\')) else False
+        if platform.system() == 'Windows' or pathType == 'Win32':
+            string = PathString.as_posix().replace(r'/', '\\')
+            string += '\\' if trailingSlash else ''
+        if platform.system() == 'Linux' or pathType == 'Posix':
+            string = PathString.as_posix()
+            string += '/' if trailingSlash else ''
+        return string
 
 #############################################################################################################
 
-def RawString(
-    Text: str
+def rawString(
+    text: str
 ):
-    '''
+    """
     Return as raw string representation of text
-    '''
+    """
     RawMap = {
         7: r'\a',
         8: r'\b',
@@ -121,29 +125,30 @@ def RawString(
         12: r'\f',
         13: r'\r'
     }
-    Text = r''.join([RawMap.get(ord(Char), Char) for Char in Text])
+    text = r''.join([RawMap.get(ord(Char), Char) for Char in text])
     '''
-    StringRepresentation = repr(Text)[1:-1] #StringRepresentation = Text.encode('unicode_escape').decode()
+    StringRepresentation = repr(text)[1:-1] #StringRepresentation = text.encode('unicode_escape').decode()
     return re.sub(r'\\+', lambda arg: r'\\', StringRepresentation).replace(r'\\', '\\').replace(r'\'', '\'') #return eval("'%s'" % canonical_string)
     '''
-    return unicodedata.normalize('NFKC', Text)
+    return unicodedata.normalize('NFKC', text)
 
 
-class SubprocessManager:
-    '''
-    '''
+class subprocessManager:
+    """
+
+    """
     def __init__(self,
-        CommunicateThroughConsole: bool = False
+        communicateThroughConsole: bool = False
     ):
-        self.CommunicateThroughConsole = CommunicateThroughConsole
+        self.communicateThroughConsole = communicateThroughConsole
 
         self.Encoding = 'gbk' if platform.system() == 'Windows' else 'utf-8'
 
     def create(self,
-        Args: Union[list[Union[list, str]], str],
+        args: Union[list[Union[list, str]], str],
     ):
-        if not self.CommunicateThroughConsole:
-            for Arg in ToIterable(Args):
+        if not self.communicateThroughConsole:
+            for Arg in toIterable(args):
                 Arg = shlex.split(Arg) if isinstance(Arg, str) else Arg
                 self.Subprocess = subprocess.Popen(
                     args = Arg,
@@ -155,9 +160,9 @@ class SubprocessManager:
 
         else:
             TotalInput = str()
-            for Arg in ToIterable(Args):
+            for Arg in toIterable(args):
                 Arg = shlex.join(Arg) if isinstance(Arg, list) else Arg
-                TotalInput += f'{RawString(Arg)}\n'
+                TotalInput += f'{rawString(Arg)}\n'
             self.TotalInput = TotalInput.encode(self.Encoding, errors = 'replace')
             if platform.system() == 'Windows':
                 ShellArgs = ['cmd']
@@ -175,19 +180,19 @@ class SubprocessManager:
         return self.Subprocess
 
     def monitor(self,
-        ShowProgress: bool = False,
-        DecodeResult: Optional[bool] = None,
-        LogPath: Optional[str] = None
+        showProgress: bool = False,
+        decodeResult: Optional[bool] = None,
+        logPath: Optional[str] = None
     ):
-        if not self.CommunicateThroughConsole:
+        if not self.communicateThroughConsole:
             TotalOutput, TotalError = (bytes(), bytes())
-            if ShowProgress:
+            if showProgress:
                 Output, Error = (bytes(), bytes())
                 for Line in io.TextIOWrapper(self.Subprocess.stdout, encoding = self.Encoding, errors = 'replace'):
                     Output += Line.encode(self.Encoding, errors = 'replace')
                     sys.stdout.write(Line) if sys.stdout is not None else None
-                    if LogPath is not None:
-                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                    if logPath is not None:
+                        with open(logPath, mode = 'a', encoding = 'utf-8') as Log:
                             Log.write(Line)
                     self.Subprocess.stdout.flush()
                     if self.Subprocess.poll() is not None:
@@ -195,8 +200,8 @@ class SubprocessManager:
                 for Line in io.TextIOWrapper(self.Subprocess.stderr, encoding = self.Encoding, errors = 'replace'):
                     Error += Line.encode(self.Encoding, errors = 'replace')
                     sys.stderr.write(Line) if sys.stderr is not None else None
-                    if LogPath is not None:
-                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                    if logPath is not None:
+                        with open(logPath, mode = 'a', encoding = 'utf-8') as Log:
                             Log.write(Line)
             else:
                 Output, Error = self.Subprocess.communicate()
@@ -204,15 +209,15 @@ class SubprocessManager:
             TotalOutput, TotalError = TotalOutput + Output, TotalError + Error
 
         else:
-            if ShowProgress:
+            if showProgress:
                 TotalOutput, TotalError = (bytes(), bytes())
                 self.Subprocess.stdin.write(self.TotalInput)
                 self.Subprocess.stdin.close()
                 for Line in io.TextIOWrapper(self.Subprocess.stdout, encoding = self.Encoding, errors = 'replace'):
                     TotalOutput += Line.encode(self.Encoding, errors = 'replace')
                     sys.stdout.write(Line) if sys.stdout is not None else None
-                    if LogPath is not None:
-                        with open(LogPath, mode = 'a', encoding = 'utf-8') as Log:
+                    if logPath is not None:
+                        with open(logPath, mode = 'a', encoding = 'utf-8') as Log:
                             Log.write(Line)
                     self.Subprocess.stdout.flush()
                     if self.Subprocess.poll() is not None:
@@ -224,70 +229,72 @@ class SubprocessManager:
                 TotalOutput, TotalError = b'' if TotalOutput is None else TotalOutput, b'' if TotalError is None else TotalError
 
         TotalOutput, TotalError = TotalOutput.strip(), TotalError.strip()
-        TotalOutput, TotalError = TotalOutput.decode(self.Encoding, errors = 'ignore') if DecodeResult else TotalOutput, TotalError.decode(self.Encoding, errors = 'ignore') if DecodeResult else TotalError
+        TotalOutput, TotalError = TotalOutput.decode(self.Encoding, errors = 'ignore') if decodeResult else TotalOutput, TotalError.decode(self.Encoding, errors = 'ignore') if decodeResult else TotalError
 
         return None if TotalOutput in ('', b'') else TotalOutput, None if TotalError in ('', b'') else TotalError, self.Subprocess.returncode
 
 
-def RunCMD(
-    Args: Union[list[Union[list, str]], str],
-    ShowProgress: bool = False,
-    CommunicateThroughConsole: bool = False,
-    DecodeResult: Optional[bool] = None,
-    LogPath: Optional[str] = None
+def runCMD(
+    args: Union[list[Union[list, str]], str],
+    showProgress: bool = False,
+    communicateThroughConsole: bool = False,
+    decodeResult: Optional[bool] = None,
+    logPath: Optional[str] = None
 ):
-    '''
-    '''
-    ManageSubprocess = SubprocessManager(CommunicateThroughConsole)
-    ManageSubprocess.create(Args)
-    return ManageSubprocess.monitor(ShowProgress, DecodeResult, LogPath)
+    """
+    Run command
+    """
+    ManageSubprocess = subprocessManager(communicateThroughConsole)
+    ManageSubprocess.create(args)
+    return ManageSubprocess.monitor(showProgress, decodeResult, logPath)
 
 
-def SetEnvVar(
-    Variable: str,
-    Value: str,
-    Type: str = 'Temp',
-    AffectOS: bool = True
+def setEnvVar(
+    variable: str,
+    value: str,
+    type: str = 'Temp',
+    affectOS: bool = True
 ):
-    '''
-    '''
-    Value = RawString(Value)
+    """
+    Set environment variable
+    """
+    value = rawString(value)
 
-    if Type == 'Sys':
+    if type == 'Sys':
         if platform.system() == 'Windows':
-            RunCMD(
-                # Args = [
-                #     f'set VAR={Value}{os.pathsep}%{Variable}%',
-                #     f'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
+            runCMD(
+                # args = [
+                #     f'set VAR={value}{os.pathsep}%{variable}%',
+                #     f'reg add "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
                 # ],
-                Args = [
-                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{Variable}"`) do set sysVAR=%B',
-                    f'setx "{Variable}" "{Value}{os.pathsep}%sysVAR%" /m'
+                args = [
+                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment" /v "{variable}"`) do set sysVAR=%B',
+                    f'setx "{variable}" "{value}{os.pathsep}%sysVAR%" /m'
                 ],
-                CommunicateThroughConsole = True
+                communicateThroughConsole = True
             )
         if platform.system() == 'Linux':
             '''
-            RunCMD(
-                f'echo {Variable}={Value} >> /etc/environment',
-                CommunicateThroughConsole = True
+            runCMD(
+                f'echo {variable}={value} >> /etc/environment',
+                communicateThroughConsole = True
             )
             '''
             with open('/etc/environment', 'a') as f:
-                f.write(f'\n{Variable}="{Value}"\n')
+                f.write(f'\n{variable}="{value}"\n')
 
-    if Type == 'User':
+    if type == 'User':
         if platform.system() == 'Windows':
-            RunCMD(
-                # Args = [
-                #     f'set VAR={Value}{os.pathsep}%{Variable}%',
-                #     f'reg add "HKEY_CURRENT_USER\\Environment" /v "{Variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
+            runCMD(
+                # args = [
+                #     f'set VAR={value}{os.pathsep}%{variable}%',
+                #     f'reg add "HKEY_CURRENT_USER\\Environment" /v "{variable}" /t REG_EXPAND_SZ /d "%VAR%" /f',
                 # ],
-                Args = [
-                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_CURRENT_USER\\Environment" /v "{Variable}"`) do set userVAR=%B',
-                    f'setx "{Variable}" "{Value}{os.pathsep}%userVAR%"'
+                args = [
+                    f'for /f "usebackq tokens=2,*" %A in (`reg query "HKEY_CURRENT_USER\\Environment" /v "{variable}"`) do set userVAR=%B',
+                    f'setx "{variable}" "{value}{os.pathsep}%userVAR%"'
                 ],
-                CommunicateThroughConsole = True
+                communicateThroughConsole = True
             )
         if platform.system() == 'Linux':
             shell = os.environ.get('SHELL', '/bin/bash')
@@ -298,19 +305,22 @@ def SetEnvVar(
             else:
                 config_file = os.path.expanduser('~/.profile')
             with open(config_file, 'a') as f:
-                f.write(f'\nexport {Variable}="{Value}"\n')
+                f.write(f'\nexport {variable}="{value}"\n')
 
-    if Type == 'Temp' or AffectOS:
-        EnvValue = os.environ.get(Variable)
-        if EnvValue is not None and NormPath(Value, 'Posix') not in [NormPath(Value, 'Posix') for Value in EnvValue.split(os.pathsep)]:
-            EnvValue = f'{Value}{os.pathsep}{EnvValue}' #EnvValue = f'{EnvValue}{os.pathsep}{Value}'
+    if type == 'Temp' or affectOS:
+        EnvValue = os.environ.get(variable)
+        if EnvValue is not None and normPath(value, 'Posix') not in [normPath(value, 'Posix') for value in EnvValue.split(os.pathsep)]:
+            EnvValue = f'{value}{os.pathsep}{EnvValue}' #EnvValue = f'{EnvValue}{os.pathsep}{value}'
         else:
-            EnvValue = Value
-        os.environ[Variable] = EnvValue
+            EnvValue = value
+        os.environ[variable] = EnvValue
 
 #############################################################################################################
 
 def isJson(content: str):
+    """
+    Check if content is a json
+    """
     try:
         json.loads(json.dumps(eval(content)))
         return True
@@ -319,6 +329,9 @@ def isJson(content: str):
 
 
 def isUrl(content: str):
+    """
+    Check if content is a url
+    """
     if urlparse.urlparse(content).scheme in ['http', 'https']:
         return True
     else:
@@ -330,276 +343,305 @@ def isUrl(content: str):
     tbl_hide_column_data_types = True,
     tbl_hide_dataframe_shape = True,
 )
-def toMarkdown(df: polars.DataFrame) -> str:
+def _toMarkdown(df: polars.DataFrame) -> str:
     return str(df)
 
 
-def ToMarkdown(content: str):
+def toMarkdown(content: str):
+    """
+    Convert content to markdown
+    """
     if isUrl(content):
         content = f"[URL]({content})"
     if isJson(content):
-        content = toMarkdown(polars.DataFrame(json.loads(json.dumps(eval(content)))))
+        content = _toMarkdown(polars.DataFrame(json.loads(json.dumps(eval(content)))))
     return content
 
 
-def ToHtml(Content, Align, Size, Weight, LetterSpacing, LineHeight):
-    Style = f"'text-align:{Align}; font-size:{Size}pt; font-weight:{Weight}; letter-spacing: {LetterSpacing}px; line-height: {LineHeight}px'"
-    Content = re.sub(
-        pattern = "[\n]",
-        repl = "<br>",
-        string = Content
-    ) if Content is not None else None
-    return f"<p style={Style}>{Content}</p>" if Content is not None else ''
+class richTextManager:
+    """
+    Manage rich text
+    """
+    def __init__(self):
+        self.richTextLines = []
+
+    def _toHtml(self, text, align, size, weight, letterSpacing, lineHeight):
+        Style = f"'text-align:{align}; font-size:{size}pt; font-weight:{weight}; letter-spacing: {letterSpacing}px; line-height: {lineHeight}px'"
+        content = re.sub(
+            pattern = "[\n]",
+            repl = "<br>",
+            string = text
+        ) if text is not None else None
+        return f"<p style={Style}>{content}</p>" if content is not None else ''
+
+    def addTitle(self,
+        text: Optional[str] = None,
+        align: str = "left",
+        size: float = 12.3,
+        weight: float = 630.,
+        spacing: float = 0.9,
+        lineHeight: float = 24.6,
+    ):
+        head = f"<body>{self._toHtml(text, align, size, weight, spacing, lineHeight)}</body>" #head = f"<head><title>{self._toHtml(text, align, size, weight, spacing, lineHeight)}</title></head>"
+        self.richTextLines.append(head)
+        return self
+
+    def addBody(self,
+        text: Optional[str] = None,
+        align: str = "left",
+        size: float = 9.3,
+        weight: float = 420.,
+        spacing: float = 0.6,
+        lineHeight: float = 22.2,
+    ):
+        body = f"<body>{self._toHtml(text, align, size, weight, spacing, lineHeight)}</body>"
+        self.richTextLines.append(body)
+        return self
+
+    def richText(self):
+        richText = "<html>\n%s\n</html>" % '\n'.join(self.richTextLines)
+        return (richText)
 
 
-def SetRichText(
-    Title: Optional[str] = None,
-    TitleAlign: str = "left",
-    TitleSize: float = 12.3,
-    TitleWeight: float = 630.,
-    TitleSpacing: float = 0.9,
-    TitleLineHeight: float = 24.6,
-    Body: Optional[str] = None,
-    BodyAlign: str = "left",
-    BodySize: float = 9.3,
-    BodyWeight: float = 420.,
-    BodySpacing: float = 0.6,
-    BodyLineHeight: float = 22.2,
+def setRichText(
+    text: str = "",
+    align: str = "left",
+    size: float = 9.6,
+    weight: float = 480.,
+    spacing: float = 0.75,
+    lineHeight: float = 23.4,
 ):
-    '''
-    Function to set text for widget
-    '''
-
-    RichText = (
-        "<html>"
-            "<head>"
-                f"<title>{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleSpacing, TitleLineHeight)}</title>" # Not working with QWidgets
-            "</head>"
-            "<body>"
-                f"{ToHtml(Title, TitleAlign, TitleSize, TitleWeight, TitleSpacing, TitleLineHeight)}"
-                f"{ToHtml(Body, BodyAlign, BodySize, BodyWeight, BodySpacing, BodyLineHeight)}"
-            "</body>"
-        "</html>"
-    )
-
-    return RichText
+    """
+    Function to set rich text
+    """
+    return richTextManager().addBody(text, align, size, weight, spacing, lineHeight).richText()
 
 #############################################################################################################
 
-def FindURL(
-    String: str
+def findURL(
+    string: str
 ):
-    '''
-    '''
-    URLList = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+').findall(RawString(String))
+    """
+    Function to find URL in a string
+    """
+    URLList = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+').findall(rawString(string))
     URL = URLList[0]
-
     return URL
 
 #############################################################################################################
 
-def Function_getDecimalPlaces(number):
+def getDecimalPlaces(
+    number: Union[int, float]
+):
+    """
+    Function to get decimal places of a number
+    """
     return abs(Decimal(str(number)).as_tuple().exponent)
 
 #############################################################################################################
 
-def GetClassFromMethod(Method):
+def getClassFromMethod(
+    method: object
+):
+    """
+    Function to get class from method
+    """
     '''
-    Modules = list(inspect.getmodule(Method).__dict__.values())
+    Modules = list(inspect.getmodule(method).__dict__.values())
     Modules = [Module for Module in Modules if str(Module).startswith("<class '__main__.")]
     return Modules[-1]
     '''
-    return inspect.getmodule(Method).__dict__[Method.__qualname__.split('.')[0]]
+    return inspect.getmodule(method).__dict__[method.__qualname__.split('.')[0]]
 
 #############################################################################################################
 
-def RunEvents(
-    Events: Union[list, dict]
+def runEvents(
+    events: Union[list, dict]
 ):
-    '''
-    '''
-    if isinstance(Events, list):
-        for Event in Events:
+    """
+    Function to run events
+    """
+    if isinstance(events, list):
+        for Event in events:
             Event() if Event is not None else None
-    if isinstance(Events, dict):
-        for Event, Param in Events.items():
-            Event(*ToIterable(Param if Param is not None else ())) if Event is not None else None
+    if isinstance(events, dict):
+        for Event, Param in events.items():
+            Event(*toIterable(Param if Param is not None else ())) if Event is not None else None
 
 #############################################################################################################
 
-def MultiThreading(
-    funcDict: dict,
-    maxWorkers: Optional[int] = None,
-    asynchronous: bool = True
-):
-    '''
-    Function to create pool for multithreading to accelerate tasks
-    '''
-    threadPoolExecutor = ThreadPoolExecutor(max_workers = maxWorkers)
+class taskAccelerationManager(Enum):
+    """
+    Class to accelerate tasks by using thread or process pools
+    """
+    ThreadPool = 0
+    ProcessPool = 1
 
-    with threadPoolExecutor as executor:
+    def createPool(self, 
+        funcDict: dict,
+        asynchronous: bool = True,
+        maxWorkers: Optional[int] = None
+    ) -> Union[ThreadPoolExecutor, ProcessPoolExecutor]:
+        if self.value == self.ThreadPool.value:
+            self.executor = ThreadPoolExecutor(maxWorkers)
+        if self.value == self.ProcessPool.value:
+            self.executor = ProcessPoolExecutor(maxWorkers)
         for func, args in funcDict.items():
-            thread = executor.submit(func, *args)
-            thread.result() if asynchronous == False else None
+            future = self.executor.submit(func, *args)
+            future.result() if asynchronous == False else None
+        return self.executor
 
 
-def MultiProcessing(
-    funcDict: dict,
-    maxWorkers: Optional[int] = None,
-    asynchronous: bool = True
+def processTerminator(
+    program: Union[str, int],
+    selfIgnored: bool = True,
+    searchKeyword: bool = False
 ):
-    '''
-    Function to create pool for multiprocessing to accelerate tasks
-    '''
-    processPooExecutor = ProcessPoolExecutor(max_workers = maxWorkers)
-
-    with processPooExecutor as executer:
-        for func, args in funcDict.items():
-            process = executer.submit(func, *args)
-            process.result() if asynchronous == False else None
-
-
-def ProcessTerminator(
-    Program: Union[str, int],
-    SelfIgnored: bool = True,
-    SearchKeyword: bool = False
-):
-    '''
-    '''
-    if isinstance(Program, int):
-        PID = Program
+    """
+    Kill a process by its PID or name
+    """
+    if isinstance(program, int):
+        PID = program
         try:
             Process = psutil.Process(PID)
-        except psutil.NoSuchProcess:
-            # Process already terminated
+        except psutil.NoSuchProcess: # Process already terminated
             return
 
         ProcessList =  Process.children(recursive = True) + [Process]
         for Process in ProcessList:
             try:
-                if Process.pid == os.getpid() and SelfIgnored:
+                if Process.pid == os.getpid() and selfIgnored:
                     continue
                 os.kill(Process.pid, signal.SIGTERM)
             except:
                 pass
 
-    if isinstance(Program, str):
-        Name = Program
-        ProgramPath = NormPath(Name) if NormPath(Name) is not None else Name
+    if isinstance(program, str):
+        name = program
+        programPath = normPath(name) if normPath(name) is not None else name
         for Process in psutil.process_iter():
             ProcessList =  Process.children(recursive = True) + [Process]
             try:
                 for Process in ProcessList:
-                    if Process.pid == os.getpid() and SelfIgnored:
+                    if Process.pid == os.getpid() and selfIgnored:
                         continue
                     ProcessPath = Process.exe()
-                    if ProgramPath == ProcessPath or (ProgramPath.lower() in ProcessPath.lower() and SearchKeyword):
+                    if programPath == ProcessPath or (programPath.lower() in ProcessPath.lower() and searchKeyword):
                         Process.send_signal(signal.SIGTERM) #Process.kill()
             except:
                 pass
 
 
-def OccupationTerminator(
-    File: str,
-    SearchKeyword: bool = False
+def occupationTerminator(
+    file: str,
+    searchKeyword: bool = False
 ):
-    '''
-    '''
-    FilePath = NormPath(File) if NormPath(File) is not None else File
+    """
+    Terminate all processes that are currently using the file
+    """
+    filePath = normPath(file) if normPath(file) is not None else file
     for Process in psutil.process_iter():
         try:
             PopenFiles = Process.open_files()
             for PopenFile in PopenFiles:
                 PopenFilePath = PopenFile.path
-                if FilePath == PopenFilePath or (FilePath.lower() in PopenFilePath.lower() and SearchKeyword):
+                if filePath == PopenFilePath or (filePath.lower() in PopenFilePath.lower() and searchKeyword):
                     Process.send_signal(signal.SIGTERM) #Process.kill()
         except:
             pass
 
 #############################################################################################################
 
-def RenameIfExists(PathStr: str):
-    ParentDirectory, Name = os.path.split(PathStr)
-    suffix = Path(Name).suffix
+def renameIfExists(
+    pathStr: str
+):
+    """
+    If pathStr already exists, rename it to pathStr(0), pathStr(1), etc.
+    """
+    ParentDirectory, name = os.path.split(pathStr)
+    suffix = Path(name).suffix
     if len(suffix) > 0:
-        while Path(PathStr).exists():
+        while Path(pathStr).exists():
             pattern = r'(\d+)\)\.'
-            if re.search(pattern, Name) is None:
-                Name = Name.replace('.', '(0).')
+            if re.search(pattern, name) is None:
+                name = name.replace('.', '(0).')
             else:
-                CurrentNumber = int(re.findall(pattern, Name)[-1])
-                Name = Name.replace(f'({CurrentNumber}).', f'({CurrentNumber + 1}).')
-            PathStr = Path(ParentDirectory).joinpath(Name).as_posix()
+                CurrentNumber = int(re.findall(pattern, name)[-1])
+                name = name.replace(f'({CurrentNumber}).', f'({CurrentNumber + 1}).')
+            pathStr = Path(ParentDirectory).joinpath(name).as_posix()
     else:
-        while Path(PathStr).exists():
+        while Path(pathStr).exists():
             pattern = r'(\d+)\)'
-            match = re.search(pattern, Name)
+            match = re.search(pattern, name)
             if match is None:
-                Name += '(0)'
+                name += '(0)'
             else:
                 CurrentNumber = int(match.group(1))
-                Name = Name[:match.start(1)] + f'({CurrentNumber + 1})'
-            PathStr = Path(ParentDirectory).joinpath(Name).as_posix()
-    return PathStr
+                name = name[:match.start(1)] + f'({CurrentNumber + 1})'
+            pathStr = Path(ParentDirectory).joinpath(name).as_posix()
+    return pathStr
 
 
-def CleanDirectory(
-    Directory: str,
-    WhiteList: list
+def cleanDirectory(
+    directory: str,
+    whiteList: list
 ):
-    '''
-    '''
-    if os.path.exists(Directory):
-        for DirPath, Folders, Files in os.walk(Directory, topdown = False):
-            for File in Files:
-                FilePath = os.path.join(DirPath, File)
+    """
+    Remove all files and folders in directory except those in whiteList
+    """
+    if os.path.exists(directory):
+        for DirPath, Folders, Files in os.walk(directory, topdown = False):
+            for file in Files:
+                filePath = os.path.join(DirPath, file)
                 try:
-                    if not any(File in FilePath for File in WhiteList):
-                        os.remove(FilePath)
+                    if not any(file in filePath for file in whiteList):
+                        os.remove(filePath)
                 except:
                     pass
             for Folder in Folders:
                 FolderPath = os.path.join(DirPath, Folder)
                 try:
-                    if not any(Folder in FolderPath for Folder in WhiteList):
+                    if not any(Folder in FolderPath for Folder in whiteList):
                         shutil.rmtree(FolderPath)
                 except:
                     pass
 
 
-def MoveFiles(
-    Dir: str,
-    Dst: str
+def moveFiles(
+    directory: str,
+    destination: str
 ):
-    '''
-    '''
-    for DirPath, FolderNames, FileNames in os.walk(Dir):
+    """
+    Move all files and folders in directory to destination
+    """
+    for DirPath, FolderNames, fileNames in os.walk(directory):
         for FolderName in FolderNames:
-            if Dir != Dst:
-                shutil.move(os.path.join(DirPath, FolderName), Dst)
-        for FileName in FileNames:
-            if Dir != Dst:
-                shutil.move(os.path.join(DirPath, FileName), Dst)
+            if directory != destination:
+                shutil.move(os.path.join(DirPath, FolderName), destination)
+        for fileName in fileNames:
+            if directory != destination:
+                shutil.move(os.path.join(DirPath, fileName), destination)
 
 
-def GetPaths(
-    Dir: str,
-    Name: str,
-    SearchKeyword: bool = True
+def getPaths(
+    directory: str,
+    name: str,
+    searchKeyword: bool = True
 ):
-    '''
-    '''
+    """
+    Get all paths of files and folders in directory
+    """
     Result = []
 
-    for DirPath, FolderNames, FileNames in os.walk(Dir):
+    for DirPath, FolderNames, fileNames in os.walk(directory):
         for FolderName in FolderNames:
-            if Name == FolderName or (Name in FolderName and SearchKeyword is True):
+            if name == FolderName or (name in FolderName and searchKeyword is True):
                 Result.append(os.path.join(DirPath, FolderName))
             else:
                 pass
-        for FileName in FileNames:
-            if Name == FileName or (Name in FileName and SearchKeyword is True):
-                Result.append(os.path.join(DirPath, FileName))
+        for fileName in fileNames:
+            if name == fileName or (name in fileName and searchKeyword is True):
+                Result.append(os.path.join(DirPath, fileName))
             else:
                 pass
 
@@ -607,190 +649,204 @@ def GetPaths(
 
 #############################################################################################################
 
-def GetBaseDir(
-    FilePath: Optional[str] = None,
-    ParentLevel: Optional[int] = None,
-    SearchMEIPASS: bool = False
+def getBaseDir(
+    filePath: Optional[str] = None,
+    parentLevel: Optional[int] = None,
+    searchMEIPASS: bool = False
 ):
-    '''
+    """
     Get the parent directory of file, or get the MEIPASS if file is compiled with pyinstaller
-    '''
-    if FilePath is not None:
-        BaseDir = NormPath(Path(str(FilePath)).absolute().parents[ParentLevel if ParentLevel is not None else 0])
-    elif SearchMEIPASS and getattr(sys, 'frozen', None):
-        BaseDir = NormPath(sys._MEIPASS)
+    """
+    if filePath is not None:
+        BaseDir = normPath(Path(str(filePath)).absolute().parents[parentLevel if parentLevel is not None else 0])
+    elif searchMEIPASS and getattr(sys, 'frozen', None):
+        BaseDir = normPath(sys._MEIPASS)
     else:
         BaseDir = None
 
     return BaseDir
 
 
-def GetFileInfo(
-    File: Optional[str] = None
+def getFileInfo(
+    file: Optional[str] = None
 ):
-    '''
+    """
     Check whether python file is compiled
-    '''
-    if File is None:
-        FileName = Path(sys.argv[0]).name
+    """
+    if file is None:
+        fileName = Path(sys.argv[0]).name
         if getattr(sys, 'frozen', None):
-            IsFileCompiled = True
+            isFileCompiled = True
         else:
-            IsFileCompiled = False if FileName.endswith('.py') or sys.executable.endswith('python.exe') else True
+            isFileCompiled = False if fileName.endswith('.py') or sys.executable.endswith('python.exe') else True
     else:
-        FileName = Path(NormPath(File)).name
-        IsFileCompiled = False if FileName.endswith('.py') else True
+        fileName = Path(normPath(file)).name
+        isFileCompiled = False if fileName.endswith('.py') else True
 
-    return FileName, IsFileCompiled
-
+    return fileName, isFileCompiled
 
 #############################################################################################################
 
-def IsVersionSatisfied(CurrentVersion, VersionReqs):
-    if VersionReqs is None:
+def isVersionSatisfied(
+    currentVersion: str,
+    versionReqs: str
+):
+    """
+    Check if the version requirements are satisfied
+    """
+    if versionReqs is None:
         return True
-    VersionReqs = VersionReqs.split(',') if isinstance(VersionReqs, str) else list(VersionReqs)
-    Results = []
-    for VersionReq in VersionReqs:
+    versionReqs = versionReqs.split(',') if isinstance(versionReqs, str) else list(versionReqs)
+    results = []
+    for VersionReq in versionReqs:
         SplitVersionReq = re.split('=|>|<', VersionReq)
         RequiredVersion = SplitVersionReq[-1]
         Req = VersionReq[:len(VersionReq) - len(RequiredVersion)]
         if Req == "==":
-            Results.append(version.parse(CurrentVersion) == version.parse(RequiredVersion))
+            results.append(version.parse(currentVersion) == version.parse(RequiredVersion))
         if Req == ">=":
-            Results.append(version.parse(CurrentVersion) >= version.parse(RequiredVersion))
+            results.append(version.parse(currentVersion) >= version.parse(RequiredVersion))
         if Req == "<=":
-            Results.append(version.parse(CurrentVersion) <= version.parse(RequiredVersion))
-        return True if False not in Results else False
+            results.append(version.parse(currentVersion) <= version.parse(RequiredVersion))
+        return True if False not in results else False
 
 
-def IsSystemSatisfied(SystemReqs):
-    if SystemReqs is None:
+def isSystemSatisfied(
+    systemReqs: str
+):
+    """
+    Check if the system requirements are satisfied
+    """
+    if systemReqs is None:
         return True
-    SystemReqs = SystemReqs.split(';') if isinstance(SystemReqs, str) else list(SystemReqs)
-    Results = []
-    for SystemReq in SystemReqs:
-        SplitSystemReq = re.split('=|>|<', SystemReq)
-        RequiredSystem = SplitSystemReq[-1].strip()
-        Req = SystemReq[len(SplitSystemReq[0]) : len(SystemReq) - len(RequiredSystem)].strip()
+    systemReqs = systemReqs.split(';') if isinstance(systemReqs, str) else list(systemReqs)
+    results = []
+    for systemReq in systemReqs:
+        SplitsystemReq = re.split('=|>|<', systemReq)
+        RequiredSystem = SplitsystemReq[-1].strip()
+        Req = systemReq[len(SplitsystemReq[0]) : len(systemReq) - len(RequiredSystem)].strip()
         if Req == "==":
-            Results.append(sys.platform == eval(RequiredSystem))
+            results.append(sys.platform == eval(RequiredSystem))
         if Req == "!=":
-            Results.append(sys.platform != eval(RequiredSystem))
-        return True if False not in Results else False
+            results.append(sys.platform != eval(RequiredSystem))
+        return True if False not in results else False
 
 #############################################################################################################
 
-def RunScript(
-    CommandList: list[str],
-    ScriptPath: Optional[str]
+def runScript(
+    commandList: list[str],
+    scriptPath: Optional[str]
 ):
-    '''
-    '''
+    """
+    Run a script with bash or bat
+    """
     if platform.system() == 'Linux':
-        ScriptPath = Path.cwd().joinpath('Bash.sh') if ScriptPath is None else NormPath(ScriptPath)
-        with open(ScriptPath, 'w') as BashFile:
-            Commands = "\n".join(CommandList)
+        scriptPath = Path.cwd().joinpath('Bash.sh') if scriptPath is None else normPath(scriptPath)
+        with open(scriptPath, 'w') as BashFile:
+            Commands = "\n".join(commandList)
             BashFile.write(Commands)
-        os.chmod(ScriptPath, 0o755) # 给予可执行权限
-        subprocess.Popen(['bash', ScriptPath])
+        os.chmod(scriptPath, 0o755) # 给予可执行权限
+        subprocess.Popen(['bash', scriptPath])
     if platform.system() == 'Windows':
-        ScriptPath = Path.cwd().joinpath('Bat.bat') if ScriptPath is None else NormPath(ScriptPath)
-        with open(ScriptPath, 'w') as BatFile:
-            Commands = "\n".join(CommandList)
+        scriptPath = Path.cwd().joinpath('Bat.bat') if scriptPath is None else normPath(scriptPath)
+        with open(scriptPath, 'w') as BatFile:
+            Commands = "\n".join(commandList)
             BatFile.write(Commands)
-        subprocess.Popen([ScriptPath], creationflags = subprocess.CREATE_NEW_CONSOLE)
+        subprocess.Popen([scriptPath], creationflags = subprocess.CREATE_NEW_CONSOLE)
 
 
-def BootWithScript(
-    ProgramPath: str = ...,
-    DelayTime: int = 3,
-    ScriptPath: Optional[str] = None
+def bootWithScript(
+    programPath: str = ...,
+    delayTime: int = 3,
+    scriptPath: Optional[str] = None
 ):
-    '''
-    '''
+    """
+    Boot the program with a script
+    """
     if platform.system() == 'Linux':
-        _, IsFileCompiled = GetFileInfo(ProgramPath)
-        RunScript(
-            CommandList = [
+        _, isFileCompiled = getFileInfo(programPath)
+        runScript(
+            commandList = [
                 '#!/bin/bash',
-                f'sleep {DelayTime}',
-                f'./"{ProgramPath}"' if IsFileCompiled else f'python3 "{ProgramPath}"',
+                f'sleep {delayTime}',
+                f'./"{programPath}"' if isFileCompiled else f'python3 "{programPath}"',
                 'rm -- "$0"'
             ],
-            ScriptPath = ScriptPath
+            scriptPath = scriptPath
         )
     if platform.system() == 'Windows':
-        _, IsFileCompiled = GetFileInfo(ProgramPath)
-        RunScript(
-            CommandList = [
+        _, isFileCompiled = getFileInfo(programPath)
+        runScript(
+            commandList = [
                 '@echo off',
-                f'ping 127.0.0.1 -n {DelayTime + 1} > nul',
-                f'start "Programm Running" "{ProgramPath}"' if IsFileCompiled else f'python "{ProgramPath}"',
+                f'ping 127.0.0.1 -n {delayTime + 1} > nul',
+                f'start "Programm Running" "{programPath}"' if isFileCompiled else f'python "{programPath}"',
                 'del "%~f0"'
             ],
-            ScriptPath = ScriptPath
+            scriptPath = scriptPath
         )
 
 ##############################################################################################################################
 
-def CheckUpdateFromGithub(
-    AccessToken: Optional[str] = None,
-    RepoOwner: str = ...,
-    RepoName: str = ...,
-    FileName: str = ...,
-    FileFormat: str = ...,
-    Version_Current: str = ...
+def checkUpdateFromGithub(
+    accessToken: Optional[str] = None,
+    repoOwner: str = ...,
+    repoName: str = ...,
+    fileName: str = ...,
+    fileFormat: str = ...,
+    currentVersion: str = ...
 ):
-    '''
-    '''
+    """
+    Check if there is an update available on Github
+    """
     try:
-        PersonalGit = Github(AccessToken)
-        Repo = PersonalGit.get_repo(f"{RepoOwner}/{RepoName}")
-        Version_Latest = Repo.get_tags()[0].name
-        LatestRelease = Repo.get_latest_release() #LatestRelease = Repo.get_release(Version_Latest)
-        for Index, Asset in enumerate(LatestRelease.assets):
-            if Asset.name == f"{FileName}.{FileFormat}":
-                IsUpdateNeeded = True if version.parse(Version_Current) < version.parse(Version_Latest) else False
-                DownloadURL = Asset.browser_download_url #DownloadURL = f"https://github.com/{RepoOwner}/{RepoName}/releases/download/{Version_Latest}/{FileName}.{FileFormat}"
-                VersionInfo = LatestRelease.body
-                return IsUpdateNeeded, DownloadURL, VersionInfo
-            elif Index + 1 == len(LatestRelease.assets):
-                raise Exception(f"No file found with name {FileName}.{FileFormat} in the latest release")
+        PersonalGit = Github(accessToken)
+        Repo = PersonalGit.get_repo(f"{repoOwner}/{repoName}")
+        latestVersion = Repo.get_tags()[0].name
+        latestRelease = Repo.get_latest_release() #latestRelease = Repo.get_release(latestVersion)
+        for Index, Asset in enumerate(latestRelease.assets):
+            if Asset.name == f"{fileName}.{fileFormat}":
+                IsUpdateNeeded = True if version.parse(currentVersion) < version.parse(latestVersion) else False
+                downloadURL = Asset.browser_download_url #downloadURL = f"https://github.com/{repoOwner}/{repoName}/releases/download/{latestVersion}/{fileName}.{fileFormat}"
+                VersionInfo = latestRelease.body
+                return IsUpdateNeeded, downloadURL, VersionInfo
+            elif Index + 1 == len(latestRelease.assets):
+                raise Exception(f"No file found with name {fileName}.{fileFormat} in the latest release")
 
     except Exception as e:
         print(f"Error occurred while checking for updates: \n{e}")
 
 
-def DownloadFile(
-    DownloadURL: str,
-    DownloadDir: str,
-    FileName: str,
-    FileFormat: str,
-    SHA_Expected: Optional[str],
-    CreateNewConsole: bool = False
+def downloadFile(
+    downloadURL: str,
+    downloadDir: str,
+    fileName: str,
+    fileFormat: str,
+    sha: Optional[str],
+    createNewConsole: bool = False
 ) -> Tuple[Union[bytes, str], str]:
-    '''
-    '''
-    os.makedirs(DownloadDir, exist_ok = True)
+    """
+    Downloads a file from a given URL and saves it to a specified directory
+    """
+    os.makedirs(downloadDir, exist_ok = True)
 
-    DownloadName = FileName + (FileFormat if '.' in FileFormat else f'.{FileFormat}')
-    DownloadPath = NormPath(Path(DownloadDir).joinpath(DownloadName).absolute())
+    downloadName = fileName + (fileFormat if '.' in fileFormat else f'.{fileFormat}')
+    downloadPath = normPath(Path(downloadDir).joinpath(downloadName).absolute())
 
     def Download():
         try:
-            RunCMD(
-                Args = [
+            runCMD(
+                args = [
                     'aria2c',
                     f'''
-                    {('cmd.exe /c start ' if platform.system() == 'Windows' else 'x-terminal-emulator -e ') if CreateNewConsole else ''}
-                    aria2c "{DownloadURL}" --dir="{Path(DownloadPath).parent.as_posix()}" --out="{Path(DownloadPath).name}" -x6 -s6 --file-allocation=none --force-save=false
+                    {('cmd.exe /c start ' if platform.system() == 'Windows' else 'x-terminal-emulator -e ') if createNewConsole else ''}
+                    aria2c "{downloadURL}" --dir="{Path(downloadPath).parent.as_posix()}" --out="{Path(downloadPath).name}" -x6 -s6 --file-allocation=none --force-save=false
                     '''
                 ]
             )
         except:
-            with urllib.request.urlopen(DownloadURL) as source, open(DownloadPath, "wb") as output:
-                with tqdm(total = int(source.info().get("Content-Length")), ncols = 80, unit = 'iB', unit_scale = True, unit_divisor = 1024) as loop:
+            with urllib.request.urlopen(downloadURL) as source, open(downloadPath, "wb") as output:
+                with tqdm(total = int(source.info().get("content-Length")), ncols = 80, unit = 'iB', unit_scale = True, unit_divisor = 1024) as loop:
                     while True:
                         buffer = source.read(8192)
                         if not buffer:
@@ -798,21 +854,21 @@ def DownloadFile(
                         output.write(buffer)
                         loop.update(len(buffer))
         finally:
-            return open(DownloadPath, "rb").read() if Path(DownloadPath).exists() else None
+            return open(downloadPath, "rb").read() if Path(downloadPath).exists() else None
 
-    if os.path.exists(DownloadPath):
-        if os.path.isfile(DownloadPath) == False:
-            raise RuntimeError(f"{DownloadPath} exists and is not a regular file")
-        elif SHA_Expected is not None:
-            with open(DownloadPath, "rb") as f:
+    if os.path.exists(downloadPath):
+        if os.path.isfile(downloadPath) == False:
+            raise RuntimeError(f"{downloadPath} exists and is not a regular file")
+        elif sha is not None:
+            with open(downloadPath, "rb") as f:
                 FileBytes = f.read()
-            if len(SHA_Expected) == 40:
+            if len(sha) == 40:
                 SHA_Current = hashlib.sha1(FileBytes).hexdigest()
-            if len(SHA_Expected) == 64:
+            if len(sha) == 64:
                 SHA_Current = hashlib.sha256(FileBytes).hexdigest()
-            FileBytes = Download() if SHA_Current != SHA_Expected else FileBytes #Download() if SHA_Current != SHA_Expected else None
+            FileBytes = Download() if SHA_Current != sha else FileBytes #Download() if SHA_Current != sha else None
         else:
-            os.remove(DownloadPath)
+            os.remove(downloadPath)
             FileBytes = Download()
     else:
         FileBytes = Download()
@@ -820,21 +876,21 @@ def DownloadFile(
     if FileBytes is None:
         raise Exception('Download Failed!')
 
-    return FileBytes, DownloadPath
+    return FileBytes, downloadPath
 
 #############################################################################################################
 
-class ManageSQL:
-    '''
+class sqlManager:
+    """
     Manage SQL
-    '''
+    """
     historydbName = "history"
     historydbTableName = "historyTable"
 
     file_path = None
     filedb_name = None
 
-    def export_data_to_filedb(self, df: polars.DataFrame, new: bool = True):
+    def exportDataToFiledb(self, df: polars.DataFrame, new: bool = True):
         '''
         将DataFrame导入文件数据库
         '''
@@ -846,7 +902,7 @@ class ManageSQL:
             if_table_exists = 'replace'
         )
 
-    def load_data_from_filedb(self):
+    def loadDataFromFiledb(self):
         '''
         从文件数据库中导出DataFrame
         '''
@@ -858,7 +914,7 @@ class ManageSQL:
         df.fill_nan("")
         return df
 
-    def create_historydb(self):
+    def createHistorydb(self):
         '''
         创建历史记录数据库并初始化历史记录Table
         '''
@@ -874,7 +930,7 @@ class ManageSQL:
                 if_table_exists = 'replace'
             )
 
-    def to_historydb(self):
+    def toHistorydb(self):
         '''
         将[表格哈希值,表格数据库名]写入历史记录数据库
         '''
@@ -890,7 +946,7 @@ class ManageSQL:
         )
         # TODO 通过redis建立旁路缓存模式
 
-    def chk_historydb(self):
+    def chkHistorydb(self):
         '''
         检查文件哈希值在历史记录数据库中的对应值
         '''
@@ -906,58 +962,58 @@ class ManageSQL:
 
 ##############################################################################################################################
 
-class ManageConfig:
-    '''
+class configManager:
+    """
     Manage config
-    '''
+    """
     def __init__(self,
-        Config_Path: Optional[str] = None
+        configPath: Optional[str] = None
     ):
-        self.Config_Path = NormPath(Path(os.getenv('SystemDrive')).joinpath('Config.ini')) if Config_Path == None else Config_Path
-        os.makedirs(Path(self.Config_Path).parent, exist_ok = True)
+        self.configPath = normPath(Path(os.getenv('SystemDrive')).joinpath('Config.ini')) if configPath == None else configPath
+        os.makedirs(Path(self.configPath).parent, exist_ok = True)
 
-        self.ConfigParser = configparser.ConfigParser()
+        self.configParser = configparser.ConfigParser()
         try:
-            self.ConfigParser.read(self.Config_Path, encoding = 'utf-8')
+            self.configParser.read(self.configPath, encoding = 'utf-8')
         except:
-            with open(self.Config_Path, 'w'):
+            with open(self.configPath, 'w'):
                 pass
-            self.ConfigParser.clear()
+            self.configParser.clear()
 
     def parser(self):
-        return self.ConfigParser
+        return self.configParser
 
     def editConfig(self,
-        Section: str = ...,
-        Option: str = ...,
-        Value: str = ...,
-        ConfigParser: Optional[configparser.ConfigParser] = None
+        section: str = ...,
+        option: str = ...,
+        value: str = ...,
+        configParser: Optional[configparser.ConfigParser] = None
     ):
-        ConfigParser = self.parser() if ConfigParser == None else ConfigParser
+        configParser = self.parser() if configParser == None else configParser
         try:
-            ConfigParser.add_section(Section)
+            configParser.add_section(section)
         except:
             pass
-        ConfigParser.set(Section, Option, Value)
-        with open(self.Config_Path, 'w', encoding = 'utf-8') as Config:
-            ConfigParser.write(Config)
+        configParser.set(section, option, value)
+        with open(self.configPath, 'w', encoding = 'utf-8') as Config:
+            configParser.write(Config)
 
     def getValue(self,
-        Section: str = ...,
-        Option: str = ...,
-        InitValue: Optional[str] = None,
-        ConfigParser: Optional[configparser.ConfigParser] = None
+        section: str = ...,
+        option: str = ...,
+        initValue: Optional[str] = None,
+        configParser: Optional[configparser.ConfigParser] = None
     ):
-        ConfigParser = self.parser() if ConfigParser == None else ConfigParser
+        configParser = self.parser() if configParser == None else configParser
         try:
-            Value = ConfigParser.get(Section, Option)
+            value = configParser.get(section, option)
         except:
-            if InitValue != None:
-                self.editConfig(Section, Option, InitValue, ConfigParser)
-                return InitValue
+            if initValue != None:
+                self.editConfig(section, option, initValue, configParser)
+                return initValue
             else:
                 raise Exception("Need initial value")
-        return Value
+        return value
 
 #############################################################################################################
 

@@ -29,8 +29,8 @@ class DialogBase(WindowBase, QDialog):
         self.TitleBar.MaximizeButton.hide()
         self.TitleBar.MaximizeButton.deleteLater()
 
-        self.showed.connect(lambda: parent.ShowMask(True)) if isinstance(parent, WindowBase) else None
-        self.closed.connect(lambda: parent.ShowMask(False)) if isinstance(parent, WindowBase) else None
+        self.showed.connect(lambda: parent.showMask(True)) if isinstance(parent, WindowBase) else None
+        self.closed.connect(lambda: parent.showMask(False)) if isinstance(parent, WindowBase) else None
 
     def exec(self) -> int:
         result = super().exec()
@@ -139,13 +139,13 @@ class MessageBoxBase(DialogBase):
         self.iconLabel.setPixmap(icon)
 
     def setText(self, text: str, textsize: float = 11.1, textweight: int = 420):
-        Function_SetText(
-            Widget = self.textLabel,
-            Text = SetRichText(
-                Title = text,
-                TitleSize = textsize,
-                TitleWeight = textweight,
-                TitleAlign = 'center'
+        setText(
+            widget = self.textLabel,
+            text = setRichText(
+                text = text,
+                align = 'center',
+                size = textsize,
+                weight = textweight,
             )
         )
 

@@ -71,7 +71,7 @@ class MediaPlayerBase(QWidget):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Player.Deregistrate(self)
 
 ##############################################################################################################################

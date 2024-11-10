@@ -95,7 +95,7 @@ class TitleBarBase(QWidget):
         #TitleLabel.setFont(QFont("Microsoft YaHei", 11.1, QFont.Normal))
         TitleLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Bar.Deregistrate(self)
 
 ##############################################################################################################################

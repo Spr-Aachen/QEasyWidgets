@@ -55,10 +55,10 @@ class LineEditBase(QLineEdit):
         self.__init__(parent)
         self.setText(arg__1)
 
-    def showToolTip(self, Content: Optional[str] = None) -> None:
+    def showToolTip(self, content: Optional[str] = None) -> None:
         XPos = 0
         YPos = 0 - self.height()
-        self.ToolTip.showText(self.mapToGlobal(QPoint(XPos, YPos)), Content) if not self.ToolTip.isVisible() and Content is not None else None
+        self.ToolTip.showText(self.mapToGlobal(QPoint(XPos, YPos)), content) if not self.ToolTip.isVisible() and content is not None else None
 
     def hideToolTip(self) -> None:
         self.ToolTip.hideText() if self.ToolTip.isVisible() else None
@@ -147,8 +147,8 @@ class LineEditBase(QLineEdit):
     def isFileButtonEnabled(self) -> bool:
         return self._isFileButtonEnabled
 
-    def setFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse"):
-        self.fileButton.setFileDialog(Mode, FileType, Directory, ButtonTooltip)
+    def setFileDialog(self, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse"):
+        self.fileButton.setFileDialog(mode, fileType, directory, buttonTooltip)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
@@ -156,17 +156,17 @@ class LineEditBase(QLineEdit):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
 
     def setStyleSheet(self, styleSheet: str) -> None:
         AlertStyle = 'LineEditBase {border-color: red;}' if self.IsAlerted else ''
         super().setStyleSheet(styleSheet + AlertStyle)
 
-    def Alert(self, Enable: bool, Content: Optional[str] = None) -> None:
-        self.IsAlerted = Enable
+    def alert(self, enable: bool, content: Optional[str] = None) -> None:
+        self.IsAlerted = enable
         #StyleSheetBase.Edit.Apply(self)
-        self.showToolTip(Content) if Enable else self.hideToolTip()
+        self.showToolTip(content) if enable else self.hideToolTip()
 
 ##############################################################################################################################
 
@@ -208,7 +208,7 @@ class TextEditBase(QTextEdit):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Edit.Deregistrate(self)
 
 ##############################################################################################################################

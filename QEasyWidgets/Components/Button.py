@@ -29,7 +29,7 @@ class ButtonBase(QPushButton):
 
         self.setIconSize(QSize(16, 16))
 
-        Function_SetFont(self, 12)
+        setFont(self, 12)
 
         StyleSheetBase.Button.Apply(self)
 
@@ -127,7 +127,7 @@ class ButtonBase(QPushButton):
     def setTransparent(self, transparent: bool) -> None:
         self.setProperty("isTransparent", transparent)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Button.Deregistrate(self)
 
 
@@ -168,17 +168,17 @@ class FileButton(ButtonBase):
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
-    def setFileDialog(self, Mode: str, FileType: Optional[str] = None, Directory: Optional[str] = None, ButtonTooltip: str = "Browse") -> None:
+    def setFileDialog(self, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
         self.clicked.connect(
             lambda: self.setText(
-                Function_GetFileDialog(
-                    Mode = Mode,
-                    FileType = FileType,
-                    Directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if Directory is None else Directory
+                getFileDialog(
+                    mode = mode,
+                    fileType = fileType,
+                    directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if directory is None else directory
                 )
             )
         )
-        self.setToolTip(ButtonTooltip)
+        self.setToolTip(buttonTooltip)
 
 
 class MenuButton(ButtonBase):

@@ -126,10 +126,10 @@ class WindowBase(BackgroundColorAnimationBase):
         else:
             self.TitleBar = None
 
-    def ShowMask(self, SetVisible: bool, MaskContent: Optional[str] = None) -> None:
-        if SetVisible:
+    def showMask(self, setVisible: bool, maskContent: Optional[str] = None) -> None:
+        if setVisible:
             self.Mask.raise_() if self.Mask.isHidden() else None
-            self.Mask.setText(MaskContent) if MaskContent is not None else self.Mask.clear()
+            self.Mask.setText(maskContent) if maskContent is not None else self.Mask.clear()
             self.Mask.show()
         else:
             self.Mask.clear()

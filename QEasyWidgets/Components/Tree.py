@@ -62,7 +62,7 @@ class TreeWidgetBase(QTreeWidget):
         ChildItemTexts = [ChildItem.text(0) for ChildItem in self.childItems(RootItem)]
         return ChildItemTexts
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Tree.Deregistrate(self)
 
 ##############################################################################################################################

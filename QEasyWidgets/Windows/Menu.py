@@ -12,7 +12,7 @@ class MenuBase(QMenu):
 
         StyleSheetBase.Menu.Apply(self)
 
-    def ClearDefaultStyleSheet(self) -> None:
+    def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Menu.Deregistrate(self)
 
 ##############################################################################################################################
