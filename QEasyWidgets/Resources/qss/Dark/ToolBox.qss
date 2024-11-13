@@ -10,7 +10,7 @@ ToolPage {
     border: none;
 }
 
-ToolPage QPushButton {
+ToolPage Folder {
     color: rgb(210, 222, 234);
 	text-align: left;
 	background-color: transparent;
@@ -19,9 +19,6 @@ ToolPage QPushButton {
 	padding-bottom: 3px;
 	padding-right: 6px;
     border: none;
-}
-ToolPage QPushButton:hover {
-	background-color: rgba(201, 210, 222, 12);
 }
 
 

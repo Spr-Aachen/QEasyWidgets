@@ -158,6 +158,54 @@ class ClearButton(ButtonBase):
         painter.setOpacity(0.75 if self.isPressed else 1)
 
 
+class RotateButton(QAbstractButton):
+    """
+    """
+    _angle = 0
+
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
+        self.rotateAnimation = QPropertyAnimation(self, b'angle', self)
+
+        self.clicked.connect(lambda: self.setRotate(self.angle < 180))
+
+    def getAngle(self):
+        return self._angle
+
+    def setAngle(self, angle):
+        self._angle = angle
+        self.update()
+
+    angle = Property(float, getAngle, setAngle)
+
+    def setRotate(self, isDown: bool):
+        self.rotateAnimation.stop()
+        self.rotateAnimation.setEndValue(180 if isDown else 0)
+        self.rotateAnimation.setDuration(210)
+        self.rotateAnimation.start()
+
+    def mousePressEvent(self, e):
+        super().mousePressEvent(e)
+        self.setRotate(True)
+
+    def mouseReleaseEvent(self, e):
+        super().mouseReleaseEvent(e)
+        self.setRotate(False)
+
+    def paintEvent(self, e):
+        painter = QPainter(self)
+        painter.setRenderHints(QPainter.Antialiasing | QPainter.SmoothPixmapTransform)
+        painter.setPen(Qt.NoPen)
+        # Draw background
+        painter.setBrush(Qt.transparent)
+        #painter.drawRoundedRect(self.rect(), 3, 3)
+        # Draw icon
+        painter.translate(self.rect().center().x(), self.rect().center().y())
+        painter.rotate(self.getAngle())
+        IconBase.Chevron_Down.paint(painter, QRectF(-self.width()//4, -self.height()//4, self.width()//2, self.height()//2))
+
+
 class FileButton(ButtonBase):
     '''
     '''
@@ -168,10 +216,11 @@ class FileButton(ButtonBase):
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
-    def setFileDialog(self, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
+    def setFileDialog(self, parent: QWidget, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
         self.clicked.connect(
-            lambda: self.setText(
-                getFileDialog(
+            lambda: setText(
+                widget = parent,
+                text = getFileDialog(
                     mode = mode,
                     fileType = fileType,
                     directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if directory is None else directory

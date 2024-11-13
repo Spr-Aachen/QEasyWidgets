@@ -148,7 +148,7 @@ class LineEditBase(QLineEdit):
         return self._isFileButtonEnabled
 
     def setFileDialog(self, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse"):
-        self.fileButton.setFileDialog(mode, fileType, directory, buttonTooltip)
+        self.fileButton.setFileDialog(self, mode, fileType, directory, buttonTooltip)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

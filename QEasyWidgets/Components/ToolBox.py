@@ -5,17 +5,46 @@ from PySide6.QtWidgets import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .Widget import WidgetBase
+from .Button import RotateButton
 
 ##############################################################################################################################
+
+class Folder(QLabel):
+    '''
+    '''
+    _height = 30
+    _margin = 6
+
+    clicked = Signal()
+
+    def __init__(self,
+        parent: Optional[QWidget] = None,
+    ):
+        super().__init__(parent)
+
+        self.installEventFilter(self)
+        self.setFixedHeight(self._height)
+        setFont(self, int(self._height*0.45))
+
+        self.folderButton = RotateButton()
+        self.folderButton.setFixedSize(self._height - self._margin, self._height - self._margin)
+        self.folderButton.clicked.connect(self.clicked.emit)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(self._margin, self._margin, self._margin, self._margin)
+        layout.setSpacing(0)
+        layout.addWidget(self.folderButton, alignment = Qt.AlignRight)
+
+    def eventFilter(self, watched: QObject, event: QEvent):
+        if watched is self:
+            if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
+                self.folderButton.click()
+        return super().eventFilter(watched, event)
+
 
 class ToolPage(WidgetBase):
     '''
     '''
-    FolderButtonHeight = 30
-
-    FontSize = int(FolderButtonHeight*0.45)
-    IndicatorSize = QSize(int(FolderButtonHeight*0.6), int(FolderButtonHeight*0.6))
-
     def __init__(self,
         parent: Optional[QWidget] = None,
     ):
@@ -23,61 +52,49 @@ class ToolPage(WidgetBase):
 
         self.IsExpanded = True
 
-        self.Indicator = QLabel()
-        self.Indicator.setFixedSize(self.IndicatorSize)
-        layout = QHBoxLayout()
-        layout.setContentsMargins(3, 3, 6, 3)
-        layout.setSpacing(0)
-        layout.addStretch(1)
-        layout.addWidget(self.Indicator)
-        self.FolderButton = QPushButton()
-        self.FolderButton.setFixedHeight(self.FolderButtonHeight)
-        self.FolderButton.setLayout(layout)
-        self.FolderButton.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
-        setFont(self.FolderButton, self.FontSize)
+        self.folder = Folder(self)
+        self.folder.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
 
         widgetlayout = QGridLayout()
         widgetlayout.setContentsMargins(0, 0, 0, 0)
         widgetlayout.setSpacing(0)
-        self.Widget = WidgetBase()
-        self.Widget.setAttribute(Qt.WA_StyledBackground)
-        self.Widget.setLayout(widgetlayout)
-        self.Widget.resized.connect(self._resizeHeight)
+        self.widget = WidgetBase()
+        self.widget.setAttribute(Qt.WA_StyledBackground)
+        self.widget.setLayout(widgetlayout)
+        self.widget.resized.connect(self._resizeHeight)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        layout.addWidget(self.FolderButton)
-        layout.addWidget(self.Widget)
+        layout.addWidget(self.folder)
+        layout.addWidget(self.widget)
 
     def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
-        ButtonHeight = self.FolderButtonHeight
+        ButtonHeight = self.folder.height()
         LayoutSpacing = self.layout().spacing()
-        WidgetLayoutMargins = self.Widget.layout().contentsMargins().top() + self.Widget.layout().contentsMargins().bottom()
-        WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.Widget.height()
+        WidgetLayoutMargins = self.widget.layout().contentsMargins().top() + self.widget.layout().contentsMargins().bottom()
+        WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.widget.height()
         AdjustedHeight = ButtonHeight + LayoutSpacing + WidgetHeight if WidgetHeight >=0 else 0
         self.setFixedHeight(AdjustedHeight)
 
     def addWidget(self, widget: QWidget, title: str):
-        self.Widget.layout().addWidget(widget)
-        self.FolderButton.setText(title)
+        self.widget.layout().addWidget(widget)
+        self.folder.setText(title)
         def resizeWidgetHeight():
             AdjustedHeight = widget.height()
-            self.Widget.setFixedHeight(AdjustedHeight) if self.IsExpanded else None
+            self.widget.setFixedHeight(AdjustedHeight) if self.IsExpanded else None
         widget.resized.connect(resizeWidgetHeight) if hasattr(widget, 'resized') else None
 
     def expand(self):
-        setWidgetSizeAnimation(self.Widget, targetHeight = self.Widget.minimumSizeHint().height()).start()
-        self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/DownArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        setWidgetSizeAnimation(self.widget, targetHeight = self.widget.minimumSizeHint().height()).start()
         self.IsExpanded = True
 
     def collapse(self):
-        setWidgetSizeAnimation(self.Widget, targetHeight = 0).start()
-        self.Indicator.setPixmap(QPixmap(":/ToolBox_Icon/Icons/LeftArrow.png").scaled(self.IndicatorSize, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        setWidgetSizeAnimation(self.widget, targetHeight = 0).start()
         self.IsExpanded = False
 
     def setText(self, text: str):
-        self.FolderButton.setText(text)
+        self.folder.setText(text)
 
 
 class ToolBoxBase(QFrame):
