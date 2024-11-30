@@ -2,6 +2,7 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
+from ..Common.Theme import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .Widget import WidgetBase
@@ -14,6 +15,11 @@ class Folder(QLabel):
     '''
     _height = 30
     _margin = 6
+
+    isEntered = False
+
+    hoverColor = ThemeColor.Default.color()
+    hoverColor.setAlpha(12)
 
     clicked = Signal()
 
@@ -40,6 +46,20 @@ class Folder(QLabel):
             if event.type() == QEvent.MouseButtonRelease and event.button() == Qt.LeftButton:
                 self.folderButton.click()
         return super().eventFilter(watched, event)
+
+    def enterEvent(self, event):
+        self.isEntered = True
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.isEntered = False
+        super().leaveEvent(event)
+
+    def printEvent(self, e: QPaintEvent):
+        super().printEvent(e)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.fillRect(self.rect(), QColor(self.hoverColor) if self.isEntered else QColor(Qt.transparent))
 
 
 class ToolPage(WidgetBase):

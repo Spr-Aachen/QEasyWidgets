@@ -407,9 +407,9 @@ def setRichText(
     text: str = "",
     align: str = "left",
     size: float = 9.6,
-    weight: float = 480.,
-    spacing: float = 0.75,
-    lineHeight: float = 23.4,
+    weight: float = 450.,
+    spacing: float = 0.66,
+    lineHeight: float = 22.2,
 ):
     """
     Function to set rich text
@@ -482,14 +482,20 @@ class taskAccelerationManager(Enum):
         asynchronous: bool = True,
         maxWorkers: Optional[int] = None
     ) -> Union[ThreadPoolExecutor, ProcessPoolExecutor]:
-        if self.value == self.ThreadPool.value:
-            self.executor = ThreadPoolExecutor(maxWorkers)
-        if self.value == self.ProcessPool.value:
-            self.executor = ProcessPoolExecutor(maxWorkers)
+        if self == self.ThreadPool:
+            executor = ThreadPoolExecutor(maxWorkers)
+        if self == self.ProcessPool:
+            executor = ProcessPoolExecutor(maxWorkers)
+        futures = []
         for func, args in funcDict.items():
-            future = self.executor.submit(func, *args)
-            future.result() if asynchronous == False else None
-        return self.executor
+            try:
+                future = executor.submit(func, *args)
+                isLastFuture = len(futures) == len(funcDict) - 1
+                futures.append(future) if asynchronous or isLastFuture else future.result()
+            except Exception as e:
+                executor.shutdown(wait = False, cancel_futures = True)
+                raise e
+        return executor
 
 
 def processTerminator(
@@ -789,12 +795,12 @@ def bootWithScript(
 ##############################################################################################################################
 
 def checkUpdateFromGithub(
-    accessToken: Optional[str] = None,
     repoOwner: str = ...,
     repoName: str = ...,
     fileName: str = ...,
     fileFormat: str = ...,
-    currentVersion: str = ...
+    currentVersion: str = ...,
+    accessToken: Optional[str] = None,
 ):
     """
     Check if there is an update available on Github

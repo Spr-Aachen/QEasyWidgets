@@ -139,9 +139,11 @@ class ClearButton(ButtonBase):
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
-        self.setIcon(IconBase.X)
+        self.setFocusPolicy(Qt.NoFocus)
 
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setCursor(Qt.PointingHandCursor)
+
+        self.setIcon(IconBase.X)
 
     def mousePressEvent(self, e):
         self.isPressed = True
@@ -212,9 +214,11 @@ class FileButton(ButtonBase):
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
-        self.setIcon(IconBase.OpenedFolder)
+        self.setFocusPolicy(Qt.NoFocus)
 
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setCursor(Qt.PointingHandCursor)
+
+        self.setIcon(IconBase.OpenedFolder)
 
     def setFileDialog(self, parent: QWidget, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
         self.clicked.connect(

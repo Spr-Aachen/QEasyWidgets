@@ -20,6 +20,9 @@ ToolPage Folder {
 	padding-right: 6px;
     border: none;
 }
+ToolPage Folder:hover {
+	background-color: rgba(54, 45, 33, 12);
+}
 
 
 QToolTip {

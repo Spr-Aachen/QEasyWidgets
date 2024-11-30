@@ -122,7 +122,7 @@ class LineEditBase(QLineEdit):
 
     def focusOutEvent(self, arg__1: QFocusEvent) -> None:
         self.focusedOut.emit()
-        #self.clearButton.hide() if self.isClearButtonEnabled() else None
+        self.clearButton.hide() if self.isClearButtonEnabled() else None
         super().focusOutEvent(arg__1)
 
     @property
