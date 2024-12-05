@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 from typing import Union, Optional
-from PySide6.QtCore import Qt, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
-from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices
+from PySide6.QtCore import Qt, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
+from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices, QAction
 from PySide6.QtWidgets import *
 
 from .Utils import *
@@ -58,6 +58,14 @@ def setFont(
     widget.setFont(Font)
 
 ##############################################################################################################################
+
+def setNoContents(
+    widget: QWidget
+):
+    if isinstance(widget, QStackedWidget):
+        while widget.count():
+            widget.removeWidget(widget.widget(0))
+
 
 def setRetainSizeWhenHidden(
     widget: QWidget,
@@ -152,15 +160,6 @@ def setWidgetOpacityAnimation(
 
 ##############################################################################################################################
 
-def setNoContents(
-    widget: QWidget
-):
-    if isinstance(widget, QStackedWidget):
-        while widget.count():
-            widget.removeWidget(widget.widget(0))
-
-##############################################################################################################################
-
 def setText(
     widget: QWidget,
     text: str,
@@ -219,6 +218,16 @@ def getFileDialog(
             filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
     return DisplayText
+
+##############################################################################################################################
+
+def showContextMenu(parent: QWidget, contextMenu: QMenu, actions: dict, position: QPoint):
+    for actionName, events in actions.items():
+        action = QAction(actionName, parent)
+        for event in toIterable(events):
+            action.triggered.connect(event)
+        contextMenu.addAction(action)
+    contextMenu.exec(position)
 
 ##############################################################################################################################
 

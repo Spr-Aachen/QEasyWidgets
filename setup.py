@@ -11,7 +11,7 @@ with open('./README.md', encoding = 'utf-8') as f:
 
 setup(
     name = "QEasyWidgets",
-    version = '0.5.9',
+    version = '0.6.0',
     description = 'A simple widget library based on PySide6',
     long_description = LongDescription,
     long_description_content_type = 'text/markdown',
@@ -32,12 +32,7 @@ setup(
         "PySide6",
         "pywin32;platform_system=='Windows'",
         "darkdetect",
-        "tqdm",
-        "psutil",
-        "polars",
-        "sqlalchemy",
-        "nvidia-ml-py",
-        "PyGithub"
+        "PyEasyUtils"
     ],
     classifiers = [
         'Operating System :: OS Independent',
