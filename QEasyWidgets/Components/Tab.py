@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -9,9 +10,10 @@ from ..Resources.Sources import *
 ##############################################################################################################################
 
 class TabWidgetBase(QTabWidget):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+    """
+    Base class for tabWidget components
+    """
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.tabBar().setMinimumSize(84, 42)

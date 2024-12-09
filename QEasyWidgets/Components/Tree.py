@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -26,10 +27,11 @@ class ItemDelegate(QStyledItemDelegate):
 
 
 class TreeWidgetBase(QTreeWidget):
-    '''
-    '''
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
+    """
+    Base class for treeWidget components
+    """
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
 
         self.setColumnCount(1)
 

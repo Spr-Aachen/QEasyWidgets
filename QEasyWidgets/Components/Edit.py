@@ -7,13 +7,16 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from ..Windows.Menu import MenuBase
 from .Button import ClearButton, FileButton
 
 ##############################################################################################################################
 
 class LineEditBase(QLineEdit):
-    '''
-    '''
+    """
+    Base class for lineEdit components
+    """
+
     _clearButton = None
     _isClearButtonEnabled = False
 
@@ -171,8 +174,10 @@ class LineEditBase(QLineEdit):
 ##############################################################################################################################
 
 class TextEditBase(QTextEdit):
-    '''
-    '''
+    """
+    Base class for textEdit components
+    """
+
     keyEnterPressed = Signal()
 
     keyEnterBlocked = False

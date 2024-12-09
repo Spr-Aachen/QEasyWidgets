@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import Union, Optional
-from PySide6.QtCore import Qt, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
+from PySide6.QtCore import Qt, QSettings, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
 from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices, QAction
 from PySide6.QtWidgets import *
 
@@ -221,12 +221,17 @@ def getFileDialog(
 
 ##############################################################################################################################
 
-def showContextMenu(parent: QWidget, contextMenu: QMenu, actions: dict, position: QPoint):
+def setContextMenu(parent: QWidget, contextMenu: QMenu, actions: dict):
     for actionName, events in actions.items():
         action = QAction(actionName, parent)
         for event in toIterable(events):
             action.triggered.connect(event)
         contextMenu.addAction(action)
+    return contextMenu
+
+
+def showContextMenu(parent: QWidget, contextMenu: QMenu, actions: dict, position: QPoint):
+    contextMenu = setContextMenu(parent, contextMenu, actions)
     contextMenu.exec(position)
 
 ##############################################################################################################################
@@ -254,5 +259,21 @@ def openURL(
         for Index, url in enumerate(URLList):
             #url = Function_ParamsChecker(URLList)[Index] if isinstance(url, QObject) else url
             OpenURL(url)
+
+##############################################################################################################################
+
+def saveLayout(widget: QWidget, settings: QSettings):
+    settings.setValue("layout/geometry", widget.saveGeometry())
+    if isinstance(widget, QMainWindow):
+        settings.setValue("layout/state", widget.saveState())
+    settings.sync()
+
+
+def resetLayout(widget: QWidget, settings: QSettings):
+    widget.restoreGeometry(settings.value("layout/geometry"))
+    if isinstance(widget, QMainWindow):
+        widget.restoreState(settings.value("layout/state"))
+        for dockWidget in widget.findChildren(QDockWidget):
+            widget.restoreDockWidget(dockWidget)
 
 ##############################################################################################################################

@@ -23,8 +23,9 @@ class ScrollBar(QScrollBar):
 
 
 class ScrollAreaBase(QScrollArea):
-    '''
-    '''
+    """
+    Base class for scrollArea components
+    """
     viewportSizeChanged = Signal(QSize)
 
     def __init__(self, parent: Optional[QWidget] = None):
@@ -53,8 +54,9 @@ class ScrollAreaBase(QScrollArea):
 
 
 class VerticalScrollArea(ScrollAreaBase):
-    '''
-    '''
+    """
+    Vertical scrollArea component
+    """
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 

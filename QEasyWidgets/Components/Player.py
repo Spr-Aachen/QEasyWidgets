@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -12,9 +13,10 @@ from .Slider import SliderBase
 ##############################################################################################################################
 
 class MediaPlayerBase(QWidget):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+    """
+    Base class for mediaPlayer components
+    """
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.StackedWidget = QStackedWidget()
@@ -49,7 +51,7 @@ class MediaPlayerBase(QWidget):
 
         StyleSheetBase.Player.Apply(self)
 
-    def SetMediaPlayer(self, MediaPath: str):
+    def setMediaPlayer(self, MediaPath: str):
         self.MediaPlayer.setSource(QUrl.fromLocalFile(MediaPath))
 
         self.PlayButton.clicked.connect(self.MediaPlayer.play)
@@ -60,7 +62,7 @@ class MediaPlayerBase(QWidget):
         self.Slider.sliderMoved.connect(lambda: self.MediaPlayer.setPosition(int(self.Slider.value() / 100 * self.MediaPlayer.duration())))
         self.MediaPlayer.positionChanged.connect(lambda Position: self.Slider.setValue(int(Position / self.MediaPlayer.duration() * 100)))
 
-    def ReleaseMediaPlayer(self):
+    def releaseMediaPlayer(self):
         self.MediaPlayer.stop()
         self.MediaPlayer.setSource('')
         #self.MediaPlayer.deleteLater()

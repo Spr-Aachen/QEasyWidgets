@@ -11,8 +11,9 @@ from ..Common.QFunctions import *
 ##############################################################################################################################
 
 class SliderBase(QSlider):
-    '''
-    '''
+    """
+    Base class for slider components
+    """
     _times = {
         "minimum": 1,
         "maximum": 1,
@@ -23,13 +24,13 @@ class SliderBase(QSlider):
     valueChanged = Signal(float)
 
     @singledispatchmethod
-    def __init__(self, parent: QWidget = None) -> None:
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
         StyleSheetBase.Slider.Apply(self)
 
     @__init__.register
-    def _(self, arg__1: Qt.Orientation, parent: QWidget = None) -> None:
+    def _(self, arg__1: Qt.Orientation, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setOrientation(arg__1)
 

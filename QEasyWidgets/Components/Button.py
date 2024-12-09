@@ -1,3 +1,4 @@
+import platform
 from typing import Optional, Union, overload
 #from functools import singledispatchmethod
 from PySide6.QtGui import *
@@ -13,8 +14,9 @@ from ..Resources.Sources import *
 ##############################################################################################################################
 
 class ButtonBase(QPushButton):
-    '''
-    '''
+    """
+    Base class for button components
+    """
     _spacing = 3
 
     _hoverBackgroundColor = QColor(0, 0, 0, 0)
@@ -132,8 +134,9 @@ class ButtonBase(QPushButton):
 
 
 class ClearButton(ButtonBase):
-    '''
-    '''
+    """
+    Clear button component
+    """
     isPressed = False
 
     def __init__(self, parent: QWidget = None):
@@ -162,6 +165,7 @@ class ClearButton(ButtonBase):
 
 class RotateButton(QAbstractButton):
     """
+    Rotate button component
     """
     _angle = 0
 
@@ -209,8 +213,9 @@ class RotateButton(QAbstractButton):
 
 
 class FileButton(ButtonBase):
-    '''
-    '''
+    """
+    File button component
+    """
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
@@ -235,8 +240,9 @@ class FileButton(ButtonBase):
 
 
 class MenuButton(ButtonBase):
-    '''
-    '''
+    """
+    Menu button component
+    """
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
@@ -263,15 +269,17 @@ class MenuButton(ButtonBase):
 
 
 class HollowButton(ButtonBase):
-    '''
-    '''
+    """
+    Hollow button component
+    """
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
 
 class NavigationButton(ButtonBase):
-    '''
-    '''
+    """
+    Navigation button component
+    """
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 

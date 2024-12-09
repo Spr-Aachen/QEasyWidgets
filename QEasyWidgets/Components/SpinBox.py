@@ -1,16 +1,20 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from ..Windows.Menu import MenuBase
 
 ##############################################################################################################################
 
 class SpinBoxBase(QSpinBox):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+    """
+    Base class for spinBox components
+    """
+
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
@@ -32,9 +36,11 @@ class SpinBoxBase(QSpinBox):
 ##############################################################################################################################
 
 class DoubleSpinBoxBase(QDoubleSpinBox):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+    """
+    Base class for doubleSpinBox components
+    """
+
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)

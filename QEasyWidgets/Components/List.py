@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -10,12 +11,13 @@ from ..Windows.Menu import MenuBase
 
 class ListBase(QListView):
     """
+    Base class for list components
     """
     _contextMenu = None
 
     itemClicked = Signal(QStandardItem)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.StandardItemModel = QStandardItemModel(self)

@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -34,11 +35,12 @@ class ItemDelegate(QStyledItemDelegate):
 
 
 class TableBase(QTableView):
-    '''
-    '''
+    """
+    Base class for table components
+    """
     sorted = Signal()
 
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.StandardItemModel = QStandardItemModel(self)

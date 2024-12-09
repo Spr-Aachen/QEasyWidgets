@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtCore import Qt, QSize, QPoint, QTimer
 from PySide6.QtGui import QPainter, QFont, QColor, QPixmap, QPolygon, QPaintEvent
 from PySide6.QtWidgets import QWidget, QFrame, QLabel, QLayout, QHBoxLayout, QSizePolicy, QVBoxLayout, QSpacerItem
@@ -105,6 +106,9 @@ class MessageLayout(QHBoxLayout):
 ##############################################################################################################################
 
 class ChatWidgetBase(QFrame):
+    """
+    Base class for chatWidget components
+    """
     def __init__(self, parent = None):
         super().__init__(parent)
 

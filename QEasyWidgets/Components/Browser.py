@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -5,13 +6,16 @@ from PySide6.QtWidgets import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from ..Resources.Sources import *
+from ..Windows.Menu import MenuBase
 
 ##############################################################################################################################
 
 class TextBrowserBase(QTextBrowser):
-    '''
-    '''
-    def __init__(self, parent: QWidget = None):
+    """
+    Base class for textBrowser components
+    """
+
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         StyleSheetBase.Browser.Apply(self)

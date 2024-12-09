@@ -1,5 +1,6 @@
 import math
 import time
+from typing import Optional, overload
 from PySide6.QtCore import Qt, QTimer, QPointF, QSize
 from PySide6.QtGui import QPainter, QColor, QPaintEvent, QResizeEvent
 from PySide6.QtWidgets import QWidget, QGridLayout
@@ -13,7 +14,7 @@ class LoadingStatus(QWidget):
     locationList = []
     radiiList = []
 
-    def __init__(self, dotcount: int = 12, interval: int = 50, parent = None):
+    def __init__(self, dotcount: int = 12, interval: int = 50, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -63,8 +64,11 @@ class LoadingStatus(QWidget):
 ##############################################################################################################################
 
 class StatusWidgetBase(QWidget):
+    """
+    Base class for statusWidget components
+    """
     currentStatus = None
-    def __init__(self, status: Status = None, size: QSize = QSize(24, 24), parent = None):
+    def __init__(self, status: Status = None, size: QSize = QSize(24, 24), parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.setAttribute(Qt.WA_TranslucentBackground, True)

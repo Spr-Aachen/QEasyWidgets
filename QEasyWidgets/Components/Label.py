@@ -10,8 +10,9 @@ from ..Common.QFunctions import *
 ##############################################################################################################################
 
 class LabelBase(QLabel):
-    '''
-    '''
+    """
+    Base class for label components
+    """
     resized = Signal()
 
     _pixmap = None

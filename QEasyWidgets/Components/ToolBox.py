@@ -1,3 +1,4 @@
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -23,9 +24,7 @@ class Folder(QLabel):
 
     clicked = Signal()
 
-    def __init__(self,
-        parent: Optional[QWidget] = None,
-    ):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.installEventFilter(self)
@@ -63,11 +62,10 @@ class Folder(QLabel):
 
 
 class ToolPage(WidgetBase):
-    '''
-    '''
-    def __init__(self,
-        parent: Optional[QWidget] = None,
-    ):
+    """
+    Base class for toolPage components
+    """
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.IsExpanded = True
@@ -118,11 +116,10 @@ class ToolPage(WidgetBase):
 
 
 class ToolBoxBase(QFrame):
-    '''
-    '''
-    def __init__(self,
-        parent: Optional[QWidget] = None
-    ):
+    """
+    Base class for toolBox components
+    """
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         self.Pages = []

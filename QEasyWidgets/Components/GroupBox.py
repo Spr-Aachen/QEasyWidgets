@@ -10,8 +10,9 @@ from ..Common.QFunctions import *
 ##############################################################################################################################
 
 class GroupBoxBase(QGroupBox):
-    '''
-    '''
+    """
+    Base class for groupBox components
+    """
     @singledispatchmethod
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)

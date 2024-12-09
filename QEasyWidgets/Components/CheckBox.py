@@ -1,4 +1,5 @@
 # coding: utf-8
+from typing import Optional, overload
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -21,8 +22,8 @@ class Indicator(QPushButton):
 
     checked = Signal(bool)
 
-    def __init__(self, parent):
-        super().__init__(parent = parent)
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
 
         self.setCheckable(True)
 
@@ -80,13 +81,14 @@ class Indicator(QPushButton):
 
 class CheckBoxBase(QCheckBox):
     """
+    Base class for checkBox components
     """
     _spacing = 12
 
     toggled = Signal(bool)
 
     @singledispatchmethod
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent = parent)
 
         setFont(self, 15)
