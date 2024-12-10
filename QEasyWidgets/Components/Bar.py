@@ -2,10 +2,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QWidget, QMainWindow, QDialog, QLabel, QHBoxLayout, QSizePolicy
 
-from ...Common.Icon import IconBase
-from ...Common.StyleSheet import StyleSheetBase
-from ...Components.Button import ButtonBase
-from ...Components.Label import LabelBase
+from ..Common.Icon import IconBase
+from ..Common.StyleSheet import StyleSheetBase
+from .Button import ButtonBase
+from .Label import LabelBase
 
 ##############################################################################################################################
 

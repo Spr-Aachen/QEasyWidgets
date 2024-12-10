@@ -6,13 +6,12 @@ from typing import Optional
 from ctypes import Structure, c_int, POINTER, WinDLL, byref, windll
 from ctypes.wintypes import UINT, HWND, RECT, MSG, LPRECT
 from PySide6.QtCore import Qt, Signal, QPoint, QRect, QEvent
-from PySide6.QtGui import QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
+from PySide6.QtGui import QGuiApplication, QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 
 from ...Common.Theme import BackgroundColorAnimationBase
 from ...Common.StyleSheet import StyleSheetBase
-from ...Common.QFunctions import *
-from .Bar import TitleBarBase
+from ...Components.Bar import TitleBarBase
 
 ##############################################################################################################################
 
