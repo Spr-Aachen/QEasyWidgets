@@ -18,3 +18,4 @@ from .Tab import TabWidgetBase
 from .Table import TableBase
 from .ChatWidget import ChatWidgetBase
 from .StatusWidget import StatusWidgetBase
+from .DockWidget import DockWidgetBase

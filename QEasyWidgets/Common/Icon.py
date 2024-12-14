@@ -57,7 +57,10 @@ class IconBase(Enum):
     Play = 'Play'
     Pause = 'Pause'
     Dash = 'Dash'
+    Window_FullScreen = 'Window-FullScreen'
+    Window_Stack = 'Window-Stack'
     FullScreen = 'FullScreen'
+    FullScreen_Exit = 'FullScreen-Exit'
     X = 'X'
 
     def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):

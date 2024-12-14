@@ -33,8 +33,8 @@ class StyleSheetBase(Enum):
     Tab = 'Tab'
     Table = 'Table'
     ChatWidget = 'ChatWidget'
-
     Bar = 'Bar'
+    DockWidget = 'DockWidget'
     Menu = 'Menu'
 
     def Registrate(self, widget, value):
