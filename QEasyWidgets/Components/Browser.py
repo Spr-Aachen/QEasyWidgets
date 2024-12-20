@@ -6,7 +6,7 @@ from PySide6.QtWidgets import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from ..Resources.Sources import *
-from ..Windows.Menu import MenuBase
+from .Menu import MenuBase
 
 ##############################################################################################################################
 

@@ -7,7 +7,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Windows.Menu import MenuBase
+from .Menu import MenuBase
 from .Button import ClearButton, FileButton
 
 ##############################################################################################################################

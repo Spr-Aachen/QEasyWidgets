@@ -10,36 +10,36 @@ from ..Resources.Sources import *
 
 ##############################################################################################################################
 
-def findChildUI(
-    parentUI: QWidget,
+def findChild(
+    parent: QWidget,
     childType: object
 ):
     """
-    Function to find child UI
+    Function to find child widget
     """
-    parentUI_Children = parentUI.children()
+    parentWidget_Children = parent.children()
 
-    for parentUI_Child in parentUI_Children:
-        if isinstance(parentUI_Child, childType):
-            return parentUI_Child
+    for parentWidget_Child in parentWidget_Children:
+        if isinstance(parentWidget_Child, childType):
+            return parentWidget_Child
 
 
-def findParentUI(
-    childUI: QWidget,
+def findParent(
+    child: QWidget,
     parentType: object
 ):
     """
-    Function to find parent UI
+    Function to find parent widget
     """
-    childUI_Parent = childUI.parent()
+    childWidget_Parent = child.parent()
 
-    while not isinstance(childUI_Parent, parentType):
+    while not isinstance(childWidget_Parent, parentType):
         try:
-            childUI_Parent = childUI_Parent.parent()
+            childWidget_Parent = childWidget_Parent.parent()
         except:
-            raise Exception(f"{childUI}'s parent UI not found! Please check if the layout is correct.")
+            childWidget_Parent = None #raise Exception(f"{child}'s parent widget not found! Please check if the layout is correct.")
 
-    return childUI_Parent
+    return childWidget_Parent
 
 ##############################################################################################################################
 
@@ -194,30 +194,36 @@ def getText(
 
 ##############################################################################################################################
 
+class FileDialogMode: 
+    SelectFolder = 0
+    SelectFile = 1
+    SaveFile = 2
+
+
 def getFileDialog(
-    mode: str,
+    mode: FileDialogMode,
     fileType: Optional[str] = None,
     directory: Optional[str] = None
 ):
     os.makedirs(directory, exist_ok = True) if directory is not None and Path(directory).exists() == False else None
-    if mode == 'SelectFolder':
-        DisplayText = QFileDialog.getExistingDirectory(
-            caption = "选择文件夹",
+    if mode == FileDialogMode.SelectFolder:
+        displayText = QFileDialog.getExistingDirectory(
+            caption = "选择文件夹 | SelectFolder",
             dir = directory if directory is not None else os.getcwd()
         )
-    if mode == 'SelectFile':
-        DisplayText, _ = QFileDialog.getOpenFileName(
-            caption = "选择文件",
+    if mode == FileDialogMode.SelectFile:
+        displayText, _ = QFileDialog.getOpenFileName(
+            caption = "选择文件 | SelectFile",
             dir = directory if directory is not None else os.getcwd(),
             filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
-    if mode == 'SaveFile':
-        DisplayText, _ = QFileDialog.getSaveFileName(
-            caption = "保存文件",
+    if mode == FileDialogMode.SaveFile:
+        displayText, _ = QFileDialog.getSaveFileName(
+            caption = "保存文件 | SaveFile",
             dir = directory if directory is not None else os.getcwd(),
             filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
-    return DisplayText
+    return displayText
 
 ##############################################################################################################################
 

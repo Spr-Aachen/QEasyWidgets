@@ -8,8 +8,8 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Windows.Menu import *
 from ..Resources.Sources import *
+from .Menu import MenuBase
 
 ##############################################################################################################################
 

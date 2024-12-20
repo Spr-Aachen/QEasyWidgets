@@ -4,5 +4,5 @@ from .Language import Language, EasyLanguage
 from .Translator import TranslationBase
 from .Icon import IconBase
 from .Status import Status#, EasyStatus
-#from .QFunctions import *
+from .QFunctions import FileDialogMode #from .QFunctions import *
 #from .QTasks import *

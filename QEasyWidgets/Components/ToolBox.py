@@ -122,7 +122,7 @@ class ToolBoxBase(QFrame):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.Pages = []
+        self.pages = []
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -138,14 +138,14 @@ class ToolBoxBase(QFrame):
             page = ToolPage(self)
             page.addWidget(widget, text)
         self.layout().addWidget(page)
-        self.Pages.append(page)
+        self.pages.append(page)
         def resizeHeight():
             AdjustedHeight = page.height()
             self.setFixedHeight(AdjustedHeight)
         page.resized.connect(resizeHeight)
 
     def widget(self, index: int) -> ToolPage:
-        return self.Pages[index]
+        return self.pages[index]
 
     def setItemText(self, index: int, text: str) -> None:
         self.widget(index).setText(text)
@@ -153,11 +153,11 @@ class ToolBoxBase(QFrame):
     def setCurrentIndex(self, index: int) -> None:
         ''''''
 
-    def CurrentIndex(self) -> int:
+    def currentIndex(self) -> int:
         ''''''
 
     def indexOf(self, widget: QWidget) -> int:
-        return self.Pages.index(widget if isinstance(widget, ToolPage) else findParentUI(widget, ToolPage))
+        return self.pages.index(widget if isinstance(widget, ToolPage) else findParent(widget, ToolPage))
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

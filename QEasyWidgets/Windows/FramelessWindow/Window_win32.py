@@ -162,19 +162,19 @@ class WindowBase(BackgroundColorAnimationBase):
     ):
         super().__init__(*args, **kwargs)
 
-        self.TitleBar = TitleBarBase(self)
+        self.titleBar = TitleBarBase(self)
 
-        self.Mask = QLabel(self)
-        self.rectChanged.connect(self.Mask.setGeometry)
-        self.Mask.setStyleSheet('background-color: rgba(0, 0, 0, 111);')
-        self.Mask.setAlignment(Qt.AlignCenter)
-        self.Mask.setFont(QFont('Microsoft YaHei', int(min_height / 10), QFont.Bold))
-        self.Mask.hide()
+        self.mask = QLabel(self)
+        self.rectChanged.connect(self.mask.setGeometry)
+        self.mask.setStyleSheet('background-color: rgba(0, 0, 0, 111);')
+        self.mask.setAlignment(Qt.AlignCenter)
+        self.mask.setFont(QFont('Microsoft YaHei', int(min_height / 10), QFont.Bold))
+        self.mask.hide()
 
         self.resize(min_width, min_height)
 
     def _check_ifdraggable(self, pos) -> bool:
-        return (0 < pos.x() < self.width() and 0 < pos.y() < self.TitleBar.height()) if self.TitleBar is not None else False
+        return (0 < pos.x() < self.width() and 0 < pos.y() < self.titleBar.height()) if self.titleBar is not None else False
 
     def _move_window(self, pos) -> None:
         self.windowHandle().startSystemMove()
@@ -226,7 +226,7 @@ class WindowBase(BackgroundColorAnimationBase):
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.rectChanged.emit(self.rect())
-        self.TitleBar.resize(self.width(), self.TitleBar.height()) if isinstance(self.TitleBar, TitleBarBase) else None
+        self.titleBar.resize(self.width(), self.titleBar.height()) if isinstance(self.titleBar, TitleBarBase) else None
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def nativeEvent(self, eventType, message):
@@ -269,40 +269,40 @@ class WindowBase(BackgroundColorAnimationBase):
                 return True, win32con.HTBOTTOM
         return QWidget.nativeEvent(self, eventType, message)
 
-    def setFrameless(self, SetStrechable: bool = True, SetDropShadowEffect: bool = True) -> None:
+    def setFrameless(self, setStrechable: bool = True, setDropShadowEffect: bool = True) -> None:
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
         hWnd = self.winId()
         Index = win32con.GWL_STYLE
         Value = win32gui.GetWindowLong(hWnd, Index)
         win32gui.SetWindowLong(hWnd, Index, Value | win32con.WS_THICKFRAME | win32con.WS_CAPTION)
-        if not SetStrechable:
+        if not setStrechable:
             self.edge_size = 0
-        if SetDropShadowEffect:
+        if setDropShadowEffect:
             ExtendFrameIntoClientArea = WinDLL("dwmapi").DwmExtendFrameIntoClientArea
             ExtendFrameIntoClientArea.argtypes = [c_int, PMARGINS]
             ExtendFrameIntoClientArea(hWnd, byref(MARGINS(-1, -1, -1, -1)))
 
-    def setTitleBar(self, TitleBar: Optional[QWidget]) -> None:
+    def setTitleBar(self, titleBar: Optional[QWidget]) -> None:
         try:
-            self.TitleBar.deleteLater()
-            self.TitleBar.hide()
-            StyleSheetBase.Bar.Deregistrate(self.TitleBar)
+            self.titleBar.deleteLater()
+            self.titleBar.hide()
+            StyleSheetBase.Bar.Deregistrate(self.titleBar)
         except:
             pass
-        if TitleBar is not None:
-            self.TitleBar = TitleBar
-            self.TitleBar.setParent(self) if self.TitleBar.parent() is None else None
-            self.TitleBar.raise_() if self.TitleBar.isHidden() else None
+        if titleBar is not None:
+            self.titleBar = titleBar
+            self.titleBar.setParent(self) if self.titleBar.parent() is None else None
+            self.titleBar.raise_() if self.titleBar.isHidden() else None
         else:
-            self.TitleBar = None
+            self.titleBar = None
 
     def showMask(self, setVisible: bool, maskContent: Optional[str] = None) -> None:
         if setVisible:
-            self.Mask.raise_() if self.Mask.isHidden() else None
-            self.Mask.setText(maskContent) if maskContent is not None else self.Mask.clear()
-            self.Mask.show()
+            self.mask.raise_() if self.mask.isHidden() else None
+            self.mask.setText(maskContent) if maskContent is not None else self.mask.clear()
+            self.mask.show()
         else:
-            self.Mask.clear()
-            self.Mask.hide()
+            self.mask.clear()
+            self.mask.hide()
 
 ##############################################################################################################################

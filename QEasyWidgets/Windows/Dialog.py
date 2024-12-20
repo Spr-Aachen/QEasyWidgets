@@ -22,15 +22,16 @@ class DialogBase(WindowBase, QDialog):
         QDialog.__init__(self, None, f) #QDialog.__init__(self, parent, f)
         WindowBase.__init__(self, min_width, min_height)
 
-        self.setFrameless(SetStrechable = False)
+        self.setFrameless(setStrechable = False)
 
-        self.TitleBar.MinimizeButton.hide()
-        self.TitleBar.MinimizeButton.deleteLater()
-        self.TitleBar.MaximizeButton.hide()
-        self.TitleBar.MaximizeButton.deleteLater()
+        self.titleBar.minimizeButton.hide()
+        self.titleBar.minimizeButton.deleteLater()
+        self.titleBar.maximizeButton.hide()
+        self.titleBar.maximizeButton.deleteLater()
 
-        self.showed.connect(lambda: parent.showMask(True)) if isinstance(parent, WindowBase) else None
-        self.closed.connect(lambda: parent.showMask(False)) if isinstance(parent, WindowBase) else None
+        parentWindow = findParent(self, WindowBase) or (parent.window() if parent else None)
+        self.showed.connect(lambda: parentWindow.showMask(True)) if isinstance(parentWindow, WindowBase) else None
+        self.closed.connect(lambda: parentWindow.showMask(False)) if isinstance(parentWindow, WindowBase) else None
 
     def exec(self) -> int:
         result = super().exec()

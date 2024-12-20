@@ -19,3 +19,4 @@ from .Table import TableBase
 from .ChatWidget import ChatWidgetBase
 from .StatusWidget import StatusWidgetBase
 from .DockWidget import DockWidgetBase
+from .Menu import MenuBase
