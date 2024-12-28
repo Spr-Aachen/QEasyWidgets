@@ -59,12 +59,12 @@ class MonitorUsage(QThread):
 
         try:
             pynvml.nvmlInit()
-            self.IsNVIDIAGPU = True
+            self.isNVIDIAGPU = True
         except:
-            self.IsNVIDIAGPU = False
+            self.isNVIDIAGPU = False
 
     def run(self):
-        while self.IsNVIDIAGPU:
+        while self.isNVIDIAGPU:
             Usage_CPU_Percent = psutil.cpu_percent(interval = 1.)
             Usage_CPU = f"{Usage_CPU_Percent}%"
 
@@ -87,24 +87,32 @@ class MonitorFile(QThread):
     '''
     Get the content of file and send to the UI
     '''
-    Signal_FileContent = Signal(str)
+    Signal_fileContent = Signal(str)
 
-    def __init__(self, FilePath):
+    def __init__(self, filePath):
         super().__init__()
 
-        self.FilePath = FilePath
+        self.filePath = filePath
 
     def run(self):
-        self.FileContent_Prev = str()
-        while True:
-            with open(self.FilePath, 'r', encoding = 'utf-8') as File:
-                FileContent = File.read()
+        self.fileContent_Prev = str()
 
-            if FileContent == self.FileContent_Prev:
+        while Path(self.filePath).exists():
+            with open(self.filePath, mode = 'r', encoding = 'utf-8') as file:
+                fileContent = file.read()
+
+            if fileContent == self.fileContent_Prev:
                 self.msleep(100)
             else:
-                self.Signal_FileContent.emit(FileContent)
-                self.FileContent_Prev = FileContent
+                self.Signal_fileContent.emit(fileContent)
+                self.fileContent_Prev = fileContent
+
+        else:
+            print("file %s not found, creating new one..." % self.filePath)
+
+            os.makedirs(Path(self.filePath).parent.__str__(), exist_ok = True) if Path(self.filePath).parent.exists() == False else None
+            with open(self.filePath, mode = 'w', encoding = 'utf-8') as file:
+                pass
 
 
 # Monitor the log file's content
@@ -114,33 +122,33 @@ class MonitorLogFile(QThread):
     '''
     Signal_ConsoleInfo = Signal(str)
 
-    def __init__(self, LogPath):
+    def __init__(self, logPath):
         super().__init__()
 
-        self.LogPath = LogPath
+        self.logPath = logPath
 
-        if Path(self.LogPath).exists():
+        if Path(self.logPath).exists():
             self.clear()
         else:
-            os.makedirs(Path(self.LogPath).parent.__str__(), exist_ok = True) if Path(self.LogPath).parent.exists() == False else None
-            with open(self.LogPath, 'w') as Log:
+            os.makedirs(Path(self.logPath).parent.__str__(), exist_ok = True) if Path(self.logPath).parent.exists() == False else None
+            with open(self.logPath, 'w') as log:
                 pass
 
     def run(self):
-        self.LogContent_Prev = str()
+        self.logContent_Prev = str()
         while True:
-            with open(self.LogPath, 'r', encoding = 'utf-8') as Log:
-                LogContent = Log.read()
+            with open(self.logPath, 'r', encoding = 'utf-8') as log:
+                LogContent = log.read()
 
-            if LogContent == self.LogContent_Prev:
+            if LogContent == self.logContent_Prev:
                 self.msleep(100)
             else:
                 self.Signal_ConsoleInfo.emit(LogContent)
-                self.LogContent_Prev = LogContent
+                self.logContent_Prev = LogContent
 
     def clear(self):
-        with open(self.LogPath, 'r+') as Log:
-            Log.seek(0)
-            Log.truncate()
+        with open(self.logPath, 'r+') as log:
+            log.seek(0)
+            log.truncate()
 
 ##############################################################################################################################

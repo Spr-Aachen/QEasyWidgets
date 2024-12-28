@@ -52,7 +52,7 @@ class ChildWindowBase(WindowBase, QWidget):
         min_width: int = 630,
         min_height: int = 420
     ):
-        QWidget.__init__(self, None, f) #QWidget.__init__(self, parent, f)
+        QWidget.__init__(self, parent, f)
         WindowBase.__init__(self, min_width, min_height)
 
         self.setFrameless()
@@ -61,8 +61,9 @@ class ChildWindowBase(WindowBase, QWidget):
 
         self.EventLoop = QEventLoop(self)
 
-        self.showed.connect(lambda: parent.showMask(True)) if isinstance(parent, WindowBase) else None
-        self.closed.connect(lambda: parent.showMask(False)) if isinstance(parent, WindowBase) else None
+        parentWindow = findParent(self, WindowBase) or (parent.window() if parent else None)
+        self.showed.connect(lambda: parentWindow.showMask(True)) if isinstance(parentWindow, WindowBase) else None
+        self.closed.connect(lambda: parentWindow.showMask(False)) if isinstance(parentWindow, WindowBase) else None
 
     def exec(self) -> int:
         self.show()

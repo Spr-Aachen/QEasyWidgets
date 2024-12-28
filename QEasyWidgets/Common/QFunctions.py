@@ -37,7 +37,8 @@ def findParent(
         try:
             childWidget_Parent = childWidget_Parent.parent()
         except:
-            childWidget_Parent = None #raise Exception(f"{child}'s parent widget not found! Please check if the layout is correct.")
+            childWidget_Parent = None
+            break
 
     return childWidget_Parent
 
@@ -205,6 +206,7 @@ def getFileDialog(
     fileType: Optional[str] = None,
     directory: Optional[str] = None
 ):
+    displayText = ""
     os.makedirs(directory, exist_ok = True) if directory is not None and Path(directory).exists() == False else None
     if mode == FileDialogMode.SelectFolder:
         displayText = QFileDialog.getExistingDirectory(

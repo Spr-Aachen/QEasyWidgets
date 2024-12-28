@@ -19,7 +19,7 @@ class DialogBase(WindowBase, QDialog):
         min_width: int = 630,
         min_height: int = 420
     ):
-        QDialog.__init__(self, None, f) #QDialog.__init__(self, parent, f)
+        QDialog.__init__(self, parent, f)
         WindowBase.__init__(self, min_width, min_height)
 
         self.setFrameless(setStrechable = False)
