@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -33,7 +33,7 @@ class ScrollAreaBase(QScrollArea):
 
         self.setWidgetResizable(True)
 
-        StyleSheetBase.ScrollArea.Apply(self)
+        StyleSheetBase.ScrollArea.apply(self)
 
     def setWidget(self, widget: QWidget) -> None:
         self.widget().deleteLater() if self.widget() is not None else None
@@ -50,7 +50,7 @@ class ScrollAreaBase(QScrollArea):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ScrollArea.Deregistrate(self)
+        StyleSheetBase.ScrollArea.deregistrate(self)
 
 
 class VerticalScrollArea(ScrollAreaBase):

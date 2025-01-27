@@ -9,7 +9,7 @@ from .Theme import EasyTheme
 
 ##############################################################################################################################
 
-RegistratedWidgets = {}
+registratedWidgets = {}
 
 
 class StyleSheetBase(Enum):
@@ -37,14 +37,14 @@ class StyleSheetBase(Enum):
     DockWidget = 'DockWidget'
     Menu = 'Menu'
 
-    def Registrate(self, widget, value):
-        RegistratedWidgets[widget] = value
+    def registrate(self, widget, value):
+        registratedWidgets[widget] = value
 
-    def Deregistrate(self, widget):
-        RegistratedWidgets.pop(widget)
+    def deregistrate(self, widget):
+        registratedWidgets.pop(widget)
 
-    def Apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
-        EasyTheme.Update(theme) if theme is not None else None
+    def apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
+        EasyTheme.update(theme) if theme is not None else None
 
         Prefix = 'QSS'
         FilePath = f'QSS/{EasyTheme.THEME}/{self.value}.qss'
@@ -55,7 +55,7 @@ class StyleSheetBase(Enum):
 
         widget.setStyleSheet(QSS)
 
-        self.Registrate(widget, self.value) if registrate else None
+        self.registrate(widget, self.value) if registrate else None
 
 
 def Function_UpdateStyleSheet(
@@ -63,14 +63,14 @@ def Function_UpdateStyleSheet(
 ):
     '''
     '''
-    for Widget, value in list(RegistratedWidgets.items()):
+    for widget, value in list(registratedWidgets.items()):
         for Value in StyleSheetBase:
             if Value.value != value:
                 continue
             try:
-                Value.Apply(Widget, theme)
+                Value.apply(widget, theme)
             except RuntimeError:
-                Value.Deregistrate(Widget)
+                Value.deregistrate(widget)
             finally:
                 continue
 

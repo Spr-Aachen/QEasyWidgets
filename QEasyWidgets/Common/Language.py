@@ -16,11 +16,11 @@ class LanguageBase:
     '''
     LANG = 'Chinese' if Language.Auto in ('zh', 'zh_CN') else 'English'
 
-    def Update(self, language: str):
+    def update(self, language: str):
         if language in (Language.ZH, Language.EN):
             self.LANG = language
 
 
-EasyLanguage= LanguageBase()
+EasyLanguage = LanguageBase()
 
 ##############################################################################################################################

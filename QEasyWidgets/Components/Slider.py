@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod, getDecimalPlaces
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -27,7 +27,7 @@ class SliderBase(QSlider):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        StyleSheetBase.Slider.Apply(self)
+        StyleSheetBase.Slider.apply(self)
 
     @__init__.register
     def _(self, arg__1: Qt.Orientation, parent: Optional[QWidget] = None) -> None:
@@ -96,6 +96,6 @@ class SliderBase(QSlider):
         super().sliderChange(change)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Slider.Deregistrate(self)
+        StyleSheetBase.Slider.deregistrate(self)
 
 ##############################################################################################################################

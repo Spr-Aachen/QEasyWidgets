@@ -115,7 +115,7 @@ class WindowBase(BackgroundColorAnimationBase):
         try:
             self.titleBar.deleteLater()
             self.titleBar.hide()
-            StyleSheetBase.Bar.Deregistrate(self.titleBar)
+            StyleSheetBase.Bar.deregistrate(self.titleBar)
         except:
             pass
         if titleBar is not None:

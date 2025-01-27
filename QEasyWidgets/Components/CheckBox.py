@@ -1,5 +1,6 @@
 # coding: utf-8
 from typing import Optional, overload
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -108,7 +109,7 @@ class CheckBoxBase(QCheckBox):
 
         self.setMinimumSize(layout.totalSizeHint())
 
-        StyleSheetBase.CheckBox.Apply(self)
+        StyleSheetBase.CheckBox.apply(self)
 
     @__init__.register
     def _(self, text: str = ..., parent: QWidget = None):

@@ -17,7 +17,7 @@ class ComboBoxBase(QComboBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        StyleSheetBase.ComboBox.Apply(self)
+        StyleSheetBase.ComboBox.apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
@@ -29,6 +29,6 @@ class ComboBoxBase(QComboBox):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ComboBox.Deregistrate(self)
+        StyleSheetBase.ComboBox.deregistrate(self)
 
 ##############################################################################################################################

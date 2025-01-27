@@ -133,10 +133,10 @@ def getMissingBorderPixels(hWnd: int):
     for BorderLengthIndex, dpiScaling in SIZEFRAME.items():
         MissingBorderPixels = getSystemMetrics(hWnd, BorderLengthIndex, dpiScaling) + getSystemMetrics(hWnd, 92, dpiScaling) #MissingBorderPixels = win32api.getSystemMetrics(MissingBorderLength) + win32api.getSystemMetrics(win32con.SM_CXPADDEDBORDER)
         if not MissingBorderPixels > 0:
-            def IsCompositionEnabled():
+            def isCompositionEnabled():
                 Result = windll.dwmapi.DwmIsCompositionEnabled(byref(c_int(0)))
                 return bool(Result.value)
-            MissingBorderPixels = round((6 if IsCompositionEnabled() else 3) * Window.devicePixelRatio())
+            MissingBorderPixels = round((6 if isCompositionEnabled() else 3) * Window.devicePixelRatio())
         MissingBorderSize.append(MissingBorderPixels)
 
     return MissingBorderSize
@@ -286,7 +286,7 @@ class WindowBase(BackgroundColorAnimationBase):
         try:
             self.titleBar.deleteLater()
             self.titleBar.hide()
-            StyleSheetBase.Bar.Deregistrate(self.titleBar)
+            StyleSheetBase.Bar.deregistrate(self.titleBar)
         except:
             pass
         if titleBar is not None:

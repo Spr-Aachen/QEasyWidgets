@@ -27,7 +27,7 @@ class ListBase(QListView):
 
         setFont(self, 12)
 
-        StyleSheetBase.List.Apply(self)
+        StyleSheetBase.List.apply(self)
 
     def model(self) -> QStandardItemModel:
         return self.StandardItemModel
@@ -100,6 +100,6 @@ class ListBase(QListView):
         self.setProperty("isBorderless", borderless)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.List.Deregistrate(self)
+        StyleSheetBase.List.deregistrate(self)
 
 ##############################################################################################################################

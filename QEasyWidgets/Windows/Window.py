@@ -52,7 +52,7 @@ class ChildWindowBase(WindowBase, QWidget):
         min_width: int = 630,
         min_height: int = 420
     ):
-        QWidget.__init__(self, parent, f)
+        QWidget.__init__(self, None, f)
         WindowBase.__init__(self, min_width, min_height)
 
         self.setFrameless()

@@ -39,7 +39,7 @@ class TitleBarBase(QWidget):
         self.maximizeButton.setIconSize(iconSize)
         self.minimizeButton.setIconSize(iconSize)
 
-        StyleSheetBase.Bar.Apply(self)
+        StyleSheetBase.Bar.apply(self)
 
     def _closeEvent(self):
         self.Window.close()
@@ -120,6 +120,6 @@ class TitleBarBase(QWidget):
         titleLabel.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Bar.Deregistrate(self)
+        StyleSheetBase.Bar.deregistrate(self)
 
 ##############################################################################################################################

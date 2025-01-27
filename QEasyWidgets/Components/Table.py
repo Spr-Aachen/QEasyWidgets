@@ -66,12 +66,12 @@ class TableBase(QTableView):
         self.model().rowsRemoved.connect(self.setIndex)
         self.sorted.connect(self.setIndex)
 
-        self.IsIndexShown = False
+        self.isIndexShown = False
         self.setIndexHeaderVisible(True)
 
         self.setItemDelegate(ItemDelegate(self))
 
-        StyleSheetBase.Table.Apply(self)
+        StyleSheetBase.Table.apply(self)
 
     def model(self) -> QStandardItemModel:
         return self.StandardItemModel
@@ -129,8 +129,8 @@ class TableBase(QTableView):
     def setHorizontalHeaderItem(self, column: int, item: QStandardItem) -> None:
         self.model().setHorizontalHeaderItem(column + 1, item)
 
-    def setHorizontalHeaderLabels(self, Headers: list[str]) -> None:
-        for Index, Header in enumerate(Headers):
+    def setHorizontalHeaderLabels(self, headers: list[str]) -> None:
+        for Index, Header in enumerate(headers):
             if Index == 1 + self.columnCount():
                 return print("Maximum headers reached")
             self.setHorizontalHeaderItem(Index, QStandardItem(Header))
@@ -141,13 +141,13 @@ class TableBase(QTableView):
     def horizontalHeaderLabels(self) -> list[str]:
         return [self.horizontalHeaderItem(column).text() for column in range(self.columnCount())]
 
-    def setIndexHeaderVisible(self, ShowIndexHeader: bool = True) -> None:
-        if ShowIndexHeader and not self.IsIndexShown:
+    def setIndexHeaderVisible(self, showIndexHeader: bool = True) -> None:
+        if showIndexHeader and not self.isIndexShown:
             super().showColumn(0)
-            self.IsIndexShown = True
-        if not ShowIndexHeader and self.IsIndexShown:
+            self.isIndexShown = True
+        if not showIndexHeader and self.isIndexShown:
             super().hideColumn(0)
-            self.IsIndexShown = False
+            self.isIndexShown = False
 
     def setIndex(self) -> None:
         for Index in range(self.model().rowCount()):
@@ -159,21 +159,21 @@ class TableBase(QTableView):
     def setSectionHorizontalResizeMode(self, column: int, mode: QHeaderView.ResizeMode) -> None:
         super().horizontalHeader().setSectionResizeMode(column + 1, mode)
 
-    def selectOuterRow(self, InnerWidget: QWidget) -> None:
-        CellWidget = InnerWidget.parent()
+    def selectOuterRow(self, innerWidget: QWidget) -> None:
+        CellWidget = innerWidget.parent()
         ModelIndex = self.indexAt(CellWidget.pos())
         self.selectRow(ModelIndex.row()) #if index.isValid() else None
 
-    def addRow(self, Layouts: list[QLayout], ResizeModes: list[Optional[QHeaderView.ResizeMode]], ColumnWidth: list[Optional[int]], Height: Optional[int], reverse: bool = False) -> None:
-        TargetRow = self.rowCount() if not reverse else 0
-        ColumnCount = self.columnCount()
-        self.insertRow(TargetRow)
-        for ColumnCount in range(ColumnCount):
-            self.setCellWidget(TargetRow, ColumnCount, QWidget())
-            self.cellWidget(TargetRow, ColumnCount).setLayout(Layouts[ColumnCount])
-            self.setSectionHorizontalResizeMode(ColumnCount, ResizeModes[ColumnCount]) if ResizeModes[ColumnCount] is not None else None
-            self.setColumnWidth(ColumnCount, ColumnWidth[ColumnCount]) if ColumnWidth[ColumnCount] is not None else None
-        self.setRowHeight(TargetRow, Height) if Height is not None else None
+    def addRow(self, layouts: list[QLayout], resizeModes: list[Optional[QHeaderView.ResizeMode]], columnWidth: list[Optional[int]], height: Optional[int], reverse: bool = False) -> None:
+        targetRow = self.rowCount() if not reverse else 0
+        columnCount = self.columnCount()
+        self.insertRow(targetRow)
+        for columnCount in range(columnCount):
+            self.setCellWidget(targetRow, columnCount, QWidget())
+            self.cellWidget(targetRow, columnCount).setLayout(layouts[columnCount])
+            self.setSectionHorizontalResizeMode(columnCount, resizeModes[columnCount]) if resizeModes[columnCount] is not None else None
+            self.setColumnWidth(columnCount, columnWidth[columnCount]) if columnWidth[columnCount] is not None else None
+        self.setRowHeight(targetRow, height) if height is not None else None
 
     def delRow(self) -> None:
         self.removeRow(self.currentRow()) if self.rowCount() > 1 else None
@@ -186,6 +186,6 @@ class TableBase(QTableView):
         self.setProperty("isBorderless", borderless)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Table.Deregistrate(self)
+        StyleSheetBase.Table.deregistrate(self)
 
 ##############################################################################################################################

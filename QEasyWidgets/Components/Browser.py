@@ -18,12 +18,12 @@ class TextBrowserBase(QTextBrowser):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        StyleSheetBase.Browser.Apply(self)
+        StyleSheetBase.Browser.apply(self)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Browser.Deregistrate(self)
+        StyleSheetBase.Browser.deregistrate(self)
 
 ##############################################################################################################################

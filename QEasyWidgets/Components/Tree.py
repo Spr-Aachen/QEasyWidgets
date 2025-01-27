@@ -42,7 +42,7 @@ class TreeWidgetBase(QTreeWidget):
         self.setItemDelegate(ItemDelegate(self))
         self.setIconSize(QSize(16, 16))
 
-        StyleSheetBase.Tree.Apply(self)
+        StyleSheetBase.Tree.apply(self)
 
     def drawBranches(self, painter: QPainter, rect: QRect, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
         #rect.moveLeft(3)
@@ -65,6 +65,6 @@ class TreeWidgetBase(QTreeWidget):
         return ChildItemTexts
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Tree.Deregistrate(self)
+        StyleSheetBase.Tree.deregistrate(self)
 
 ##############################################################################################################################

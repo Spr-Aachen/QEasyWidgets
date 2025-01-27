@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
 from typing import Union, Optional
+from PyEasyUtils import toIterable, normPath, runCMD
 from PySide6.QtCore import Qt, QSettings, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
 from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices, QAction
 from PySide6.QtWidgets import *
 
-from .Utils import *
 from ..Resources.Sources import *
 
 ##############################################################################################################################
@@ -255,8 +255,8 @@ def openURL(
         QURL = QUrl().fromLocalFile(normPath(url))
         if QURL.isValid():
             os.makedirs(normPath(url), exist_ok = True) if createIfNotExist else None
-            IsSucceeded = QDesktopServices.openUrl(QURL)
-            runCMD([f'start {url}']) if not IsSucceeded else None
+            isSucceeded = QDesktopServices.openUrl(QURL)
+            runCMD([f'start {url}']) if not isSucceeded else None
         else:
             print(f"Invalid url: {url} !")
 

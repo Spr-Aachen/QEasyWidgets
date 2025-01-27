@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -22,7 +22,7 @@ class GroupBoxBase(QGroupBox):
 
         setFont(self, 15)
 
-        StyleSheetBase.GroupBox.Apply(self)
+        StyleSheetBase.GroupBox.apply(self)
 
     @__init__.register
     def _(self, title: str, parent: Optional[QWidget] = None) -> None:
@@ -42,6 +42,6 @@ class GroupBoxBase(QGroupBox):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.GroupBox.Deregistrate(self)
+        StyleSheetBase.GroupBox.deregistrate(self)
 
 ##############################################################################################################################

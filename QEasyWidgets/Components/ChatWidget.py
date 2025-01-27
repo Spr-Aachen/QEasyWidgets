@@ -126,7 +126,7 @@ class ChatWidgetBase(QFrame):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.scrollArea)
 
-        StyleSheetBase.ChatWidget.Apply(self)
+        StyleSheetBase.ChatWidget.apply(self)
 
     def update(self) -> None:
         self.scrollArea.verticalScrollBar().setValue(self.scrollArea.verticalScrollBar().maximum())
@@ -175,6 +175,6 @@ class ChatWidgetBase(QFrame):
             self.addMessage(*message, False)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ChatWidget.Deregistrate(self)
+        StyleSheetBase.ChatWidget.deregistrate(self)
 
 ##############################################################################################################################

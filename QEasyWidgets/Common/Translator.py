@@ -15,7 +15,7 @@ class TranslationBase(QTranslator):
         super().__init__(parent)
 
     def load(self, language: Optional[str] = None):
-        EasyLanguage.Update(language) if language is not None else None
+        EasyLanguage.update(language) if language is not None else None
 
         Prefix = 'QM'
         FilePath = f'i18n/{EasyLanguage.LANG}.qm'

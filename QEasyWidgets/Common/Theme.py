@@ -22,7 +22,7 @@ class ThemeBase:
     '''
     THEME = Theme.Auto if Theme.Auto is not None else Theme.Dark
 
-    def Update(self, theme: str):
+    def update(self, theme: str):
         if theme in (Theme.Dark, Theme.Light):
             self.THEME = theme
 

@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -49,9 +49,9 @@ class LineEditBase(QLineEdit):
 
         self.ToolTip = QToolTip() # TODO Change it to a custom tooltip
 
-        self.IsAlerted = False
+        self.isAlerted = False
 
-        StyleSheetBase.Edit.Apply(self)
+        StyleSheetBase.Edit.apply(self)
 
     @__init__.register
     def _(self, arg__1: str, parent: Optional[QWidget] = None) -> None:
@@ -160,15 +160,15 @@ class LineEditBase(QLineEdit):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Edit.Deregistrate(self)
+        StyleSheetBase.Edit.deregistrate(self)
 
     def setStyleSheet(self, styleSheet: str) -> None:
-        AlertStyle = 'LineEditBase {border-color: red;}' if self.IsAlerted else ''
-        super().setStyleSheet(styleSheet + AlertStyle)
+        alertStyle = 'LineEditBase {border-color: red;}' if self.isAlerted else ''
+        super().setStyleSheet(styleSheet + alertStyle)
 
     def alert(self, enable: bool, content: Optional[str] = None) -> None:
-        self.IsAlerted = enable
-        #StyleSheetBase.Edit.Apply(self)
+        self.isAlerted = enable
+        #StyleSheetBase.Edit.apply(self)
         self.showToolTip(content) if enable else self.hideToolTip()
 
 ##############################################################################################################################
@@ -192,7 +192,7 @@ class TextEditBase(QTextEdit):
         HBoxLayout.setSpacing(0)
         HBoxLayout.setContentsMargins(0, 0, 0, 0)
 
-        StyleSheetBase.Edit.Apply(self)
+        StyleSheetBase.Edit.apply(self)
 
     @__init__.register
     def _(self, text: str, parent: Optional[QWidget] = None) -> None:
@@ -214,6 +214,6 @@ class TextEditBase(QTextEdit):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Edit.Deregistrate(self)
+        StyleSheetBase.Edit.deregistrate(self)
 
 ##############################################################################################################################

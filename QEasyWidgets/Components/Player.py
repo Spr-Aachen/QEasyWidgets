@@ -49,7 +49,7 @@ class MediaPlayerBase(QWidget):
         self.MediaPlayer.setAudioOutput(AudioOutput)
         #self.MediaPlayer.mediaStatusChanged.connect(lambda Status: self.MediaPlayer.stop() if Status == QMediaPlayer.EndOfMedia else None)
 
-        StyleSheetBase.Player.Apply(self)
+        StyleSheetBase.Player.apply(self)
 
     def setMediaPlayer(self, MediaPath: str):
         self.MediaPlayer.setSource(QUrl.fromLocalFile(MediaPath))
@@ -74,6 +74,6 @@ class MediaPlayerBase(QWidget):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Player.Deregistrate(self)
+        StyleSheetBase.Player.deregistrate(self)
 
 ##############################################################################################################################

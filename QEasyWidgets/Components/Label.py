@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -21,7 +21,7 @@ class LabelBase(QLabel):
     def __init__(self, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
         super().__init__(parent)
 
-        StyleSheetBase.Label.Apply(self)
+        StyleSheetBase.Label.apply(self)
 
     @__init__.register
     def _(self, text: str, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
@@ -48,6 +48,6 @@ class LabelBase(QLabel):
         super().resizeEvent(event)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Label.Deregistrate(self)
+        StyleSheetBase.Label.deregistrate(self)
 
 ##############################################################################################################################

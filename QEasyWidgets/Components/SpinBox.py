@@ -19,7 +19,7 @@ class SpinBoxBase(QSpinBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        StyleSheetBase.SpinBox.Apply(self)
+        StyleSheetBase.SpinBox.apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
@@ -31,7 +31,7 @@ class SpinBoxBase(QSpinBox):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.SpinBox.Deregistrate(self)
+        StyleSheetBase.SpinBox.deregistrate(self)
 
 ##############################################################################################################################
 
@@ -45,7 +45,7 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
 
         self.setFocusPolicy(Qt.StrongFocus)
 
-        StyleSheetBase.SpinBox.Apply(self)
+        StyleSheetBase.SpinBox.apply(self)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         event.ignore()
@@ -57,6 +57,6 @@ class DoubleSpinBoxBase(QDoubleSpinBox):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.SpinBox.Deregistrate(self)
+        StyleSheetBase.SpinBox.deregistrate(self)
 
 ##############################################################################################################################

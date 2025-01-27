@@ -1,5 +1,5 @@
 from typing import Optional, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -65,7 +65,7 @@ class DockWidgetBase(QDockWidget):
         titleBar = DockTitleBar(self)
         self.setTitleBarWidget(titleBar)
 
-        StyleSheetBase.DockWidget.Apply(self)
+        StyleSheetBase.DockWidget.apply(self)
 
     @__init__.register
     def _(self, title: str, parent: Optional[QWidget] = None) -> None:
@@ -79,6 +79,6 @@ class DockWidgetBase(QDockWidget):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.DockWidget.Deregistrate(self)
+        StyleSheetBase.DockWidget.deregistrate(self)
 
 ##############################################################################################################################

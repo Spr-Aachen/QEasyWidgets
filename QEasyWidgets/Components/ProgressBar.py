@@ -17,7 +17,7 @@ class ProgressBarBase(QProgressBar):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        StyleSheetBase.ProgressBar.Apply(self)
+        StyleSheetBase.ProgressBar.apply(self)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
@@ -26,6 +26,6 @@ class ProgressBarBase(QProgressBar):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ProgressBar.Deregistrate(self)
+        StyleSheetBase.ProgressBar.deregistrate(self)
 
 ##############################################################################################################################

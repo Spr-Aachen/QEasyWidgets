@@ -16,15 +16,15 @@ class IconEngine(QIconEngine):
     def __init__(self):
         super().__init__()
 
-        self.IsIconSVG = False
+        self.isIconSVG = False
 
     def loadSVG(self, SVGString: str):
-        self.IsIconSVG = True
-        self.Icon = SVGString.encode(errors = 'replace')
+        self.isIconSVG = True
+        self.icon = SVGString.encode(errors = 'replace')
 
     def paint(self, painter: QPainter, rect: QRect, mode: QIcon.Mode, state: QIcon.State) -> None:
-        if self.IsIconSVG:
-            renderer = QSvgRenderer(self.Icon)
+        if self.isIconSVG:
+            renderer = QSvgRenderer(self.icon)
             renderer.render(painter, QRectF(rect))
         else:
             super().paint(painter, rect, mode, state)
@@ -64,26 +64,26 @@ class IconBase(Enum):
     X = 'X'
 
     def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
-        Prefix = 'Icons'
-        IconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
-        IconPath = Path(f':/{Prefix}').joinpath(IconPath).as_posix()
-        Renderer = QSvgRenderer(IconPath)
-        Renderer.render(painter, QRectF(rect))
+        prefix = 'Icons'
+        iconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
+        iconPath = Path(f':/{prefix}').joinpath(iconPath).as_posix()
+        renderer = QSvgRenderer(iconPath)
+        renderer.render(painter, QRectF(rect))
 
     def create(self, theme: Optional[str] = None) -> QIcon:
-        Prefix = 'Icons'
-        IconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
-        File = QFile(Path(f':/{Prefix}').joinpath(IconPath))
-        File.open(QFile.ReadOnly)
-        DomDocument = QDomDocument()
-        DomDocument.setContent(File.readAll())
-        File.close()
+        prefix = 'Icons'
+        iconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
+        file = QFile(Path(f':/{prefix}').joinpath(iconPath))
+        file.open(QFile.ReadOnly)
+        domDocument = QDomDocument()
+        domDocument.setContent(file.readAll())
+        file.close()
 
-        Engine = IconEngine()
-        Engine.loadSVG(DomDocument.toString())
-        Icon = QIcon(Engine)
+        engine = IconEngine()
+        engine.loadSVG(domDocument.toString())
+        icon = QIcon(engine)
 
-        return Icon
+        return icon
 
 
 def Function_DrawIcon(

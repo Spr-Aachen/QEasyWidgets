@@ -1,6 +1,6 @@
 import platform
 from typing import Optional, Union, overload
-#from functools import singledispatchmethod
+from PyEasyUtils import singledispatchmethod
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -33,7 +33,7 @@ class ButtonBase(QPushButton):
 
         setFont(self, 12)
 
-        StyleSheetBase.Button.Apply(self)
+        StyleSheetBase.Button.apply(self)
 
     @__init__.register
     def _(self, text: str, parent: Optional[QWidget] = None) -> None:
@@ -130,7 +130,7 @@ class ButtonBase(QPushButton):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Button.Deregistrate(self)
+        StyleSheetBase.Button.deregistrate(self)
 
 
 class ClearButton(ButtonBase):

@@ -68,10 +68,10 @@ class ToolPage(WidgetBase):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.IsExpanded = True
+        self.isExpanded = True
 
         self.folder = Folder(self)
-        self.folder.clicked.connect(lambda: self.collapse() if self.IsExpanded else self.expand())
+        self.folder.clicked.connect(lambda: self.collapse() if self.isExpanded else self.expand())
 
         widgetlayout = QGridLayout()
         widgetlayout.setContentsMargins(0, 0, 0, 0)
@@ -88,31 +88,29 @@ class ToolPage(WidgetBase):
         layout.addWidget(self.widget)
 
     def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
-        ButtonHeight = self.folder.height()
-        LayoutSpacing = self.layout().spacing()
-        WidgetLayoutMargins = self.widget.layout().contentsMargins().top() + self.widget.layout().contentsMargins().bottom()
-        WidgetHeight = (WidgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.widget.height()
-        AdjustedHeight = ButtonHeight + LayoutSpacing + WidgetHeight if WidgetHeight >=0 else 0
-        self.setFixedHeight(AdjustedHeight)
+        buttonHeight = self.folder.height()
+        layoutSpacing = self.layout().spacing()
+        widgetLayoutMargins = self.widget.layout().contentsMargins().top() + self.widget.layout().contentsMargins().bottom()
+        widgetHeight = (widgetLayoutMargins + addedWidget.height()) if addedWidget is not None else self.widget.height()
+        adjustedHeight = buttonHeight + layoutSpacing + widgetHeight if widgetHeight >=0 else 0
+        self.setFixedHeight(adjustedHeight)
 
-    def addWidget(self, widget: QWidget, title: str):
+    def addWidget(self, widget: QWidget):
         self.widget.layout().addWidget(widget)
-        self.folder.setText(title)
-        def resizeWidgetHeight():
-            AdjustedHeight = widget.height()
-            self.widget.setFixedHeight(AdjustedHeight) if self.IsExpanded else None
-        widget.resized.connect(resizeWidgetHeight) if hasattr(widget, 'resized') else None
 
     def expand(self):
         setWidgetSizeAnimation(self.widget, targetHeight = self.widget.minimumSizeHint().height()).start()
-        self.IsExpanded = True
+        self.isExpanded = True
 
     def collapse(self):
         setWidgetSizeAnimation(self.widget, targetHeight = 0).start()
-        self.IsExpanded = False
+        self.isExpanded = False
 
     def setText(self, text: str):
         self.folder.setText(text)
+
+    def text(self):
+        return self.folder.text()
 
 
 class ToolBoxBase(QFrame):
@@ -122,26 +120,23 @@ class ToolBoxBase(QFrame):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.pages = []
+        self.pages: list[ToolPage] = []
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(12)
 
-        StyleSheetBase.ToolBox.Apply(self)
+        StyleSheetBase.ToolBox.apply(self)
 
-    def addItem(self, widget: Union[QWidget, ToolPage], text: str):
-        if isinstance(widget, ToolPage):
-            page = widget
-            page.setText(text)
-        else:
-            page = ToolPage(self)
-            page.addWidget(widget, text)
+    def addItem(self, widget: QWidget, text: str):
+        page = ToolPage(self)
+        page.addWidget(widget)
+        page.setText(text)
         self.layout().addWidget(page)
         self.pages.append(page)
         def resizeHeight():
-            AdjustedHeight = page.height()
-            self.setFixedHeight(AdjustedHeight)
+            adjustedHeight = page.height()
+            self.setFixedHeight(adjustedHeight)
         page.resized.connect(resizeHeight)
 
     def widget(self, index: int) -> ToolPage:
@@ -166,6 +161,6 @@ class ToolBoxBase(QFrame):
         self.setProperty("isTransparent", transparent)
 
     def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.ToolBox.Deregistrate(self)
+        StyleSheetBase.ToolBox.deregistrate(self)
 
 ##############################################################################################################################
