@@ -225,7 +225,7 @@ class FileButton(ButtonBase):
 
         self.setIcon(IconBase.OpenedFolder)
 
-    def setFileDialog(self, parent: QWidget, mode: str, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
+    def setFileDialog(self, parent: QWidget, mode: FileDialogMode, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
         self.clicked.connect(
             lambda: setText(
                 widget = parent,
@@ -248,24 +248,26 @@ class MenuButton(ButtonBase):
 
         self.setIcon(IconBase.Ellipsis)
 
+    @singledispatchmethod
     def setMenu(self, menu: QMenu) -> None:
-        def ShowMenu():
-            MenuWidth = menu.sizeHint().width()
-            XPos = self.width() - MenuWidth
-            YPos = self.height()
-            menu.exec(self.mapToGlobal(QPoint(XPos, YPos)))
-        self.clicked.connect(ShowMenu)
+        def _showMenu():
+            menuWidth = menu.sizeHint().width()
+            xPos = self.width() - menuWidth
+            yPos = self.height()
+            menu.exec(self.mapToGlobal(QPoint(xPos, yPos)))
+        self.clicked.connect(_showMenu)
 
-    def SetMenu(self, ActionEvents: dict) -> None:
-        Menu = MenuBase(self)
-        for Action in ActionEvents.keys():
-            if not isinstance(Action, str):
+    @setMenu.register
+    def _(self, actionEvents: dict) -> None:
+        menu = MenuBase(self)
+        for action in actionEvents.keys():
+            if not isinstance(action, str):
                 continue
-            MenuAction = QAction(text = Action, parent = self)
-            MenuAction.triggered.connect(ActionEvents.get(Action))
-            Menu.addAction(MenuAction)
+            menuAction = QAction(text = action, parent = self)
+            menuAction.triggered.connect(actionEvents.get(action))
+            menu.addAction(menuAction)
             #Menu.addSeparator()
-        self.setMenu(Menu)
+        self.setMenu(menu)
 
 
 class HollowButton(ButtonBase):
