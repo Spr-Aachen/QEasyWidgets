@@ -226,16 +226,14 @@ class FileButton(ButtonBase):
         self.setIcon(IconBase.OpenedFolder)
 
     def setFileDialog(self, parent: QWidget, mode: FileDialogMode, fileType: Optional[str] = None, directory: Optional[str] = None, buttonTooltip: str = "Browse") -> None:
-        self.clicked.connect(
-            lambda: setText(
-                widget = parent,
-                text = getFileDialog(
-                    mode = mode,
-                    fileType = fileType,
-                    directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if directory is None else directory
-                )
+        def _setText():
+            text = getFileDialog(
+                mode = mode,
+                fileType = fileType,
+                directory = os.path.expanduser('~/Documents' if platform.system() == "Windows" else '~/') if directory is None else directory
             )
-        )
+            setText(widget = parent, text = text) if text != '' else None
+        self.clicked.connect(_setText)
         self.setToolTip(buttonTooltip)
 
 

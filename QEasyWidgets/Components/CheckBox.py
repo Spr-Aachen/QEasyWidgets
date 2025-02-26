@@ -71,12 +71,12 @@ class Indicator(QPushButton):
         painter.setRenderHints(QPainter.Antialiasing)
         # Draw background
         radius = self.height() / 2
-        painter.setPen(ThemeColor.Default.color() if self.isChecked() else (ThemeColor.Dark.color() if EasyTheme.THEME == Theme.Dark else ThemeColor.Light.color()))
-        painter.setBrush(ThemeColor.Default.color() if self.isChecked() else QColor(Qt.white if EasyTheme.THEME == Theme.Dark else Qt.black))
+        painter.setPen(ThemeColor.Default.color() if self.isChecked() else currentColor())
+        painter.setBrush(ThemeColor.Default.color() if self.isChecked() else QColor(Qt.white if isDarkTheme() else Qt.black))
         painter.drawRoundedRect(self.rect().adjusted(1, 1, -1, -1), radius, radius)
         # Draw circle
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor(Qt.black if EasyTheme.THEME == Theme.Dark else Qt.white) if self.isChecked() else (ThemeColor.Dark.color() if EasyTheme.THEME == Theme.Dark else ThemeColor.Light.color()))
+        painter.setBrush(QColor(Qt.black if isDarkTheme() else Qt.white) if self.isChecked() else currentColor())
         painter.drawEllipse(int(self.ellipseCordX), (self._height - self._ellipseLength) // 2, self._ellipseLength, self._ellipseLength)
 
 

@@ -9,8 +9,8 @@ from .Signals import ComponentsSignals
 ##############################################################################################################################
 
 class Theme:
-    '''
-    '''
+    """
+    """
     Dark = 'Dark'
     Light = 'Light'
 
@@ -18,8 +18,8 @@ class Theme:
 
 
 class ThemeBase:
-    '''
-    '''
+    """
+    """
     THEME = Theme.Auto if Theme.Auto is not None else Theme.Dark
 
     def update(self, theme: str):
@@ -28,6 +28,10 @@ class ThemeBase:
 
 
 EasyTheme = ThemeBase()
+
+
+def isDarkTheme():
+    return EasyTheme.THEME == Theme.Dark
 
 ##############################################################################################################################
 
@@ -44,6 +48,10 @@ class ThemeColor(Enum):
         elif self == self.Dark:
             return QColor(24, 24, 24)
         return QColor(120, 180, 240, 123)
+
+
+def currentColor():
+    return ThemeColor.Dark.color() if isDarkTheme() else ThemeColor.Light.color()
 
 ##############################################################################################################################
 
@@ -87,7 +95,7 @@ class BackgroundColorAnimationBase:
         ComponentsSignals.Signal_SetTheme.connect(self._updateBackgroundColor)
 
     def _normalBackgroundColor(self):
-        return self._darkBackgroundColor if EasyTheme.THEME == Theme.Dark else self._lightBackgroundColor
+        return self._darkBackgroundColor if isDarkTheme() else self._lightBackgroundColor
 
     def _hoverBackgroundColor(self):
         return self._normalBackgroundColor()
