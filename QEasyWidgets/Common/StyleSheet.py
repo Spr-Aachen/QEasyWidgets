@@ -5,7 +5,7 @@ from PySide6.QtCore import QFile
 from PySide6.QtWidgets import QApplication, QWidget
 
 from .Signals import ComponentsSignals
-from .Theme import EasyTheme
+from .Theme import EasyTheme, currentTheme
 
 ##############################################################################################################################
 
@@ -47,7 +47,7 @@ class StyleSheetBase(Enum):
         EasyTheme.update(theme) if theme is not None else None
 
         Prefix = 'QSS'
-        FilePath = f'QSS/{EasyTheme.THEME}/{self.value}.qss'
+        FilePath = f'QSS/{currentTheme()}/{self.value}.qss'
         File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
         File.open(QFile.ReadOnly | QFile.Text)
         QSS = str(File.readAll(), encoding = 'utf-8')
@@ -72,6 +72,7 @@ def Function_UpdateStyleSheet(
             except RuntimeError:
                 Value.deregistrate(widget)
             finally:
+                #QApplication.instance().processEvents()
                 continue
 
 

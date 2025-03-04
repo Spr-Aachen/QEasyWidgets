@@ -23,4 +23,8 @@ class LanguageBase:
 
 EasyLanguage = LanguageBase()
 
+
+def currentLanguage():
+    return EasyLanguage.LANG
+
 ##############################################################################################################################

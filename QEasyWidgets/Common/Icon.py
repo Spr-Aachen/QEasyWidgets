@@ -6,7 +6,7 @@ from PySide6.QtGui import QIcon, QIconEngine, QPainter, QPixmap, QImage
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtXml import QDomDocument
 
-from .Theme import EasyTheme
+from .Theme import currentTheme
 
 ##############################################################################################################################
 
@@ -65,14 +65,14 @@ class IconBase(Enum):
 
     def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
         prefix = 'Icons'
-        iconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
+        iconPath = f'Icons/{theme if theme is not None else currentTheme()}/{self.value}.svg'
         iconPath = Path(f':/{prefix}').joinpath(iconPath).as_posix()
         renderer = QSvgRenderer(iconPath)
         renderer.render(painter, QRectF(rect))
 
     def create(self, theme: Optional[str] = None) -> QIcon:
         prefix = 'Icons'
-        iconPath = f'Icons/{theme if theme is not None else EasyTheme.THEME}/{self.value}.svg'
+        iconPath = f'Icons/{theme if theme is not None else currentTheme()}/{self.value}.svg'
         file = QFile(Path(f':/{prefix}').joinpath(iconPath))
         file.open(QFile.ReadOnly)
         domDocument = QDomDocument()
@@ -95,7 +95,7 @@ def Function_DrawIcon(
     Draw icon
     '''
     if isinstance(icon, IconBase):
-        icon.paint(painter, rect, EasyTheme.THEME)
+        icon.paint(painter, rect, currentTheme())
     else:
         icon = QIcon(icon)
         icon.paint(painter, QRectF(rect).toRect(), Qt.AlignCenter, state = QIcon.Off)

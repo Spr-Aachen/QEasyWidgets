@@ -30,8 +30,12 @@ class ThemeBase:
 EasyTheme = ThemeBase()
 
 
+def currentTheme():
+    return EasyTheme.THEME
+
+
 def isDarkTheme():
-    return EasyTheme.THEME == Theme.Dark
+    return currentTheme() == Theme.Dark
 
 ##############################################################################################################################
 

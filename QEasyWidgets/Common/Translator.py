@@ -4,7 +4,7 @@ from PySide6.QtCore import QTranslator
 from PySide6.QtWidgets import QApplication
 
 from .Signals import ComponentsSignals
-from .Language import EasyLanguage
+from .Language import EasyLanguage, currentLanguage
 
 ##############################################################################################################################
 
@@ -18,7 +18,7 @@ class TranslationBase(QTranslator):
         EasyLanguage.update(language) if language is not None else None
 
         Prefix = 'QM'
-        FilePath = f'i18n/{EasyLanguage.LANG}.qm'
+        FilePath = f'i18n/{currentLanguage()}.qm'
         FilePath = Path(f':/{Prefix}').joinpath(FilePath).as_posix()
 
         super().load(FilePath)
