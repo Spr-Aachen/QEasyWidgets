@@ -16,7 +16,7 @@ from .ProgressBar import ProgressBarBase
 from .Player import MediaPlayerBase
 from .Tab import TabWidgetBase
 from .Table import TableBase
-from .ChatWidget import ChatWidgetBase
+from .ChatWidget import ChatRole, ChatWidgetBase
 from .StatusWidget import StatusWidgetBase
 from .DockWidget import DockWidgetBase
 from .Menu import MenuBase

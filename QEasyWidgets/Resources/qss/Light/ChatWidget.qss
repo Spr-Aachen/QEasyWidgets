@@ -15,11 +15,11 @@ ChatWidgetBase QWidget:hover {
 }
 
 
-ChatWidgetBase Message {
+ChatWidgetBase MessageDisplay {
     background-color: transparent;
     padding: 12px;
 }
-ChatWidgetBase Message:hover {
+ChatWidgetBase MessageDisplay:hover {
 }
 
 

@@ -1,30 +1,49 @@
 from typing import Optional, overload
-from PySide6.QtCore import Qt, QSize, QPoint, QTimer
-from PySide6.QtGui import QPainter, QFont, QColor, QPixmap, QPolygon, QPaintEvent
-from PySide6.QtWidgets import QWidget, QFrame, QLabel, QLayout, QHBoxLayout, QSizePolicy, QVBoxLayout, QSpacerItem
+from PyEasyUtils import singledispatchmethod
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 
+from ..Common.Config import ChatRole
 from ..Common.StyleSheet import *
 from .StatusWidget import StatusWidgetBase
 from .ScrollArea import VerticalScrollArea
 
 ##############################################################################################################################
 
-class Notice(QLabel):
-    def __init__(self, text: str, parent = None):
-        super().__init__(text, parent)
+class AvatarDisplay(QLabel):
+    """
+    """
+    clicked = Signal()
 
-        self.setFont(QFont('微软雅黑', 12))
-        self.setWordWrap(True)
-        self.setAlignment(Qt.AlignCenter)
-        self.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-##############################################################################################################################
-
-class Message(QLabel):
-    def __init__(self, text: str, isSent: bool = False, parent: Optional[QWidget] = None):
+    @singledispatchmethod
+    def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.isSent = isSent
+    @__init__.register
+    def _(self, avatar: Union[str, QPixmap], size: QSize = QSize(45, 45), parent: Optional[QWidget] = None):
+        self.__init__(parent)
+        self.setAvatar(avatar, size)
+        self.setFixedSize(size)
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
+        super().mouseDoubleClickEvent(event)
+        self.clicked.emit()
+
+    def setAvatar(self, avatar: Union[str, QPixmap], size: QSize = QSize(45, 45)):
+        if isinstance(avatar, str):
+            self.setPixmap(QPixmap(avatar).scaled(size))
+        elif isinstance(avatar, QPixmap):
+            self.setPixmap(avatar.scaled(size))
+
+
+class MessageDisplay(QLabel):
+    """
+    """
+    def __init__(self, text: str, role: ChatRole, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+
+        self.role = role
 
         self.setFont(QFont('微软雅黑', 12))
         self.setWordWrap(True)
@@ -36,7 +55,7 @@ class Message(QLabel):
     def paintEvent(self, arg__1: QPaintEvent):
         painter = QPainter(self)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor('#b2e281') if self.isSent else QColor('white'))
+        painter.setBrush(QColor('#b2e281') if self.role == ChatRole.User else QColor('white'))
         painter.drawRoundedRect(self.rect(), 6, 6)
         '''
         painter.setPen(QColor('#000000'))
@@ -50,58 +69,61 @@ class Message(QLabel):
 
 
 class Triangle(QWidget):
-    def __init__(self, isSent: bool = False, size: QSize = QSize(6, 45), parent: Optional[QWidget] = None):
+    """
+    """
+    def __init__(self, role: ChatRole, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.isSent = isSent
+        self.role = role
 
-        self.setFixedSize(size)
+        self.setFixedSize(QSize(6, 45))
 
-    def paintEvent(self, arg__1: QPaintEvent) -> None:
+    def paintEvent(self, arg__1: QPaintEvent):
         painter = QPainter(self)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor('#b2e281') if self.isSent else QColor('white'))
-        triangle = QPolygon([QPoint(0, 20), QPoint(0, 34), QPoint(6, 27)] if self.isSent else [QPoint(0, 27), QPoint(6, 20), QPoint(6, 34)])
-        painter.drawPolygon(triangle)
-
-
-class Avatar(QLabel):
-    def __init__(self, avatar: Union[str, QPixmap] = None, size: QSize = QSize(45, 45), parent: Optional[QWidget] = None):
-        super().__init__(parent)
-
-        if isinstance(avatar, str):
-            self.setPixmap(QPixmap(avatar).scaled(size))
-        elif isinstance(avatar, QPixmap):
-            self.setPixmap(avatar.scaled(size))
-
-        self.setFixedSize(size)
+        painter.setBrush(QColor('#b2e281') if self.role == ChatRole.User else QColor('white'))
+        painter.drawPolygon(QPolygon([QPoint(0, 20), QPoint(0, 34), QPoint(6, 27)] if self.role == ChatRole.User else [QPoint(0, 27), QPoint(6, 20), QPoint(6, 34)]))
 
 
 class MessageLayout(QHBoxLayout):
-    def __init__(self, str_content, isSent, status, parent = None):
+    """
+    """
+    def __init__(self, message, role, status, parent = None):
         super().__init__(parent)
 
         self.setSpacing(0)
         self.setContentsMargins(0, 0, 0, 0)
 
-        self.avatar = Avatar(None)
-        self.triangle = Triangle(isSent)
-        self.message = Message(str_content, isSent)
+        self.avatarDisplay = AvatarDisplay(None)
+        self.messageDisplay = MessageDisplay(message, role)
+        self.triangle = Triangle(role)
         self.status = StatusWidgetBase(status)
-        self.spacer = QSpacerItem(self.avatar.sizeHint().width()+self.triangle.sizeHint().width(), 0, QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+        self.spacer = QSpacerItem(self.avatarDisplay.sizeHint().width()+self.triangle.sizeHint().width(), 0, QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
 
-        if isSent:
+        if role == ChatRole.User:
             self.addSpacerItem(self.spacer)
             self.addWidget(self.status, 0, Qt.AlignTop) if status is not None else None
-            self.addWidget(self.message)
+            self.addWidget(self.messageDisplay)
             self.addWidget(self.triangle, 0, Qt.AlignTop)
-            self.addWidget(self.avatar, 0, Qt.AlignTop)
+            self.addWidget(self.avatarDisplay, 0, Qt.AlignTop)
         else:
-            self.addWidget(self.avatar, 0, Qt.AlignTop)
+            self.addWidget(self.avatarDisplay, 0, Qt.AlignTop)
             self.addWidget(self.triangle, 0, Qt.AlignTop)
-            self.addWidget(self.message)
+            self.addWidget(self.messageDisplay)
             self.addWidget(self.status, 0, Qt.AlignTop) if status is not None else None
             self.addSpacerItem(self.spacer)
+
+
+class NoticeDisplay(QLabel):
+    """
+    """
+    def __init__(self, text: str, parent = None):
+        super().__init__(text, parent)
+
+        self.setFont(QFont('微软雅黑', 12))
+        self.setWordWrap(True)
+        self.setAlignment(Qt.AlignCenter)
+        self.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
 ##############################################################################################################################
 
@@ -109,8 +131,12 @@ class ChatWidgetBase(QFrame):
     """
     Base class for chatWidget components
     """
+    onAvatarClicked = Signal(AvatarDisplay)
+
     def __init__(self, parent = None):
         super().__init__(parent)
+
+        self.avatarDisplays = {}
 
         self.scrollArea = VerticalScrollArea()
         self.scrollAreaContent = QWidget()
@@ -153,26 +179,30 @@ class ChatWidgetBase(QFrame):
         self._removeallwidgets(self.scrollAreaContentLayout)
         self.scrollAreaContentLayout.addSpacerItem(self.scrollAreaContentSpacer)
 
-    def addNotice(self, str_content):
-        self.notice = Notice(str_content)
+    def addNotice(self, notice: str):
+        self.notice = NoticeDisplay(notice)
         self.scrollAreaContentLayout.insertWidget(self.scrollAreaContentLayout.indexOf(self.scrollAreaContentSpacer), self.notice)
         self.update()
 
-    def addMessage(self, str_content, isSent, status, stream = False):
-        if stream and hasattr(self, "messageLayout") and hasattr(self, 'role') and self.role == isSent:
-            self.messageLayout.message.setMarkdown(str_content)
+    def _storeAvatar(self, avatarDisplay: AvatarDisplay, role: ChatRole):
+        self.avatarDisplays[avatarDisplay] = role
+        avatarDisplay.clicked.connect(lambda: self.onAvatarClicked.emit(avatarDisplay))
+
+    def setAvatar(self, avatar, role):
+        for avatarDisplay, avatarRole in self.avatarDisplays.items():
+            avatarDisplay.setAvatar(avatar) if avatarRole == role else None
+
+    def addMessage(self, message, role, status, stream: bool = False):
+        if stream and hasattr(self, "messageLayout") and hasattr(self, 'role') and self.role == role:
+            self.messageLayout.messageDisplay.setMarkdown(message)
             self.messageLayout.status.setStatus(status)
             self.update()
             return
-        self.role = isSent
-        self.messageLayout = MessageLayout(str_content, isSent, status)
+        self.role = role
+        self.messageLayout = MessageLayout(message, role, status)
+        self._storeAvatar(self.messageLayout.avatarDisplay, role)
         self.scrollAreaContentLayout.insertLayout(self.scrollAreaContentLayout.indexOf(self.scrollAreaContentSpacer), self.messageLayout)
         self.update()
-
-    def setMessages(self, messages):
-        self.clear()
-        for message in messages:
-            self.addMessage(*message, False)
 
     def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.ChatWidget.deregistrate(self)
