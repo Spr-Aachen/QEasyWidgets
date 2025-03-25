@@ -6,7 +6,7 @@ from PySide6.QtGui import QIcon, QIconEngine, QPainter, QPixmap, QImage
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtXml import QDomDocument
 
-from .Theme import currentTheme
+from .Theme import Theme, currentTheme
 
 ##############################################################################################################################
 
@@ -48,7 +48,7 @@ class IconBase(Enum):
     CompactChevron_Left = 'CompactChevron-Left'
     Chevron_Right = 'Chevron-Right'
     CompactChevron_Right = 'CompactChevron-Right'
-    Chevron_Top = 'Chevron-Top'
+    Chevron_Up = 'Chevron-Up'
     Chevron_Down = 'Chevron-Down'
     Ellipsis = 'Ellipsis'
     OpenedFolder = 'OpenedFolder'
@@ -63,14 +63,14 @@ class IconBase(Enum):
     FullScreen_Exit = 'FullScreen-Exit'
     X = 'X'
 
-    def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[str] = None):
+    def paint(self, painter: QPainter, rect: Union[QRect, QRectF], theme: Optional[Theme] = None):
         prefix = 'Icons'
         iconPath = f'Icons/{theme if theme is not None else currentTheme()}/{self.value}.svg'
         iconPath = Path(f':/{prefix}').joinpath(iconPath).as_posix()
         renderer = QSvgRenderer(iconPath)
         renderer.render(painter, QRectF(rect))
 
-    def create(self, theme: Optional[str] = None) -> QIcon:
+    def create(self, theme: Optional[Theme] = None) -> QIcon:
         prefix = 'Icons'
         iconPath = f'Icons/{theme if theme is not None else currentTheme()}/{self.value}.svg'
         file = QFile(Path(f':/{prefix}').joinpath(iconPath))

@@ -11,7 +11,8 @@ class WorkerSignals(QObject):
     started = Signal()
     finished = Signal()
 
-    errChk = Signal(str)
+    error = Signal(Exception)
+    result = Signal(object)
 
 
 class Worker(QRunnable):
@@ -38,8 +39,12 @@ class Worker(QRunnable):
     def run(self):
         self.signals.started.emit()
 
-        result = self.fn(*self.args, **self.kwargs)
-        self.signals.errChk.emit(str(result))
+        try:
+            result = self.fn(*self.args, **self.kwargs)
+        except Exception as e:
+            self.signals.error.emit(e)
+        finally:
+            self.signals.result.emit(result)
 
         self.signals.finished.emit()
 
@@ -53,14 +58,20 @@ class WorkerManager:
         terminateMethod: Optional[object] = None,
         threadPool: Optional[QThreadPool] = None
     ):
-        self.executeQualName, self.executeMethodName = getNamesFromMethod(executeMethod)
-        executeClassInstance = getClassFromMethod(executeMethod)()
-        self.executeClassInstanceMethod = getattr(executeClassInstance, self.executeMethodName)
+        executeClassName, executeMethodName = getNamesFromMethod(executeMethod)
+        if executeClassName is not None:
+            self.executeClassInstance = getClassFromMethod(executeMethod)()
+            self.executeClassInstanceMethod = getattr(self.executeClassInstance, executeMethodName)
+        else:
+            self.executeClassInstanceMethod = executeMethod
 
         if terminateMethod is not None:
-            terminateQualName, terminateMethodName = getNamesFromMethod(terminateMethod)
-            terminateClassInstance = executeClassInstance if terminateQualName == self.executeQualName else getClassFromMethod(terminateMethod)()
-            self.terminateClassInstanceMethod = getattr(terminateClassInstance, terminateMethodName)
+            terminateClassName, terminateMethodName = getNamesFromMethod(terminateMethod)
+            if terminateClassName is not None:
+                self.terminateClassInstance = self.executeClassInstance if terminateClassName == executeClassName else getClassFromMethod(terminateMethod)()
+                self.terminateClassInstanceMethod = getattr(self.terminateClassInstance, terminateMethodName)
+            else:
+                self.terminateClassInstanceMethod = terminateMethod
         else:
             self.terminateClassInstanceMethod = None
 

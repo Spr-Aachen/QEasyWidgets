@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union, Optional
 from PyEasyUtils import toIterable, normPath, runCMD
 from PySide6.QtCore import Qt, QSettings, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
-from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QDesktopServices, QAction
+from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QScreen, QDesktopServices, QAction, QCursor
 from PySide6.QtWidgets import *
 
 from ..Resources.Sources import *
@@ -225,7 +225,7 @@ def getFileDialog(
             dir = directory if directory is not None else os.getcwd(),
             filter = fileType if fileType is not None else '任意类型 (*.*)'
         )
-    return displayText
+    return displayText# if displayText != '' else None
 
 ##############################################################################################################################
 
@@ -283,5 +283,28 @@ def resetLayout(widget: QWidget, settings: QSettings):
         widget.restoreState(settings.value("layout/state"))
         for dockWidget in widget.findChildren(QDockWidget):
             widget.restoreDockWidget(dockWidget)
+
+##############################################################################################################################
+
+def getCurrentScreen():
+    """
+    Get current screen
+    """
+    cursorPos = QCursor.pos()
+    for screen in QApplication.screens():
+        if screen.geometry().contains(cursorPos):
+            return screen
+
+
+def getScreenGeometry(
+    screen: Optional[QScreen] = None,
+    getAvaliableGeometry: bool = True
+):
+    """
+    Get screen geometry
+    """
+    if screen is None:
+        screen = getCurrentScreen() or QApplication.primaryScreen()
+    return screen.availableGeometry() if getAvaliableGeometry else screen.geometry()
 
 ##############################################################################################################################
