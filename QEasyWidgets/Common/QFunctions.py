@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Sequence
 from PyEasyUtils import toIterable, normPath, runCMD
 from PySide6.QtCore import Qt, QSettings, QPoint, QRect, QSize, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QUrl
 from PySide6.QtGui import QGuiApplication, QColor, QRgba64, QFont, QScreen, QDesktopServices, QAction, QCursor
@@ -47,16 +47,17 @@ def findParent(
 def setFont(
     widget: QWidget,
     fontSize:int = 12,
-    weight = QFont.Normal
+    weight: QFont.Weight = QFont.Normal,
+    families: Sequence[str] = ['Microsoft YaHei']
 ):
     """
     Set the font of widget
     """
-    Font = QFont()
-    Font.setFamilies(['Microsoft YaHei'])
-    Font.setPixelSize(fontSize)
-    Font.setWeight(weight)
-    widget.setFont(Font)
+    font = QFont()
+    font.setFamilies(families)
+    font.setPixelSize(fontSize)
+    font.setWeight(weight)
+    widget.setFont(font)
 
 ##############################################################################################################################
 

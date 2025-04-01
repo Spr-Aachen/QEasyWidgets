@@ -6,7 +6,7 @@ from PySide6.QtGui import QPainter, QColor, QPaintEvent, QResizeEvent
 from PySide6.QtWidgets import QWidget, QGridLayout
 
 #from ..Common.StyleSheet import *
-from ..Common.Status import Status
+from ..Common.Config import Status
 
 ##############################################################################################################################
 

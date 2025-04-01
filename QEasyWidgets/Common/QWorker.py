@@ -43,7 +43,7 @@ class Worker(QRunnable):
             result = self.fn(*self.args, **self.kwargs)
         except Exception as e:
             self.signals.error.emit(e)
-        finally:
+        else:
             self.signals.result.emit(result)
 
         self.signals.finished.emit()
@@ -60,16 +60,22 @@ class WorkerManager:
     ):
         executeClassName, executeMethodName = getNamesFromMethod(executeMethod)
         if executeClassName is not None:
-            self.executeClassInstance = getClassFromMethod(executeMethod)()
-            self.executeClassInstanceMethod = getattr(self.executeClassInstance, executeMethodName)
+            try:
+                self.executeClassInstance = getClassFromMethod(executeMethod)()
+                self.executeClassInstanceMethod = getattr(self.executeClassInstance, executeMethodName)
+            except:
+                self.executeClassInstanceMethod = executeMethod
         else:
             self.executeClassInstanceMethod = executeMethod
 
         if terminateMethod is not None:
             terminateClassName, terminateMethodName = getNamesFromMethod(terminateMethod)
             if terminateClassName is not None:
-                self.terminateClassInstance = self.executeClassInstance if terminateClassName == executeClassName else getClassFromMethod(terminateMethod)()
-                self.terminateClassInstanceMethod = getattr(self.terminateClassInstance, terminateMethodName)
+                try:
+                    self.terminateClassInstance = self.executeClassInstance if terminateClassName == executeClassName else getClassFromMethod(terminateMethod)()
+                    self.terminateClassInstanceMethod = getattr(self.terminateClassInstance, terminateMethodName)
+                except:
+                    self.terminateClassInstanceMethod = terminateMethod
             else:
                 self.terminateClassInstanceMethod = terminateMethod
         else:

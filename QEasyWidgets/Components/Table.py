@@ -24,7 +24,7 @@ class ItemDelegate(QStyledItemDelegate):
         super().initStyleOption(option, index)
         # get text color
         textBrush = index.data(Qt.ForegroundRole)
-        textColor = (Qt.white if EasyTheme.THEME == Theme.Dark else Qt.black) if textBrush is None else textBrush.color()
+        textColor = (Qt.white if isDarkTheme() else Qt.black) if textBrush is None else textBrush.color()
         '''
         # set font
         option.font = index.data(Qt.FontRole)

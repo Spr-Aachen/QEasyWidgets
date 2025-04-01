@@ -16,7 +16,6 @@ class LineEditBase(QLineEdit):
     """
     Base class for lineEdit components
     """
-
     _clearButton = None
     _isClearButtonEnabled = False
 
@@ -67,10 +66,10 @@ class LineEditBase(QLineEdit):
         self.ToolTip.hideText() if self.ToolTip.isVisible() else None
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        super().mouseMoveEvent(event)
         position = event.position()
         self.cursorPositionChanged.emit(position.x(), position.y())
         self.interacted.emit()
-        super().mouseMoveEvent(event)
 
     def moveEvent(self, event: QMoveEvent) -> None:
         self.rectChanged.emit(self.rect())
@@ -119,14 +118,14 @@ class LineEditBase(QLineEdit):
         return self._isClearButtonEnabled
 
     def focusInEvent(self, arg__1: QFocusEvent) -> None:
+        super().focusInEvent(arg__1)
         self.focusedIn.emit()
         self.clearButton.show() if self.isClearButtonEnabled() else None
-        super().focusInEvent(arg__1)
 
     def focusOutEvent(self, arg__1: QFocusEvent) -> None:
+        super().focusOutEvent(arg__1)
         self.focusedOut.emit()
         self.clearButton.hide() if self.isClearButtonEnabled() else None
-        super().focusOutEvent(arg__1)
 
     @property
     def fileButton(self):
@@ -177,7 +176,6 @@ class TextEditBase(QTextEdit):
     """
     Base class for textEdit components
     """
-
     keyEnterPressed = Signal()
 
     keyEnterBlocked = False
@@ -200,9 +198,9 @@ class TextEditBase(QTextEdit):
         self.setText(text)
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
+        super().keyPressEvent(e)
         if e.key() in (Qt.Key_Enter, Qt.Key_Return) and not (e.modifiers() == Qt.ShiftModifier) and not self.keyEnterBlocked:
             self.keyEnterPressed.emit()
-        super().keyPressEvent(e)
 
     def blockKeyEnter(self, block: bool) -> None:
         self.keyEnterBlocked = block

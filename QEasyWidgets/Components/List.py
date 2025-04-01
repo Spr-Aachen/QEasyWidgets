@@ -15,6 +15,7 @@ class ListBase(QListView):
     """
     _contextMenu = None
 
+    currentItemChanged = Signal(QStandardItem, QStandardItem)
     itemClicked = Signal(QStandardItem)
 
     def __init__(self, parent: Optional[QWidget] = None):
@@ -71,10 +72,21 @@ class ListBase(QListView):
     def clear(self):
         self.model().clear()
 
+    def click(self, item):
+        item = self._toStandardItem(item)
+        index = self.model().indexFromItem(item)
+        self.setCurrentIndex(index)
+        self.clicked.emit(index)
+
     @Slot('QModelIndex')
-    def onItemClicked(self, index):
+    def onItemClicked(self, index: Union[QModelIndex, QPersistentModelIndex]):
         item = self.model().itemFromIndex(index)
-        self.itemClicked.emit(item) # Emit the custom signal with the QStandardItem
+        self.itemClicked.emit(item)
+
+    def currentChanged(self, current: Union[QModelIndex, QPersistentModelIndex], previous: Union[QModelIndex, QPersistentModelIndex]):
+        super().currentChanged(current, previous)
+        currentItem, previousItem = self.model().itemFromIndex(current), self.model().itemFromIndex(previous)
+        self.currentItemChanged.emit(currentItem, previousItem)
 
     @property
     def contextMenu(self):
