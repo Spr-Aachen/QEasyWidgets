@@ -18,11 +18,11 @@ class WorkerSignals(QObject):
 class Worker(QRunnable):
     """
     """
-    @singledispatchmethod
-    def __init__(self):
+    # @singledispatchmethod
+    def __init__(self, autoDelete: bool = True):
         super().__init__()
 
-        #self.setAutoDelete(True)
+        self.setAutoDelete(autoDelete)
 
         self.signals = WorkerSignals()
 
@@ -56,8 +56,13 @@ class WorkerManager:
     def __init__(self,
         executeMethod: object = ...,
         terminateMethod: Optional[object] = None,
+        autoDelete: bool = True,
         threadPool: Optional[QThreadPool] = None
     ):
+        self.threadPool = threadPool or QThreadPool()
+
+        self.worker = Worker(autoDelete)
+
         executeClassName, executeMethodName = getNamesFromMethod(executeMethod)
         if executeClassName is not None:
             try:
@@ -68,28 +73,26 @@ class WorkerManager:
         else:
             self.executeClassInstanceMethod = executeMethod
 
-        if terminateMethod is not None:
-            terminateClassName, terminateMethodName = getNamesFromMethod(terminateMethod)
-            if terminateClassName is not None:
-                try:
-                    self.terminateClassInstance = self.executeClassInstance if terminateClassName == executeClassName else getClassFromMethod(terminateMethod)()
-                    self.terminateClassInstanceMethod = getattr(self.terminateClassInstance, terminateMethodName)
-                except:
-                    self.terminateClassInstanceMethod = terminateMethod
-            else:
+        if terminateMethod is None:
+            self.terminateClassInstanceMethod = None
+            return
+        terminateClassName, terminateMethodName = getNamesFromMethod(terminateMethod)
+        if terminateClassName is not None:
+            try:
+                self.terminateClassInstance = self.executeClassInstance if terminateClassName == executeClassName else getClassFromMethod(terminateMethod)()
+                self.terminateClassInstanceMethod = getattr(self.terminateClassInstance, terminateMethodName)
+            except:
                 self.terminateClassInstanceMethod = terminateMethod
         else:
-            self.terminateClassInstanceMethod = None
-
-        self.threadPool = threadPool or QThreadPool()
-
-        self.worker = Worker()
+            self.terminateClassInstanceMethod = terminateMethod
 
     def execute(self, *executeParams):
         self.worker.setTask(self.executeClassInstanceMethod, *executeParams)
         self.threadPool.start(self.worker)
 
-    def terminate(self):
-        self.terminateClassInstanceMethod() if self.terminateClassInstanceMethod is not None else None
+    def terminate(self, *terminateParams):
+        if self.terminateClassInstanceMethod is None:
+            return
+        self.terminateClassInstanceMethod(*terminateParams)
 
 ##############################################################################################################################

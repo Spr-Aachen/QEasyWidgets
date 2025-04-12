@@ -191,13 +191,13 @@ class RotateButton(QAbstractButton):
         self.rotateAnimation.setDuration(210)
         self.rotateAnimation.start()
 
-    def mousePressEvent(self, e):
-        super().mousePressEvent(e)
-        self.setRotate(True)
-
-    def mouseReleaseEvent(self, e):
-        super().mouseReleaseEvent(e)
-        self.setRotate(False)
+    def eventFilter(self, watched: QObject, event: QEvent):
+        if watched is self:
+            if event.type() == QEvent.MouseButtonPress:
+                self.setRotate(True)
+            if event.type() == QEvent.MouseButtonRelease:
+                self.setRotate(False)
+        return super().eventFilter(watched, event)
 
     def paintEvent(self, e):
         painter = QPainter(self)
