@@ -44,6 +44,8 @@ class IconEngine(QIconEngine):
 class IconBase(Enum):
     '''
     '''
+    Arrow_Clockwise = 'Arrow-Clockwise'
+    Arrow_Repeat = 'Arrow-Repeat'
     Chevron_Left = 'Chevron-Left'
     CompactChevron_Left = 'CompactChevron-Left'
     Chevron_Right = 'Chevron-Right'
@@ -56,6 +58,8 @@ class IconBase(Enum):
     Download = 'Download'
     Play = 'Play'
     Pause = 'Pause'
+    Send = 'Send'
+    Stop = 'Stop'
     Dash = 'Dash'
     Window_FullScreen = 'Window-FullScreen'
     Window_Stack = 'Window-Stack'

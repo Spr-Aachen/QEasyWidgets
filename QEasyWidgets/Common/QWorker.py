@@ -1,3 +1,4 @@
+import inspect
 from typing import Union, Optional, overload
 from PyEasyUtils import singledispatchmethod, getNamesFromMethod, getClassFromMethod
 from PySide6.QtCore import QObject, Signal, QThreadPool, QRunnable
@@ -41,10 +42,13 @@ class Worker(QRunnable):
 
         try:
             result = self.fn(*self.args, **self.kwargs)
+            if inspect.isgenerator(result):
+                for item in result:
+                    self.signals.result.emit(item)
+            else:
+                self.signals.result.emit(result)
         except Exception as e:
             self.signals.error.emit(e)
-        else:
-            self.signals.result.emit(result)
 
         self.signals.finished.emit()
 
