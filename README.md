@@ -2,19 +2,16 @@
 
 # QEasyWidgets
 
-[![Releases](https://img.shields.io/github/v/release/Spr-Aachen/QEasyWidgets?color=green&label=Release&logo=Github&logoColor=white&style=for-the-badge)](https://github.com/Spr-Aachen/QEasyWidgets/releases/latest)&nbsp;
+A simple Qt widget library.
+The python version is based on PySide6.
+
 [![PyPI](https://img.shields.io/pypi/v/QEasyWidgets?color=blue&logo=PYPY&logoColor=blue&style=for-the-badge)](https://pypi.org/project/QEasyWidgets/)&nbsp;
 
+[**简体中文**](./docs/README_CN.md) | **English**
+
+![Title](./docs/media/Title.png)
+
 </div>
-
-
-## Description
-
-### Overview
-
-A simple Qt widget library for python (based on PySide6).
-
-Currently this project supports Windows&Linux system.
 
 
 ## Deployment
@@ -26,10 +23,11 @@ pip install QEasyWidgets -i https://pypi.org/simple/
 ```
 
 
-## See Also
+## Cases
 Here are some projects based on QEasyWidgets:
 - [Easy Voice Toolkit](https://github.com/Spr-Aachen/Easy-Voice-Toolkit)
 - [LLM PromptMaster](https://github.com/Spr-Aachen/LLM-PromptMaster)
+- [ParkingLot-Management](https://github.com/Spr-Aachen/ParkingLot-Management)
 
 
 ## Reference
