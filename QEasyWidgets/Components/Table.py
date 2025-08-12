@@ -120,6 +120,12 @@ class TableBase(QTableView):
         super().sortByColumn(column + 1, order)
         self.sorted.emit()
 
+    def item(self, row: int, column: int) -> QStandardItem:
+        return self.model().item(row, column + 1)
+
+    def setItem(self, row: int, column: int, item: QStandardItem) -> None:
+        self.model().setItem(row, column + 1, item)
+
     def cellWidget(self, row: int, column: int) -> QWidget:
         return super().indexWidget(self.model().index(row, column + 1))
 
@@ -130,10 +136,10 @@ class TableBase(QTableView):
         self.model().setHorizontalHeaderItem(column + 1, item)
 
     def setHorizontalHeaderLabels(self, headers: list[str]) -> None:
-        for Index, Header in enumerate(headers):
-            if Index == 1 + self.columnCount():
+        for index, header in enumerate(headers):
+            if index == 1 + self.columnCount():
                 return print("Maximum headers reached")
-            self.setHorizontalHeaderItem(Index, QStandardItem(Header))
+            self.setHorizontalHeaderItem(index, QStandardItem(header))
 
     def horizontalHeaderItem(self, column: int) -> QStandardItem:
         return self.model().horizontalHeaderItem(column)
@@ -150,8 +156,8 @@ class TableBase(QTableView):
             self.isIndexShown = False
 
     def setIndex(self) -> None:
-        for Index in range(self.model().rowCount()):
-            self.model().setItem(Index, 0, QStandardItem(f"{Index + 1}"))
+        for index in range(self.model().rowCount()):
+            self.model().setItem(index, 0, QStandardItem(f"{index + 1}"))
 
     def setSectionVerticalResizeMode(self, row: int, mode: QHeaderView.ResizeMode) -> None:
         super().verticalHeader().setSectionResizeMode(row, mode)
@@ -160,9 +166,9 @@ class TableBase(QTableView):
         super().horizontalHeader().setSectionResizeMode(column + 1, mode)
 
     def selectOuterRow(self, innerWidget: QWidget) -> None:
-        CellWidget = innerWidget.parent()
-        ModelIndex = self.indexAt(CellWidget.pos())
-        self.selectRow(ModelIndex.row()) #if index.isValid() else None
+        cellWidget = innerWidget.parent()
+        modelIndex = self.indexAt(cellWidget.pos())
+        self.selectRow(modelIndex.row()) #if index.isValid() else None
 
     def addRow(self, layouts: list[QLayout], resizeModes: list[Optional[QHeaderView.ResizeMode]], columnWidth: list[Optional[int]], height: Optional[int], reverse: bool = False) -> None:
         targetRow = self.rowCount() if not reverse else 0

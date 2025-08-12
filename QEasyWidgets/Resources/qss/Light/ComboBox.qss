@@ -36,10 +36,10 @@ ComboBoxBase::drop-down {
 }
 
 ComboBoxBase::down-arrow {
-	border-image: url(:/ComboBox_Icon/Icons/DownArrow.png);
+	border-image: url(:/Icons/Icons/Light/Chevron-Down.svg);
 }
 ComboBoxBase::down-arrow:on {
-	border-image: url(:/ComboBox_Icon/Icons/UpArrow.png);
+	border-image: url(:/Icons/Icons/Light/Chevron-Up.svg);
 }
 
 

@@ -25,11 +25,11 @@ QTreeView::branch {
 	border: none;
 }
 QTreeView::branch:open:has-children {
-	image: url(:/Tree_Icon/Icons/DownArrow.png);
+	image: url(:/Icons/Icons/Light/Chevron-Down.svg);
 	padding: 3px;
 }
 QTreeView::branch:closed:has-children {
-	image: url(:/Tree_Icon/Icons/RightArrow.png);
+	image: url(:/Icons/Icons/Light/Chevron-Right.svg);
 	padding: 3px;
 }
 

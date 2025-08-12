@@ -35,7 +35,7 @@ SpinBoxBase::up-button, DoubleSpinBoxBase::up-button {
 	border-width: 0px;
 }
 SpinBoxBase::up-arrow, DoubleSpinBoxBase::up-arrow {
-	border-image: url(:/(Double)SpinBox_Icon/Icons/UpArrow.png);
+	border-image: url(:/Icons/Icons/Light/Chevron-Up.svg);
 }
 
 SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
@@ -47,7 +47,7 @@ SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
 	border-width: 0px;
 }
 SpinBoxBase::down-arrow, DoubleSpinBoxBase::down-arrow {
-	border-image: url(:/(Double)SpinBox_Icon/Icons/DownArrow.png);
+	border-image: url(:/Icons/Icons/Light/Chevron-Down.svg);
 }
 
 
