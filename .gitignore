@@ -1,12 +1,14 @@
-# 
+# GUI assets
 **/*.ui
 **/*.qrc
-**/*.png
 
 # Generated contents
 **/__pycache__/
+
+# Built contents
 **/build/
 **/dist/
 
 # Others
+**/.vscode/
 **/*.ipynb
