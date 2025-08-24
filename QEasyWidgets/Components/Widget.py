@@ -17,6 +17,22 @@ class WidgetBase(QWidget):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
+    def getCurrentWidth(self):
+        return getWidth(self)
+
+    def setCurrentWidth(self, w: int):
+        self.setFixedWidth(w)
+
+    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
+
+    def getCurrentHeight(self):
+        return getHeight(self)
+
+    def setCurrentHeight(self, w: int):
+        self.setFixedHeight(w)
+
+    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit()
         '''

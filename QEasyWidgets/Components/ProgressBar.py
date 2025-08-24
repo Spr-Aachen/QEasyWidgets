@@ -19,6 +19,22 @@ class ProgressBarBase(QProgressBar):
 
         StyleSheetBase.ProgressBar.apply(self)
 
+    def getCurrentWidth(self):
+        return getWidth(self)
+
+    def setCurrentWidth(self, w: int):
+        self.setFixedWidth(w)
+
+    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
+
+    def getCurrentHeight(self):
+        return getHeight(self)
+
+    def setCurrentHeight(self, w: int):
+        self.setFixedHeight(w)
+
+    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
+
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 

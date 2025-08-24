@@ -20,6 +20,22 @@ class TextBrowserBase(QTextBrowser):
 
         StyleSheetBase.Browser.apply(self)
 
+    def getCurrentWidth(self):
+        return getWidth(self)
+
+    def setCurrentWidth(self, w: int):
+        self.setFixedWidth(w)
+
+    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
+
+    def getCurrentHeight(self):
+        return getHeight(self)
+
+    def setCurrentHeight(self, w: int):
+        self.setFixedHeight(w)
+
+    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
+
     def loadMarkdown(self, file: Union[str, Path]):
         with open(file, mode = 'r', encoding = 'utf-8') as f:
             md = f.read()

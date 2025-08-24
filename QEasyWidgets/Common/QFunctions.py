@@ -44,24 +44,16 @@ def findParent(
 
 ##############################################################################################################################
 
-def setFont(
-    widget: QWidget,
-    fontSize:int = 12,
-    weight: QFont.Weight = QFont.Normal,
-    families: Sequence[str] = ['Microsoft YaHei']
-):
-    """
-    Set the font of widget
-    """
-    font = QFont()
-    font.setFamilies(families)
-    font.setPixelSize(fontSize)
-    font.setWeight(weight)
-    widget.setFont(font)
+def getWidth(widget: QWidget):
+    return widget.geometry().width() if widget.size() == QSize(100, 30) else widget.width()
+
+
+def getHeight(widget: QWidget):
+    return widget.geometry().height() if widget.size() == QSize(100, 30) else widget.height()
 
 ##############################################################################################################################
 
-def setNoContents(
+def removeSubWidgets(
     widget: QWidget
 ):
     if isinstance(widget, QStackedWidget):
@@ -121,27 +113,30 @@ def setWidgetSizeAnimation(
     targetWidth: Optional[int] = None,
     targetHeight: Optional[int] = None,
     duration: int = 210,
-    supportSplitter: bool = False
 ):
     """
     Function to animate widget size
     """
-    CurrentWidth = frame.geometry().width() if frame.size() == QSize(100, 30) else frame.width()
-    CurrentHeight = frame.geometry().height() if frame.size() == QSize(100, 30) else frame.height()
+    currentWidth, currentHeight = getWidth(frame), getHeight(frame)
 
-    FrameAnimationMinWidth = QPropertyAnimation(frame, b"minimumWidth", frame)
-    FrameAnimationMaxWidth = QPropertyAnimation(frame, b"maximumWidth", frame)
-    FrameAnimationMinHeight = QPropertyAnimation(frame, b"minimumHeight", frame)
-    FrameAnimationMaxHeight = QPropertyAnimation(frame, b"maximumHeight", frame)
+    animationGroup = QParallelAnimationGroup(frame)
 
-    AnimationGroup = QParallelAnimationGroup(frame)
+    if frame.property("currentWidth") and frame.property("currentHeight"):
+        frameAnimationWidth = QPropertyAnimation(frame, b"currentWidth", frame)
+        frameAnimationHeight = QPropertyAnimation(frame, b"currentHeight", frame)
+        animationGroup.addAnimation(setAnimation(frameAnimationWidth, currentWidth, targetWidth, duration)) if targetWidth is not None else None
+        animationGroup.addAnimation(setAnimation(frameAnimationHeight, currentHeight, targetHeight, duration)) if targetHeight is not None else None
+    else:
+        frameAnimationMinWidth = QPropertyAnimation(frame, b"minimumWidth", frame)
+        frameAnimationMaxWidth = QPropertyAnimation(frame, b"maximumWidth", frame)
+        frameAnimationMinHeight = QPropertyAnimation(frame, b"minimumHeight", frame)
+        frameAnimationMaxHeight = QPropertyAnimation(frame, b"maximumHeight", frame)
+        animationGroup.addAnimation(setAnimation(frameAnimationMinWidth, currentWidth, targetWidth, duration)) if targetWidth is not None else None
+        animationGroup.addAnimation(setAnimation(frameAnimationMaxWidth, currentWidth, targetWidth, duration)) if targetWidth is not None else None
+        animationGroup.addAnimation(setAnimation(frameAnimationMinHeight, currentHeight, targetHeight, duration)) if targetHeight is not None else None
+        animationGroup.addAnimation(setAnimation(frameAnimationMaxHeight, currentHeight, targetHeight, duration)) if targetHeight is not None else None
 
-    AnimationGroup.addAnimation(setAnimation(FrameAnimationMinWidth, CurrentWidth, targetWidth, duration)) if targetWidth is not None and not supportSplitter else None
-    AnimationGroup.addAnimation(setAnimation(FrameAnimationMaxWidth, CurrentWidth, targetWidth, duration)) if targetWidth is not None else None
-    AnimationGroup.addAnimation(setAnimation(FrameAnimationMinHeight, CurrentHeight, targetHeight, duration)) if targetHeight is not None and not supportSplitter else None
-    AnimationGroup.addAnimation(setAnimation(FrameAnimationMaxHeight, CurrentHeight, targetHeight, duration)) if targetHeight is not None else None
-
-    return AnimationGroup
+    return animationGroup
 
 
 def setWidgetOpacityAnimation(
@@ -161,6 +156,22 @@ def setWidgetOpacityAnimation(
     return setAnimation(WidgetAnimation, originalOpacity, AlteredOpacity, duration)
 
 ##############################################################################################################################
+
+def setFont(
+    widget: QWidget,
+    fontSize:int = 12,
+    weight: QFont.Weight = QFont.Normal,
+    families: Sequence[str] = ['Microsoft YaHei']
+):
+    """
+    Set the font of widget
+    """
+    font = QFont()
+    font.setFamilies(families)
+    font.setPixelSize(fontSize)
+    font.setWeight(weight)
+    widget.setFont(font)
+
 
 def setText(
     widget: QWidget,

@@ -97,6 +97,8 @@ class WorkerManager:
     def terminate(self, *terminateParams):
         if self.terminateClassInstanceMethod is None:
             return
-        self.terminateClassInstanceMethod(*terminateParams)
+        tempWorker = Worker(autoDelete = True)
+        tempWorker.setTask(self.terminateClassInstanceMethod, *terminateParams)
+        self.threadPool.start(tempWorker)
 
 ##############################################################################################################################
