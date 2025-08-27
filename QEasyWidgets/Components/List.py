@@ -5,6 +5,7 @@ from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .ScrollArea import ScrollDelegate
 from .Menu import MenuBase
 
 ##############################################################################################################################
@@ -27,6 +28,8 @@ class ListBase(QListView):
         self.clicked.connect(self.onItemClicked)
 
         setFont(self, 12)
+
+        self.scrollDelegate = ScrollDelegate(self)
 
         StyleSheetBase.List.apply(self)
 

@@ -27,47 +27,6 @@ LineEditBase:disabled, TextEditBase:disabled {
 }
 
 
-TextEditBase QScrollBar {
-	background-color: rgba(54, 45, 33, 123);
-	border-width: 1.2px;
-	border-radius: 6px;
-	border-style: solid;
-	border-color: transparent;
-	margin: 0px;
-}
-TextEditBase QScrollBar:hover {
-	background-color: rgba(54, 45, 33, 210);
-}
-
-TextEditBase QScrollBar::horizontal {
-	height: 9px;
-}
-TextEditBase QScrollBar::vertical {
-	width: 9px;
-}
-
-TextEditBase QScrollBar::sub-line, TextEditBase QScrollBar::add-line {
-	background-color: transparent;
-	border-width: 0px;
-	border-radius: 0px;
-	border-style: solid;
-}
-
-TextEditBase QScrollBar::sub-page, TextEditBase QScrollBar::add-page {
-	background-color: transparent;
-}
-
-TextEditBase QScrollBar::handle {
-	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
-	border-radius: 0px;
-	border-style: solid;
-}
-TextEditBase QScrollBar::handle:hover {
-	background-color: rgba(123, 123, 123, 210);
-}
-
-
 QToolTip {
     color: rgb(210, 222, 234);
     background-color: black;

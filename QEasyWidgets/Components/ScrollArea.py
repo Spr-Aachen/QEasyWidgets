@@ -472,13 +472,6 @@ class ScrollDelegate(QObject):
         self.vScrollBar = ScrollBar(Qt.Vertical, parent)
         self.hScrollBar = ScrollBar(Qt.Horizontal, parent)
 
-        if isinstance(parent, QAbstractItemView):
-            parent.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
-            parent.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        if isinstance(parent, QListView):
-            parent.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-            parent.horizontalScrollBar().setStyleSheet("QScrollBar:horizontal{height: 0px}")
-
         parent.viewport().installEventFilter(self)
         parent.setVerticalScrollBarPolicy = self.setVerticalScrollBarPolicy
         parent.setHorizontalScrollBarPolicy = self.setHorizontalScrollBarPolicy
@@ -544,6 +537,8 @@ class VerticalScrollArea(ScrollAreaBase):
     """
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
+
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.viewportSizeChanged.connect(self.onViewportSizeChanged)
 

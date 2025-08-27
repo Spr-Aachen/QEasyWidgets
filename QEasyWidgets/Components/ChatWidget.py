@@ -21,7 +21,7 @@ class AvatarDisplay(QLabel):
         super().__init__(parent)
 
     @__init__.register
-    def _(self, avatar: Union[str, QPixmap], size: QSize = QSize(45, 45), parent: Optional[QWidget] = None):
+    def _(self, size: QSize, avatar: Union[str, QPixmap], parent: Optional[QWidget] = None):
         self.__init__(parent)
         self.setAvatar(avatar, size)
         self.setFixedSize(size)

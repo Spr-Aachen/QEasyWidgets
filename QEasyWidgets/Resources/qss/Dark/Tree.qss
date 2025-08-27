@@ -32,39 +32,3 @@ QTreeView::branch:closed:has-children {
 	image: url(:/Icons/Icons/Dark/Chevron-Right.svg);
 	padding: 3px;
 }
-
-
-QScrollBar {
-	background-color: transparent;
-	border: 1.2px solid transparent;
-	border-radius: 6px;
-	margin: 0px;
-}
-QScrollBar:hover {
-}
-
-QScrollBar::horizontal {
-	height: 9px;
-}
-QScrollBar::vertical {
-	width: 9px;
-}
-
-QScrollBar::sub-line, QScrollBar::add-line {
-	background-color: transparent;
-	border: none;
-	border-radius: 0px;
-}
-
-QScrollBar::sub-page, QScrollBar::add-page {
-	background-color: transparent;
-}
-
-QScrollBar::handle {
-	background-color: rgba(123, 123, 123, 123);
-	border: none;
-	border-radius: 0px;
-}
-QScrollBar::handle:hover {
-	background-color: rgba(123, 123, 123, 210);
-}

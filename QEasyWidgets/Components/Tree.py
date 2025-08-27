@@ -6,6 +6,7 @@ from PySide6.QtWidgets import *
 from ..Common.Theme import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .ScrollArea import ScrollDelegate
 
 ##############################################################################################################################
 
@@ -41,6 +42,8 @@ class TreeWidgetBase(QTreeWidget):
 
         self.setItemDelegate(ItemDelegate(self))
         self.setIconSize(QSize(16, 16))
+
+        self.scrollDelegate = ScrollDelegate(self)
 
         StyleSheetBase.Tree.apply(self)
 

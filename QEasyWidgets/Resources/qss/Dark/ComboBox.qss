@@ -70,43 +70,6 @@ ComboBoxBase QAbstractItemView::item:selected {
 }
 
 
-ComboBoxBase QAbstractScrollArea QScrollBar {
-	background-color: transparent;
-	border: 1.2px solid transparent;
-	border-radius: 6px;
-	margin: 0px;
-}
-ComboBoxBase QAbstractScrollArea QScrollBar:hover {
-}
-
-ComboBoxBase QAbstractScrollArea QScrollBar::horizontal {
-	height: 9px;
-}
-ComboBoxBase QAbstractScrollArea QScrollBar::vertical {
-	width: 9px;
-}
-
-ComboBoxBase QAbstractScrollArea QScrollBar::sub-line, ComboBoxBase QAbstractScrollArea QScrollBar::add-line {
-	background-color: transparent;
-	border: none;
-	border-radius: 0px;
-}
-
-ComboBoxBase QAbstractScrollArea QScrollBar::sub-page, ComboBoxBase QAbstractScrollArea QScrollBar::add-page {
-	background-color: transparent;
-}
-
-ComboBoxBase QAbstractScrollArea QScrollBar::handle {
-	background-color: rgba(123, 123, 123, 123);
-	border-width: 0px;
-	border-radius: 0px;
-	border-style: solid;
-}
-ComboBoxBase QAbstractScrollArea QScrollBar::handle:hover {
-	background-color: rgba(123, 123, 123, 210);
-}
-
-
 QToolTip {
     color: rgb(210, 222, 234);
     background-color: black;

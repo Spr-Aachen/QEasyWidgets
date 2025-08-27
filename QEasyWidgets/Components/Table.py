@@ -6,6 +6,7 @@ from PySide6.QtWidgets import *
 from ..Common.Theme import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .ScrollArea import ScrollDelegate
 
 ##############################################################################################################################
 
@@ -70,6 +71,8 @@ class TableBase(QTableView):
         self.setIndexHeaderVisible(True)
 
         self.setItemDelegate(ItemDelegate(self))
+
+        self.scrollDelegate = ScrollDelegate(self)
 
         StyleSheetBase.Table.apply(self)
 

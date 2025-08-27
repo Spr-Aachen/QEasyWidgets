@@ -7,6 +7,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .ScrollArea import ScrollDelegate
 from .Menu import MenuBase
 from .Button import ClearButton, FileButton
 
@@ -189,6 +190,8 @@ class TextEditBase(QTextEdit):
         HBoxLayout = QHBoxLayout(self)
         HBoxLayout.setSpacing(0)
         HBoxLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.scrollDelegate = ScrollDelegate(self)
 
         StyleSheetBase.Edit.apply(self)
 
