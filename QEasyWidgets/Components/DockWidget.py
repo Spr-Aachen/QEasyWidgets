@@ -7,6 +7,7 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .Widget import SizableWidget
 from .Bar import TitleBarBase
 from .Button import ButtonBase
 
@@ -54,7 +55,7 @@ class DockTitleBar(TitleBarBase):
         self._floatButton = button
 
 
-class DockWidgetBase(QDockWidget):
+class DockWidgetBase(QDockWidget, SizableWidget):
     """
     Base class for dockWidget components
     """
@@ -71,22 +72,6 @@ class DockWidgetBase(QDockWidget):
     def _(self, title: str, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setWindowTitle(title)
-
-    def getCurrentWidth(self):
-        return getWidth(self)
-
-    def setCurrentWidth(self, w: int):
-        self.setFixedWidth(w)
-
-    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
-
-    def getCurrentHeight(self):
-        return getHeight(self)
-
-    def setCurrentHeight(self, w: int):
-        self.setFixedHeight(w)
-
-    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

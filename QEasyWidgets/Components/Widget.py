@@ -8,14 +8,11 @@ from ..Common.QFunctions import *
 
 ##############################################################################################################################
 
-class WidgetBase(QWidget):
+class SizableWidget:
     """
-    Base class for widget components
     """
-    resized = Signal()
-
-    def __init__(self, parent: Optional[QWidget] = None):
-        super().__init__(parent)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def getCurrentWidth(self):
         return getWidth(self)
@@ -28,10 +25,21 @@ class WidgetBase(QWidget):
     def getCurrentHeight(self):
         return getHeight(self)
 
-    def setCurrentHeight(self, w: int):
-        self.setFixedHeight(w)
+    def setCurrentHeight(self, h: int):
+        self.setFixedHeight(h)
 
     currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
+
+##############################################################################################################################
+
+class WidgetBase(QWidget, SizableWidget):
+    """
+    Base class for widget components
+    """
+    resized = Signal()
+
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resized.emit()

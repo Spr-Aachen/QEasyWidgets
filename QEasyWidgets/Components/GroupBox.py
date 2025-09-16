@@ -6,10 +6,11 @@ from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .Widget import SizableWidget
 
 ##############################################################################################################################
 
-class GroupBoxBase(QGroupBox):
+class GroupBoxBase(QGroupBox, SizableWidget):
     """
     Base class for groupBox components
     """
@@ -28,22 +29,6 @@ class GroupBoxBase(QGroupBox):
     def _(self, title: str, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setTitle(title)
-
-    def getCurrentWidth(self):
-        return getWidth(self)
-
-    def setCurrentWidth(self, w: int):
-        self.setFixedWidth(w)
-
-    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
-
-    def getCurrentHeight(self):
-        return getHeight(self)
-
-    def setCurrentHeight(self, w: int):
-        self.setFixedHeight(w)
-
-    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
 
     def expand(self):
         setWidgetSizeAnimation(self, targetHeight = self.minimumSizeHint().height()).start()

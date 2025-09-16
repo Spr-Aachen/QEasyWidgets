@@ -5,27 +5,25 @@ from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from ..Resources.Sources import *
 from .Widget import SizableWidget
 
 ##############################################################################################################################
 
-class TabWidgetBase(QTabWidget, SizableWidget):
+class FrameBase(QFrame, SizableWidget):
     """
-    Base class for tabWidget components
+    Base class for frame components
     """
+    resized = Signal()
+
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.tabBar().setMinimumSize(84, 42)
-        setFont(self, 21)
-
-        StyleSheetBase.Tab.apply(self)
-
-    def setBorderless(self, borderless: bool) -> None:
-        self.setProperty("isBorderless", borderless)
-
-    def clearDefaultStyleSheet(self) -> None:
-        StyleSheetBase.Tab.deregistrate(self)
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.resized.emit()
+        '''
+        if self.minimumSizeHint() != self.size():
+            self.adjustSize()
+        '''
+        super().resizeEvent(event)
 
 ##############################################################################################################################

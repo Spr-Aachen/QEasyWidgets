@@ -7,13 +7,14 @@ from ..Common.Theme import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .Widget import WidgetBase
+from .Frame import FrameBase
 from .Button import RotateButton
 
 ##############################################################################################################################
 
 class Folder(QLabel):
-    '''
-    '''
+    """
+    """
     _height = 30
     _margin = 6
 
@@ -79,7 +80,7 @@ class ToolPage(WidgetBase):
         self.widget = WidgetBase()
         self.widget.setAttribute(Qt.WA_StyledBackground)
         self.widget.setLayout(widgetlayout)
-        self.widget.resized.connect(self._resizeHeight)
+        self.widget.resized.connect(self.updateHeight)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -87,7 +88,7 @@ class ToolPage(WidgetBase):
         layout.addWidget(self.folder)
         layout.addWidget(self.widget)
 
-    def _resizeHeight(self, addedWidget: Optional[QWidget] = None):
+    def updateHeight(self, addedWidget: Optional[QWidget] = None):
         buttonHeight = self.folder.height()
         layoutSpacing = self.layout().spacing()
         widgetLayoutMargins = self.widget.layout().contentsMargins().top() + self.widget.layout().contentsMargins().bottom()
@@ -113,14 +114,14 @@ class ToolPage(WidgetBase):
         return self.folder.text()
 
 
-class ToolBoxBase(QFrame):
+class ToolBoxBase(FrameBase):
     """
     Base class for toolBox components
     """
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        self.pages: list[ToolPage] = []
+        self.toolPages: list[ToolPage] = []
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -128,19 +129,30 @@ class ToolBoxBase(QFrame):
 
         StyleSheetBase.ToolBox.apply(self)
 
+    def updateHeight(self):
+        layoutSpacing = self.layout().spacing() * (len(self.toolPages) - 1) if len(self.toolPages) > 1 else 0
+        layoutMargins = self.layout().contentsMargins().top() + self.layout().contentsMargins().bottom()
+        toolPagesHeight = layoutMargins
+        for toolPage in self.toolPages:
+            toolPagesHeight += toolPage.height()
+        adjustedHeight = layoutSpacing + toolPagesHeight
+        self.setFixedHeight(adjustedHeight)
+
     def addItem(self, widget: QWidget, text: str):
-        page = ToolPage(self)
-        page.addWidget(widget)
-        page.setText(text)
-        self.layout().addWidget(page)
-        self.pages.append(page)
-        def resizeHeight():
-            adjustedHeight = page.height()
-            self.setFixedHeight(adjustedHeight)
-        page.resized.connect(resizeHeight)
+        for toolPage in self.toolPages:
+            if toolPage.text() == text:
+                toolPage.addWidget(widget)
+                break
+        else:
+            toolPage = ToolPage(self)
+            toolPage.setText(text)
+            toolPage.addWidget(widget)
+            toolPage.resized.connect(self.updateHeight)
+            self.layout().addWidget(toolPage)
+            self.toolPages.append(toolPage)
 
     def widget(self, index: int) -> ToolPage:
-        return self.pages[index]
+        return self.toolPages[index]
 
     def setItemText(self, index: int, text: str) -> None:
         self.widget(index).setText(text)
@@ -152,7 +164,7 @@ class ToolBoxBase(QFrame):
         ''''''
 
     def indexOf(self, widget: QWidget) -> int:
-        return self.pages.index(widget if isinstance(widget, ToolPage) else findParent(widget, ToolPage))
+        return self.toolPages.index(widget if isinstance(widget, ToolPage) else findParent(widget, ToolPage))
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

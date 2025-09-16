@@ -6,6 +6,7 @@ from PySide6.QtWidgets import *
 
 from ..Common.Config import ChatRole
 from ..Common.StyleSheet import *
+from .Frame import FrameBase
 from .StatusWidget import StatusWidgetBase
 from .ScrollArea import VerticalScrollArea
 
@@ -127,7 +128,7 @@ class NoticeDisplay(QLabel):
 
 ##############################################################################################################################
 
-class ChatWidgetBase(QFrame):
+class ChatWidgetBase(FrameBase):
     """
     Base class for chatWidget components
     """

@@ -7,10 +7,11 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .Widget import SizableWidget
 
 ##############################################################################################################################
 
-class SliderBase(QSlider):
+class SliderBase(QSlider, SizableWidget):
     """
     Base class for slider components
     """
@@ -33,22 +34,6 @@ class SliderBase(QSlider):
     def _(self, arg__1: Qt.Orientation, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setOrientation(arg__1)
-
-    def getCurrentWidth(self):
-        return getWidth(self)
-
-    def setCurrentWidth(self, w: int):
-        self.setFixedWidth(w)
-
-    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
-
-    def getCurrentHeight(self):
-        return getHeight(self)
-
-    def setCurrentHeight(self, w: int):
-        self.setFixedHeight(w)
-
-    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
 
     def _updateTimes(self, key, value):
         Time = 10 ** getDecimalPlaces(value)

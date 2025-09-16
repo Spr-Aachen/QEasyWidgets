@@ -25,7 +25,7 @@ class TranslationBase(QTranslator):
 
 
 Translator = None
-def Function_UpdateLanguage(
+def updateLanguage(
     language: Optional[str] = None
 ):
     '''
@@ -43,6 +43,6 @@ def Function_UpdateLanguage(
     QApplication.instance().installTranslator(Translator)
 
 
-ComponentsSignals.Signal_SetLanguage.connect(Function_UpdateLanguage)
+ComponentsSignals.Signal_SetLanguage.connect(updateLanguage)
 
 ##############################################################################################################################

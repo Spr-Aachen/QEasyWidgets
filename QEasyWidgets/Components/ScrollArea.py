@@ -284,7 +284,7 @@ class ScrollBar(QWidget):
             return
 
         distance = abs(value - self.value())
-        duration = min(500, max(200, int(distance * 5)))
+        duration = min(self.duration, max(self.duration // 2, int(distance * 3)))
 
         self.ani.setDuration(duration)
         self.ani.setStartValue(self.value())
@@ -441,7 +441,7 @@ class ScrollBar(QWidget):
         new_value = self.value() - delta
         new_value = max(self.minimum(), min(new_value, self.maximum()))
 
-        self.setValueImmediately(new_value)
+        self.setValue(new_value)
         e.accept()
 
     def setScrollValue(self, value):
@@ -468,6 +468,7 @@ class ScrollDelegate(QObject):
     """
     def __init__(self, parent: QAbstractScrollArea):
         super().__init__(parent)
+        self.parent_area = parent
 
         self.vScrollBar = ScrollBar(Qt.Vertical, parent)
         self.hScrollBar = ScrollBar(Qt.Horizontal, parent)
@@ -478,22 +479,20 @@ class ScrollDelegate(QObject):
 
     def eventFilter(self, obj, e: QEvent):
         if e.type() == QEvent.Wheel:
-            if e.angleDelta().y() != 0:
-                self.vScrollBar.setScrollValue(-e.angleDelta().y())
-            else:
-                self.hScrollBar.setScrollValue(-e.angleDelta().x())
-
-            e.setAccepted(True)
+            wheel_event = e
+            if wheel_event.angleDelta().y() != 0:
+                self.vScrollBar.wheelEvent(wheel_event)
+            elif wheel_event.angleDelta().x() != 0:
+                self.hScrollBar.wheelEvent(wheel_event)
             return True
-
         return super().eventFilter(obj, e)
 
     def setVerticalScrollBarPolicy(self, policy):
-        QAbstractScrollArea.setVerticalScrollBarPolicy(self.parent(), Qt.ScrollBarAlwaysOff)
+        QAbstractScrollArea.setVerticalScrollBarPolicy(self.parent_area, Qt.ScrollBarAlwaysOff)
         self.vScrollBar.setAlwaysOff(policy == Qt.ScrollBarAlwaysOff)
 
     def setHorizontalScrollBarPolicy(self, policy):
-        QAbstractScrollArea.setHorizontalScrollBarPolicy(self.parent(), Qt.ScrollBarAlwaysOff)
+        QAbstractScrollArea.setHorizontalScrollBarPolicy(self.parent_area, Qt.ScrollBarAlwaysOff)
         self.hScrollBar.setAlwaysOff(policy == Qt.ScrollBarAlwaysOff)
 
 ##############################################################################################################################

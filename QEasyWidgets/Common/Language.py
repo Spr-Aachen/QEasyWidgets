@@ -5,8 +5,8 @@ import locale
 class Language:
     '''
     '''
-    ZH = 'Chinese'
-    EN = 'English'
+    ZH = 'zh'
+    EN = 'en'
 
     Auto = locale.getdefaultlocale()[0]
 
@@ -14,7 +14,7 @@ class Language:
 class LanguageBase:
     '''
     '''
-    LANG = 'Chinese' if Language.Auto in ('zh', 'zh_CN') else 'English'
+    LANG = Language.ZH if Language.Auto in ('zh', 'zh_CN') else Language.EN
 
     def update(self, language: str):
         if language in (Language.ZH, Language.EN):

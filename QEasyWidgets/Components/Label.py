@@ -6,10 +6,11 @@ from PySide6.QtWidgets import *
 
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
+from .Widget import SizableWidget
 
 ##############################################################################################################################
 
-class LabelBase(QLabel):
+class LabelBase(QLabel, SizableWidget):
     """
     Base class for label components
     """
@@ -27,22 +28,6 @@ class LabelBase(QLabel):
     def _(self, text: str, parent: Optional[QWidget] = None, f: Qt.WindowType = ...) -> None:
         self.__init__(parent)
         self.setText(text)
-
-    def getCurrentWidth(self):
-        return getWidth(self)
-
-    def setCurrentWidth(self, w: int):
-        self.setFixedWidth(w)
-
-    currentWidth = Property(int, getCurrentWidth, setCurrentWidth)
-
-    def getCurrentHeight(self):
-        return getHeight(self)
-
-    def setCurrentHeight(self, w: int):
-        self.setFixedHeight(w)
-
-    currentHeight = Property(int, getCurrentHeight, setCurrentHeight)
 
     def scalePixmap(self, pixmap: QPixmap):
         Length = max(self.width(), self.height())
