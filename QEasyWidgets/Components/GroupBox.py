@@ -19,7 +19,7 @@ class GroupBoxBase(QGroupBox, SizableWidget):
         super().__init__(parent)
 
         self.setCheckable(True)
-        self.toggled.connect(lambda isChecked: self.collapse() if isChecked else self.expand())
+        self.toggled.connect(lambda isChecked: self.expand() if isChecked else self.collapse())
 
         setFont(self, 15)
 
@@ -31,10 +31,10 @@ class GroupBoxBase(QGroupBox, SizableWidget):
         self.setTitle(title)
 
     def expand(self):
-        setWidgetSizeAnimation(self, targetHeight = self.minimumSizeHint().height()).start()
+        setWidgetSizeAnimation(self, targetHeight = self.sizeHint().height()).start()
 
     def collapse(self):
-        setWidgetSizeAnimation(self, targetHeight = 0).start()
+        setWidgetSizeAnimation(self, targetHeight = self.fontMetrics().height() + 3).start()
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

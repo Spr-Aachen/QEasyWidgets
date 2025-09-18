@@ -12,7 +12,7 @@ class ConsolOutputHandler(QThread):
     '''
     Intercept the output of the consol and send to the UI (Not Recommended)
     '''
-    Signal_ConsoleInfo = Signal(str)
+    consoleInfo = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -32,7 +32,7 @@ class ConsolOutputHandler(QThread):
         '''
         self.Mutex.lock()
 
-        self.Signal_ConsoleInfo.emit(str(Info))
+        self.consoleInfo.emit(str(Info))
 
         self.Mutex.unlock()
 
@@ -52,7 +52,7 @@ class MonitorUsage(QThread):
     '''
     Get the usage of CPU and NVIDIA GPU
     '''
-    Signal_UsageInfo = Signal(str, str)
+    usageInfo = Signal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -77,7 +77,7 @@ class MonitorUsage(QThread):
                 Usage_GPU_Percent += Usage_GPU_Percent_Single #Usage_GPU_Percent = Usage_GPU_Percent_Single if Usage_GPU_Percent < Usage_GPU_Percent_Single else Usage_GPU_Percent
             Usage_GPU = f"{Usage_GPU_Percent / pynvml.nvmlDeviceGetCount()}%" #Usage_GPU = f"{Usage_GPU_Percent}%"
 
-            self.Signal_UsageInfo.emit(Usage_CPU, Usage_GPU)
+            self.usageInfo.emit(Usage_CPU, Usage_GPU)
 
             self.msleep(1000)
 
@@ -98,7 +98,7 @@ class MonitorFile(QThread):
         self.fileContent_Prev = str()
 
         while Path(self.filePath).exists():
-            with open(self.filePath, mode = 'r', encoding = 'utf-8') as file:
+            with open(self.filePath, mode = 'r', encoding = 'utf-8', errors = 'replace') as file:
                 fileContent = file.read()
 
             if fileContent == self.fileContent_Prev:
@@ -111,7 +111,7 @@ class MonitorFile(QThread):
             print("file %s not found, creating new one..." % self.filePath)
 
             os.makedirs(Path(self.filePath).parent.__str__(), exist_ok = True) if Path(self.filePath).parent.exists() == False else None
-            with open(self.filePath, mode = 'w', encoding = 'utf-8') as file:
+            with open(self.filePath, mode = 'w') as file:
                 pass
 
 
@@ -120,7 +120,7 @@ class MonitorLogFile(QThread):
     '''
     Get the content of log file and send to the UI (Recommanded)
     '''
-    Signal_ConsoleInfo = Signal(str)
+    consoleInfo = Signal(str)
 
     def __init__(self, logPath):
         super().__init__()
@@ -137,13 +137,13 @@ class MonitorLogFile(QThread):
     def run(self):
         self.logContent_Prev = str()
         while True:
-            with open(self.logPath, 'r', encoding = 'utf-8') as log:
+            with open(self.logPath, 'r', encoding = 'utf-8', errors = 'replace') as log:
                 LogContent = log.read()
 
             if LogContent == self.logContent_Prev:
                 self.msleep(100)
             else:
-                self.Signal_ConsoleInfo.emit(LogContent)
+                self.consoleInfo.emit(LogContent)
                 self.logContent_Prev = LogContent
 
     def clear(self):

@@ -1,5 +1,5 @@
 from .Config import Status, ChatRole
-from .Signals import ComponentsSignals
+from .Signals import componentsSignals
 from .Theme import Theme, EasyTheme, currentTheme, isDarkTheme, ThemeColor, currentColor
 from .Language import Language, EasyLanguage, currentLanguage
 from .Translator import TranslationBase, updateLanguage

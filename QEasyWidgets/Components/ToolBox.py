@@ -88,6 +88,11 @@ class ToolPage(WidgetBase):
         layout.addWidget(self.folder)
         layout.addWidget(self.widget)
 
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.folder.setFixedWidth(self.width())
+        self.widget.setFixedWidth(self.width())
+
     def updateHeight(self, addedWidget: Optional[QWidget] = None):
         buttonHeight = self.folder.height()
         layoutSpacing = self.layout().spacing()
@@ -100,11 +105,13 @@ class ToolPage(WidgetBase):
         self.widget.layout().addWidget(widget)
 
     def expand(self):
-        setWidgetSizeAnimation(self.widget, targetHeight = self.widget.minimumSizeHint().height()).start()
+        setWidgetSizeAnimation(self.widget, targetHeight = self.widget.sizeHint().height()).start()
+        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.isExpanded = True
 
     def collapse(self):
         setWidgetSizeAnimation(self.widget, targetHeight = 0).start()
+        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
         self.isExpanded = False
 
     def setText(self, text: str):

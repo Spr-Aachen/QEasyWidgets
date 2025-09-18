@@ -4,7 +4,7 @@ from typing import Union, Optional
 from PySide6.QtCore import QFile
 from PySide6.QtWidgets import QApplication, QWidget
 
-from .Signals import ComponentsSignals
+from .Signals import componentsSignals
 from .Theme import EasyTheme, currentTheme
 
 ##############################################################################################################################
@@ -76,6 +76,6 @@ def Function_UpdateStyleSheet(
                 continue
 
 
-ComponentsSignals.Signal_SetTheme.connect(Function_UpdateStyleSheet)
+componentsSignals.setTheme.connect(Function_UpdateStyleSheet)
 
 ##############################################################################################################################

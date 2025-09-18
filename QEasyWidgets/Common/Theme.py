@@ -4,7 +4,7 @@ from typing import Union
 from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
 from PySide6.QtGui import Qt, QColor, QPainter
 
-from .Signals import ComponentsSignals
+from .Signals import componentsSignals
 
 ##############################################################################################################################
 
@@ -96,7 +96,7 @@ class BackgroundColorAnimationBase:
         self.bgColorAnim = QPropertyAnimation(self.bgColorObject, b'backgroundColor', self)
         self.bgColorAnim.setDuration(210)
 
-        ComponentsSignals.Signal_SetTheme.connect(self._updateBackgroundColor)
+        componentsSignals.setTheme.connect(self._updateBackgroundColor)
 
     def _normalBackgroundColor(self):
         return self._darkBackgroundColor if isDarkTheme() else self._lightBackgroundColor

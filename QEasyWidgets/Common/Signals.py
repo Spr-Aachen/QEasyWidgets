@@ -7,15 +7,15 @@ class CustomSignals_ComponentsCustomizer(QObject):
     Set up signals for components
     '''
     # Set theme
-    Signal_SetTheme = Signal(str)
+    setTheme = Signal(str)
 
     # Set language
-    Signal_SetLanguage = Signal(str)
-    '''
-    # Get clicked button
-    Signal_ClickedButton = Signal(QMessageBox.StandardButton)
-    '''
+    setLanguage = Signal(str)
 
-ComponentsSignals = CustomSignals_ComponentsCustomizer()
+    ## Get clicked button
+    #Signal_ClickedButton = Signal(QMessageBox.StandardButton)
+
+
+componentsSignals = CustomSignals_ComponentsCustomizer()
 
 ##############################################################################################################################

@@ -3,7 +3,7 @@ from typing import Union, Optional
 from PySide6.QtCore import QTranslator
 from PySide6.QtWidgets import QApplication
 
-from .Signals import ComponentsSignals
+from .Signals import componentsSignals
 from .Language import EasyLanguage, currentLanguage
 
 ##############################################################################################################################
@@ -43,6 +43,6 @@ def updateLanguage(
     QApplication.instance().installTranslator(Translator)
 
 
-ComponentsSignals.Signal_SetLanguage.connect(updateLanguage)
+componentsSignals.setLanguage.connect(updateLanguage)
 
 ##############################################################################################################################
