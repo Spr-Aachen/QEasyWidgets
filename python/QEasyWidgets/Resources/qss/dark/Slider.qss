@@ -1,0 +1,74 @@
+QSlider:horizontal {
+    height: 24px;
+}
+
+QSlider::groove:horizontal {
+    height: 3px;
+    background-color: rgba(123, 123, 123, 210);
+    border-radius: 3px;
+}
+QSlider::groove:horizontal:disabled {
+    background-color: rgba(123, 123, 123, 123);
+}
+
+QSlider::sub-page:horizontal {
+    background: white;
+    height: 3px;
+    border-radius: 3px;
+}
+
+QSlider::handle:horizontal {
+    width: 20px;
+    height: 24px;
+	background-color: rgb(246, 246, 246);
+    border: 1.2px solid rgb(210, 222, 234);
+    border-radius: 10px;
+    margin: -9px 0px;
+}
+QSlider::handle:horizontal:hover {
+    background-color: white;
+}
+QSlider::handle:horizontal:pressed {
+    background-color: white;
+}
+QSlider::handle:horizontal:disabled {
+    background-color: grey;
+}
+
+
+QSlider:vertical {
+    width: 24px;
+}
+
+QSlider::groove:vertical {
+    width: 3px;
+    background-color: rgba(123, 123, 123, 210);
+    border-radius: 3px;
+}
+QSlider::groove:vertical:disabled {
+    background-color: rgba(123, 123, 123, 123);
+}
+
+QSlider::add-page:vertical {
+    background: white;
+    width: 3px;
+    border-radius: 3px;
+}
+
+QSlider::handle:vertical {
+    width: 24px;
+    height: 20px;
+	background-color: rgb(246, 246, 246);
+    border: 1.2px solid rgb(210, 222, 234);
+    border-radius: 10px;
+    margin: 0px -9px;
+}
+QSlider::handle:vertical:hover {
+    background-color: white;
+}
+QSlider::handle:vertical:pressed {
+    background-color: white;
+}
+QSlider::handle:vertical:disabled {
+    background-color: grey;
+}

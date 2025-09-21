@@ -1,0 +1,27 @@
+QTabWidget::tab-bar {
+    alignment: left;
+}
+
+
+QTabBar::tab {
+    color: rgb(45, 33, 21);
+	background-color: rgba(24, 24, 24, 6);
+    padding: 2.4px 4.8px;
+    border: 1.2px solid rgba(54, 45, 33, 12);
+}
+QTabBar::tab[isBorderless=true] {
+    padding: 3.6px 6.0px;
+	border: none;
+}
+QTabBar::tab:hover {
+	background-color: rgba(24, 24, 24, 12);
+}
+QTabBar::tab:selected {
+	background-color: rgba(24, 24, 24, 18);
+}
+
+
+QTabWidget::pane {
+	background: transparent;
+    border: 1.2px solid rgba(54, 45, 33, 12);
+}

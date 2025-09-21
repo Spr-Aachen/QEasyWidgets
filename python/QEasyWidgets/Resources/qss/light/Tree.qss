@@ -1,0 +1,32 @@
+QTreeView {
+	background-color: transparent;
+    outline: none;
+	border: none;
+	border-radius: 3px;
+}
+
+QTreeView::item {
+    color: rgb(45, 33, 21);
+	background-color: transparent;
+	padding: 3px;
+	border: none;
+	border-radius: 3px;
+}
+QTreeView::item:hover {
+	background-color: rgba(54, 45, 33, 12);
+}
+QTreeView::item:selected {
+}
+
+QTreeView::branch {
+    background-color: transparent;
+	border: none;
+}
+QTreeView::branch:open:has-children {
+	image: url(:/Icons/icons/light/Chevron-Down.svg);
+	padding: 3px;
+}
+QTreeView::branch:closed:has-children {
+	image: url(:/Icons/icons/light/Chevron-Right.svg);
+	padding: 3px;
+}

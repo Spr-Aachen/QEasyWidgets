@@ -1,0 +1,9 @@
+LabelBase {
+    color: rgb(45, 33, 21);
+    background-color: transparent;
+    padding: 0px;
+    border: none;
+	border-radius: 3px;
+}
+LabelBase:hover {
+}

@@ -1,0 +1,15 @@
+TextBrowserBase {
+    color: rgb(45, 33, 21);
+	text-align: left;
+	selection-background-color: darkgrey;
+	background-color: transparent;
+    padding: 1.2px;
+	border: none;
+	border-radius: 3px;
+}
+TextBrowserBase[isBorderless=false] {
+    padding: 0px;
+    border: 1.2px solid rgba(54, 45, 33, 123);
+}
+TextBrowserBase:hover {
+}
