@@ -1,0 +1,17 @@
+LabelBase {
+    color: rgb(45, 33, 21);
+    background-color: transparent;
+    padding: 0px;
+    border: none;
+	border-radius: 3px;
+}
+LabelBase:hover {
+}
+
+
+QToolTip {
+    color: rgb(45, 33, 21);
+    background-color: white;
+	border-width: 0px;
+	border-style: solid;
+}

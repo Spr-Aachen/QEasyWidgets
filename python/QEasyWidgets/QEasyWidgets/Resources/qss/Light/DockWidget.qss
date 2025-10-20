@@ -1,0 +1,14 @@
+QDockWidget {
+    border: none;
+}
+QDockWidget[isBorderless=false] {
+    padding: 0px;
+    border: 1.2px solid rgba(54, 45, 33, 123);
+}
+QDockWidget[isTransparent=true] {
+	background-color: transparent;
+}
+
+QDockWidget::title {
+    text-align: left;
+}

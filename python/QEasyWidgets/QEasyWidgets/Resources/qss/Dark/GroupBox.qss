@@ -1,0 +1,20 @@
+GroupBoxBase {
+    color: rgb(210, 222, 234);
+	margin-top: 1.5ex;
+	background-color: transparent;
+	border: 1.2px solid transparent;
+	border-radius: 3px;
+}
+
+GroupBoxBase::title {
+	subcontrol-origin: margin;
+	subcontrol-position: top left;
+	padding: 3px;
+}
+
+GroupBoxBase::indicator:checked {
+	border-image: url(:/Icons/Icons/Dark/Chevron-Down.svg);
+}
+GroupBoxBase::indicator:unchecked {
+	border-image: url(:/Icons/Icons/Dark/Chevron-Up.svg);
+}

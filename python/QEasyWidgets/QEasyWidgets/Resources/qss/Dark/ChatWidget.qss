@@ -1,0 +1,31 @@
+ChatWidgetBase {
+    background-color: transparent;
+    border: none;
+	border-radius: 3px;
+}
+ChatWidgetBase:hover {
+}
+
+
+ChatWidgetBase QWidget {
+    background-color: transparent;
+    border: none;
+}
+ChatWidgetBase QWidget:hover {
+}
+
+
+ChatWidgetBase MessageDisplay {
+    background-color: transparent;
+    padding: 12px;
+}
+ChatWidgetBase MessageDisplay:hover {
+}
+
+
+QToolTip {
+    color: rgb(210, 222, 234);
+    background-color: black;
+	border-width: 0px;
+	border-style: solid;
+}

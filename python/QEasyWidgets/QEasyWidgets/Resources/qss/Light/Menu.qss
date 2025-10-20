@@ -1,0 +1,14 @@
+MenuBase {
+    color: rgb(45, 33, 21);
+    background-color: rgba(234, 234, 234, 246);
+    padding: 0px;
+    border: none;
+	border-radius: 3px;
+}
+
+
+QToolTip {
+    color: rgb(45, 33, 21);
+    background-color: white;
+    border: none;
+}

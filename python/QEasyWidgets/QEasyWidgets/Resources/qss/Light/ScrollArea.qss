@@ -1,0 +1,13 @@
+ScrollAreaBase {
+	border: 0px solid;
+	border-radius: 3px;
+}
+ScrollAreaBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+ScrollAreaBase[isTransparent=true] {
+	background-color: transparent;
+}
+ScrollAreaBase:hover {
+}
