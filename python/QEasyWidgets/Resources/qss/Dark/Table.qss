@@ -1,0 +1,47 @@
+QHeaderView {
+    background-color: transparent;
+}
+
+QHeaderView::section {
+    color: rgb(210, 222, 234);
+	/*text-align: left;*/
+	background-color: transparent;
+    padding: 2.4px 4.8px;
+    border: 1.2px solid rgba(201, 210, 222, 123);
+}
+QHeaderView::section:horizontal {
+    border-top: none;
+    border-left: none;
+}
+QHeaderView::section:vertical {
+    border-top: none;
+}
+
+
+QTableView {
+	/*text-align: left;*/
+	background-color: transparent;
+    /*alternate-background-color: transparent;*/
+    selection-background-color: transparent;
+    gridline-color: rgba(201, 210, 222, 123);
+	border: 1.2px solid rgba(201, 210, 222, 123);
+	border-radius: 3px;
+    outline: none;
+}
+QTableView[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+
+QTableView::item {
+    color: rgb(210, 222, 234);
+    padding: 3px 6px;
+    border: 0px solid rgba(201, 210, 222, 123);
+	border-bottom-width: 1.2px;
+}
+QTableView::item::selected {
+	border-color: rgba(201, 210, 222, 210);
+}
+QTableView::item:!alternate:!selected {
+    
+}

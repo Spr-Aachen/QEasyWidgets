@@ -1,0 +1,35 @@
+LineEditBase, TextEditBase {
+    color: rgb(210, 222, 234);
+	text-align: left;
+	selection-background-color: darkgrey;
+    background-color: rgba(246, 246, 246, 18);
+    padding: 4.8px 12px 6px 12px;
+    border: 1.2px solid rgba(210, 222, 234, 12);
+    border-bottom: 1.2px solid rgba(210, 222, 234, 48);
+	border-radius: 3px;
+    outline: none;
+}
+LineEditBase[isBorderless=true], TextEditBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+LineEditBase[isTransparent=true], TextEditBase[isTransparent=true] {
+	background-color: transparent;
+}
+LineEditBase:hover, TextEditBase:hover {
+	background-color: rgba(246, 246, 246, 24);
+}
+LineEditBase:focus, TextEditBase:focus {
+    border-bottom-color: rgba(120, 180, 240, 246);
+}
+LineEditBase:disabled, TextEditBase:disabled {
+	color: rgba(201, 210, 222, 90);
+}
+
+
+QToolTip {
+    color: rgb(210, 222, 234);
+    background-color: black;
+	border-width: 0px;
+	border-style: solid;
+}
