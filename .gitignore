@@ -1,14 +1,53 @@
-# GUI assets
-**/*.ui
-**/*.qrc
+# C++ contents
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+*.exe
 
-# Generated contents
+# Python contents
 **/__pycache__/
+**/*.ipynb
 
 # Built contents
 **/build/
+**/build-*/
 **/dist/
+**/debug/
+**/release/
+**/x64/
+**/x86/
 
-# Others
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# IDE specific
 **/.vscode/
-**/*.ipynb
+**/.idea/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.vcxproj
+*.vcxproj.filters
+
+# Output directories
+../bin/*.a
+../bin/*.lib
+../bin/*.so
+../bin/*.dll
+../bin/*.exe
+../bin/examples/
+
+# Temporary files
+*~
+*.swp
+*.swo

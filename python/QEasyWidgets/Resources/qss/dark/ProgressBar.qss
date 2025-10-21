@@ -1,0 +1,19 @@
+ProgressBarBase {
+	text-align: center;
+    color: black;
+	background-color: rgba(246, 246, 246, 18);
+    border: 1.2px solid rgba(210, 222, 234, 12);
+    border-radius: 3px;
+}
+ProgressBarBase[isBorderless=true] {
+    padding: 1.2px;
+	border: none;
+}
+ProgressBarBase[isTransparent=true] {
+	background-color: transparent;
+}
+
+ProgressBarBase::chunk {
+	background-color: qlineargradient(spread: pad, x1:0, y1:0, x2:1, y2:0, stop:0 transparent, stop:1 rgba(120, 180, 240, 123));
+    border: none;
+}

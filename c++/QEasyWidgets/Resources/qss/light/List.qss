@@ -1,0 +1,28 @@
+ListBase {
+	background-color: transparent;
+    padding: 1.2px;
+	border: none;
+	border-radius: 3px;
+    outline: none;
+}
+ListBase[isBorderless=false] {
+    padding: 0px;
+    border: 1.2px solid rgba(54, 45, 33, 123);
+}
+ListBase:hover {
+    border-color: rgba(54, 45, 33, 210);
+}
+
+ListBase::item {
+    color: rgb(45, 33, 21);
+	background-color: transparent;
+    border: 2.4px solid transparent;
+	padding: 2.4px;
+}
+ListBase::item:hover {
+	background-color: rgba(54, 45, 33, 12);
+}
+ListBase::item:selected {
+	background-color: transparent;
+	border-left-color: rgb(120, 180, 240);
+}
