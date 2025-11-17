@@ -65,38 +65,15 @@ public:
     ~MonitorFile() override;
 
 signals:
-    void fileContent(const QString &content);
+    void contentChanged(const QString &content);
 
 protected:
     void run() override;
+    void clear();
 
 private:
     QString m_filePath;
-    QString m_previousContent;
-};
-
-
-/**
- * Log file monitor thread
- */
-class MonitorLogFile : public QThread {
-    Q_OBJECT
-
-public:
-    explicit MonitorLogFile(const QString &logPath, QObject *parent = nullptr);
-    ~MonitorLogFile() override;
-
-    void clear();
-
-signals:
-    void consoleInfo(const QString &content);
-
-protected:
-    void run() override;
-
-private:
-    QString m_logPath;
-    QString m_previousContent;
+    qint64 m_pos;
 };
 
 

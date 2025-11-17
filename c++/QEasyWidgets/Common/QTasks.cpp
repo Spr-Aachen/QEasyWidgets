@@ -154,7 +154,17 @@ void MonitorUsage::run() {
 
 MonitorFile::MonitorFile(const QString &filePath, QObject *parent)
     : QThread(parent)
-    , m_filePath(filePath) {
+    , m_filePath(filePath)
+    , m_pos(0) {
+    if (!QFile::exists(m_filePath)) {
+        QDir dir = QFileInfo(m_filePath).absoluteDir();
+        if (dir.mkpath(dir.absolutePath())) {
+            QFile file(m_filePath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.close();
+            }
+        }
+    }
 }
 
 
@@ -167,78 +177,44 @@ MonitorFile::~MonitorFile() {
 void MonitorFile::run() {
     while (!isInterruptionRequested()) {
         QFile file(m_filePath);
-        if (file.exists()) {
-            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QTextStream stream(&file);
-                QString content = stream.readAll();
-                file.close();
 
-                if (content != m_previousContent) {
-                    emit fileContent(content);
-                    m_previousContent = content;
-                }
-            }
+        if (!file.exists()) {
+            msleep(100);
+            continue;
+        }
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            msleep(100);
+            continue;
+        }
+
+        if (file.size() < m_pos) {
+            m_pos = 0;
+        }
+
+        if (!file.seek(m_pos)) {
+            file.close();
+            msleep(100);
+            continue;
+        }
+
+        QByteArray chunk = file.readAll();
+        file.close();
+
+        if (!chunk.isEmpty()) {
+            QString text = QString::fromUtf8(chunk);
+            emit contentChanged(text);
+            m_pos += chunk.size();
         } else {
-            // Create the file if it doesn't exist
-            QDir dir = QFileInfo(m_filePath).absoluteDir();
-            if (dir.mkpath(dir.absolutePath())) {
-                if (file.open(QIODevice::WriteOnly)) {
-                    file.close();
-                }
-            }
-            qDebug() << "File" << m_filePath << "not found, creating new one...";
+            msleep(100);
         }
-
-        msleep(100);
     }
 }
 
 
-MonitorLogFile::MonitorLogFile(const QString &logPath, QObject *parent)
-    : QThread(parent)
-    , m_logPath(logPath) {
-    if (!QFile::exists(m_logPath)) {
-        QDir dir = QFileInfo(m_logPath).absoluteDir();
-        if (dir.mkpath(dir.absolutePath())) {
-            QFile file(m_logPath);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.close();
-            }
-        }
-    } else {
-        clear();
-    }
-}
-
-
-MonitorLogFile::~MonitorLogFile() {
-    quit();
-    wait();
-}
-
-
-void MonitorLogFile::clear() {
-    QFile file(m_logPath);
+void MonitorFile::clear() {
+    QFile file(m_filePath);
     if (file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         file.close();
-    }
-}
-
-
-void MonitorLogFile::run() {
-    while (!isInterruptionRequested()) {
-        QFile file(m_logPath);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream stream(&file);
-            QString content = stream.readAll();
-            file.close();
-
-            if (content != m_previousContent) {
-                emit consoleInfo(content);
-                m_previousContent = content;
-            }
-        }
-
-        msleep(100);
     }
 }

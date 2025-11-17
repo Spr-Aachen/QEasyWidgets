@@ -7,7 +7,6 @@ from PySide6.QtCore import QThread, QMutex, Signal, Slot, QTimer, QEventLoop
 
 ##############################################################################################################################
 
-# Handle the consol's output
 class ConsolOutputHandler(QThread):
     '''
     Intercept the output of the consol and send to the UI (Not Recommended)
@@ -47,7 +46,6 @@ class ConsolOutputHandler(QThread):
         pass
 
 
-# Monitor the cpu&gpu's usage
 class MonitorUsage(QThread):
     '''
     Get the usage of CPU and NVIDIA GPU
@@ -82,73 +80,46 @@ class MonitorUsage(QThread):
             self.msleep(1000)
 
 
-# Monitor the file's content
 class MonitorFile(QThread):
     '''
     Get the content of file and send to the UI
     '''
-    Signal_fileContent = Signal(str)
+    contentChanged = Signal(str)
 
     def __init__(self, filePath):
         super().__init__()
 
         self.filePath = filePath
 
-    def run(self):
-        self.fileContent_Prev = str()
-
-        while Path(self.filePath).exists():
-            with open(self.filePath, mode = 'r', encoding = 'utf-8', errors = 'replace') as file:
-                fileContent = file.read()
-
-            if fileContent == self.fileContent_Prev:
-                self.msleep(100)
-            else:
-                self.Signal_fileContent.emit(fileContent)
-                self.fileContent_Prev = fileContent
-
-        else:
-            print("file %s not found, creating new one..." % self.filePath)
-
-            os.makedirs(Path(self.filePath).parent.__str__(), exist_ok = True) if Path(self.filePath).parent.exists() == False else None
-            with open(self.filePath, mode = 'w') as file:
-                pass
-
-
-# Monitor the log file's content
-class MonitorLogFile(QThread):
-    '''
-    Get the content of log file and send to the UI (Recommanded)
-    '''
-    consoleInfo = Signal(str)
-
-    def __init__(self, logPath):
-        super().__init__()
-
-        self.logPath = logPath
-
-        if Path(self.logPath).exists():
+        if Path(self.filePath).exists():
             self.clear()
         else:
-            os.makedirs(Path(self.logPath).parent.__str__(), exist_ok = True) if Path(self.logPath).parent.exists() == False else None
-            with open(self.logPath, 'w') as log:
+            os.makedirs(Path(self.filePath).parent.__str__(), exist_ok = True) if Path(self.filePath).parent.exists() == False else None
+            with open(self.filePath, 'w') as fileContent:
                 pass
 
-    def run(self):
-        self.logContent_Prev = str()
-        while True:
-            with open(self.logPath, 'r', encoding = 'utf-8', errors = 'replace') as log:
-                LogContent = log.read()
+        self.pos = 0
 
-            if LogContent == self.logContent_Prev:
-                self.msleep(100)
+    def run(self):
+        while True:
+            if Path(self.filePath).stat().st_size < self.pos:
+                self.pos = 0
+
+            with open(self.filePath, 'rb') as fileContent:
+                fileContent.seek(self.pos)
+                chunk = fileContent.read()
+
+            if chunk:
+                text = chunk.decode(encoding = 'utf-8', errors = 'replace')
+                self.contentChanged.emit(text)
+                self.pos += len(chunk)
             else:
-                self.consoleInfo.emit(LogContent)
-                self.logContent_Prev = LogContent
+                self.msleep(100)
 
     def clear(self):
-        with open(self.logPath, 'r+') as log:
-            log.seek(0)
-            log.truncate()
+        with open(self.filePath, 'r+') as fileContent:
+            fileContent.seek(0)
+            fileContent.truncate()
+        self.pos = 0
 
 ##############################################################################################################################
