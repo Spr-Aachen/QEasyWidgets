@@ -106,12 +106,12 @@ class ToolPage(WidgetBase):
 
     def expand(self):
         setWidgetSizeAnimation(self.widget, targetHeight = self.widget.sizeHint().height()).start()
-        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize) # Keep the content height driven by its size hint, but allow width to remain flexible
+        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetFixedSize)
         self.isExpanded = True
 
     def collapse(self):
         setWidgetSizeAnimation(self.widget, targetHeight = 0).start()
-        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        self.widget.layout().setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
         self.isExpanded = False
 
     def setText(self, text: str):

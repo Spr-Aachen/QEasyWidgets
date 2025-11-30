@@ -16,6 +16,7 @@ class StyleSheetBase {
 public:
     enum StyleType {
         Label,
+        ToolTip,
         Button,
         CheckBox,
         ScrollArea,

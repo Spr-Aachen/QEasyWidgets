@@ -61,7 +61,7 @@ class MonitorFile : public QThread {
     Q_OBJECT
 
 public:
-    explicit MonitorFile(const QString &filePath, QObject *parent = nullptr);
+    explicit MonitorFile(const QString &filePath, const QString &mode = "append", QObject *parent = nullptr);
     ~MonitorFile() override;
 
 signals:
@@ -73,7 +73,12 @@ protected:
 
 private:
     QString m_filePath;
+    QString m_mode;
     qint64 m_pos;
+    QString m_contentPrev;
+
+    void resetPos();
+    void resetContentPrev();
 };
 
 

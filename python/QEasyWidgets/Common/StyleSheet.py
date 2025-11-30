@@ -16,6 +16,7 @@ class StyleSheetBase(Enum):
     '''
     '''
     Label = 'Label'
+    ToolTip = 'ToolTip'
     Button = 'Button'
     CheckBox = 'CheckBox'
     ScrollArea = 'ScrollArea'

@@ -152,25 +152,44 @@ void MonitorUsage::run() {
 }
 
 
-MonitorFile::MonitorFile(const QString &filePath, QObject *parent)
+MonitorFile::MonitorFile(const QString &filePath, const QString &mode, QObject *parent)
     : QThread(parent)
     , m_filePath(filePath)
-    , m_pos(0) {
-    if (!QFile::exists(m_filePath)) {
-        QDir dir = QFileInfo(m_filePath).absoluteDir();
-        if (dir.mkpath(dir.absolutePath())) {
-            QFile file(m_filePath);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.close();
-            }
+    , m_mode(mode)
+    , m_pos(0)
+    , m_contentPrev() {
+    QFileInfo fileInfo(m_filePath);
+    if (fileInfo.exists()) {
+        clear();
+    } else {
+        QDir parentDir = fileInfo.absoluteDir();
+        if (!parentDir.exists()) {
+            parentDir.mkpath(parentDir.absolutePath());
+        }
+        
+        QFile file(m_filePath);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.close();
         }
     }
+    resetPos();
+    resetContentPrev();
 }
 
 
 MonitorFile::~MonitorFile() {
     quit();
     wait();
+}
+
+
+void MonitorFile::resetPos() {
+    m_pos = 0;
+}
+
+
+void MonitorFile::resetContentPrev() {
+    m_contentPrev.clear();
 }
 
 
@@ -183,30 +202,79 @@ void MonitorFile::run() {
             continue;
         }
 
-        if (!file.open(QIODevice::ReadOnly)) {
-            msleep(100);
-            continue;
-        }
+        if (m_mode == "append") {
+            if (!file.open(QIODevice::ReadOnly)) {
+                msleep(100);
+                continue;
+            }
 
-        if (file.size() < m_pos) {
-            m_pos = 0;
-        }
+            if (file.size() < m_pos) {
+                resetPos();
+            }
 
-        if (!file.seek(m_pos)) {
+            if (!file.seek(m_pos)) {
+                file.close();
+                msleep(100);
+                continue;
+            }
+
+            QByteArray chunk = file.readAll();
             file.close();
-            msleep(100);
-            continue;
-        }
 
-        QByteArray chunk = file.readAll();
-        file.close();
+            if (!chunk.isEmpty()) {
+                QString text = QString::fromUtf8(chunk, chunk.size());
+                emit contentChanged(text);
+                m_pos += chunk.size();
+            } else {
+                msleep(100);
+            }
+        } else if (m_mode == "all") {
+            if (!file.open(QIODevice::ReadOnly)) {
+                msleep(100);
+                continue;
+            }
 
-        if (!chunk.isEmpty()) {
-            QString text = QString::fromUtf8(chunk);
-            emit contentChanged(text);
-            m_pos += chunk.size();
+            QByteArray chunk = file.readAll();
+            file.close();
+
+            if (!chunk.isEmpty()) {
+                QString content = QString::fromUtf8(chunk, chunk.size());
+                if (content == m_contentPrev) {
+                    msleep(100);
+                } else {
+                    emit contentChanged(content);
+                    m_contentPrev = content;
+                }
+            } else {
+                msleep(100);
+            }
         } else {
-            msleep(100);
+            // Default behavior: same as append when mode is unrecognized
+            if (!file.open(QIODevice::ReadOnly)) {
+                msleep(100);
+                continue;
+            }
+
+            if (file.size() < m_pos) {
+                resetPos();
+            }
+
+            if (!file.seek(m_pos)) {
+                file.close();
+                msleep(100);
+                continue;
+            }
+
+            QByteArray chunk = file.readAll();
+            file.close();
+
+            if (!chunk.isEmpty()) {
+                QString text = QString::fromUtf8(chunk, chunk.size());
+                emit contentChanged(text);
+                m_pos += chunk.size();
+            } else {
+                msleep(100);
+            }
         }
     }
 }
@@ -217,4 +285,6 @@ void MonitorFile::clear() {
     if (file.open(QIODevice::ReadWrite | QIODevice::Truncate)) {
         file.close();
     }
+    resetPos();
+    resetContentPrev();
 }

@@ -25,6 +25,11 @@ FramelessWindowBase::FramelessWindowBase(QWidget *parent, Qt::WindowFlags flags)
     , m_resizing(false)
     , m_resizeDirection(0) {
     setupUI();
+
+    // Create animation helper objects as members (composition) instead of multiple QObject
+    // inheritance which is not supported by Qt.
+    m_backgroundAnimation = new BackgroundColorAnimationBase(this);
+    m_textAnimation = new TextColorAnimationBase(this);
 }
 
 void FramelessWindowBase::setupUI() {

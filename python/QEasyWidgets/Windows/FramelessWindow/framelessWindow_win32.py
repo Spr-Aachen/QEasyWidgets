@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, Signal, QPoint, QRect, QEvent
 from PySide6.QtGui import QGuiApplication, QFont, QCursor, QMouseEvent, QShowEvent, QCloseEvent, QMoveEvent, QResizeEvent
 from PySide6.QtWidgets import QApplication, QWidget, QLabel
 
-from ...Common.Theme import BackgroundColorAnimationBase
+from ...Common.Theme import BackgroundColorAnimationBase, TextColorAnimationBase
 from ...Common.StyleSheet import StyleSheetBase
 from ...Components.Bar import TitleBarBase
 
@@ -143,7 +143,7 @@ def getMissingBorderPixels(hWnd: int):
 
 ##############################################################################################################################
 
-class WindowBase(BackgroundColorAnimationBase):
+class WindowBase(BackgroundColorAnimationBase, TextColorAnimationBase):
     '''
     '''
     showed = Signal()

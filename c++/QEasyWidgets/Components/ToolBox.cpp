@@ -155,7 +155,7 @@ void ToolPage::expand() {
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
     if (m_widget->layout()) {
-        m_widget->layout()->setSizeConstraint(QLayout::SetMinimumSize);
+        m_widget->layout()->setSizeConstraint(QLayout::SetFixedSize);
     }
     m_isExpanded = true;
 }
@@ -171,7 +171,7 @@ void ToolPage::collapse() {
     animation->start(QAbstractAnimation::DeleteWhenStopped);
 
     if (m_widget->layout()) {
-        m_widget->layout()->setSizeConstraint(QLayout::SetDefaultConstraint);
+        m_widget->layout()->setSizeConstraint(QLayout::SetNoConstraint);
     }
     m_isExpanded = false;
 }

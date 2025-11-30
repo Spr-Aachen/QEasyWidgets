@@ -98,7 +98,7 @@ void LoadingStatus::updateGeometry() {
     }
 }
 
-StatusWidgetBase::StatusWidgetBase(const QString &status, const QSize &size, QWidget *parent)
+StatusWidgetBase::StatusWidgetBase(const Status status, const QSize &size, QWidget *parent)
     : QWidget(parent) {
     setAttribute(Qt::WA_TranslucentBackground, true);
 
@@ -111,11 +111,11 @@ StatusWidgetBase::StatusWidgetBase(const QString &status, const QSize &size, QWi
     setFixedSize(size);
 }
 
-StatusWidgetBase::StatusWidgetBase(const QString &status, QWidget *parent)
+StatusWidgetBase::StatusWidgetBase(const Status status, QWidget *parent)
     : StatusWidgetBase(status, QSize(24, 24), parent) {
 }
 
-void StatusWidgetBase::setStatus(const QString &status) {
+void StatusWidgetBase::setStatus(const Status status) {
     if (m_currentStatus) {
         m_layout->removeWidget(m_currentStatus);
         m_currentStatus->deleteLater();

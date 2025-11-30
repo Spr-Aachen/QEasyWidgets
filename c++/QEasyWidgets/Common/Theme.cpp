@@ -163,3 +163,97 @@ QColor BackgroundColorAnimationBase::focusInBackgroundColor() const {
 QColor BackgroundColorAnimationBase::disabledBackgroundColor() const {
     return normalBackgroundColor();
 }
+
+
+TextColorAnimationBase::TextColorAnimationBase(QWidget *widget)
+    : QObject(widget)
+    , m_widget(widget)
+    , m_lightTextColor(0, 0, 0)
+    , m_darkTextColor(255, 255, 255)
+    , m_textColorAnim(nullptr) {
+    if (m_widget) {
+        // Create property animation for text color
+        m_textColorAnim = new QPropertyAnimation(this, "textColor", this);
+        m_textColorAnim->setDuration(210);
+
+        // Connect to global theme change signal
+        if (componentsSignals) {
+            connect(componentsSignals, &CustomSignals::setTheme, this, [this](const QString &) {
+                updateTextColor();
+            });
+        }
+        
+        // Set initial text color
+        updateTextColor();
+    }
+}
+
+
+QColor TextColorAnimationBase::textColor() const {
+    if (m_widget) {
+        // Get current text color from widget
+        return m_widget->palette().color(QPalette::WindowText);
+    }
+    return QColor();
+}
+
+
+void TextColorAnimationBase::setTextColor(const QColor &color) {
+    if (m_widget) {
+        QPalette palette = m_widget->palette();
+        palette.setColor(QPalette::WindowText, color);
+        palette.setColor(QPalette::Text, color);
+        palette.setColor(QPalette::ButtonText, color);
+        m_widget->setPalette(palette);
+        m_widget->update();
+    }
+}
+
+
+void TextColorAnimationBase::setCustomTextColor(const QColor &lightColor, const QColor &darkColor) {
+    m_lightTextColor = lightColor;
+    m_darkTextColor = darkColor;
+    updateTextColor();
+}
+
+
+void TextColorAnimationBase::updateTextColor() {
+    if (!m_widget) return;
+
+    QColor targetColor;
+    if (!m_widget->isEnabled()) {
+        targetColor = disabledTextColor();
+    } else {
+        targetColor = normalTextColor();
+    }
+
+    if (m_textColorAnim) {
+        m_textColorAnim->stop();
+        m_textColorAnim->setEndValue(targetColor);
+        m_textColorAnim->start();
+    } else {
+        setTextColor(targetColor);
+    }
+}
+
+
+QColor TextColorAnimationBase::normalTextColor() const {
+    return isDarkTheme() ? m_darkTextColor : m_lightTextColor;
+}
+
+
+QColor TextColorAnimationBase::hoverTextColor() const {
+    return normalTextColor();
+}
+
+
+QColor TextColorAnimationBase::pressedTextColor() const {
+    return normalTextColor();
+}
+
+
+QColor TextColorAnimationBase::disabledTextColor() const {
+    QColor color = normalTextColor();
+    color.setAlpha(128);
+    return color;
+}

@@ -42,6 +42,7 @@ QString StyleSheetBase::getStyleSheet(StyleType type, Theme theme) {
     
     switch (type) {
         case Label: fileName = "Label"; break;
+        case ToolTip: fileName = "ToolTip"; break;
         case Button: fileName = "Button"; break;
         case CheckBox: fileName = "CheckBox"; break;
         case ScrollArea: fileName = "ScrollArea"; break;

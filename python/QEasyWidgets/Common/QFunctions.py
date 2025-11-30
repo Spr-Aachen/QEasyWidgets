@@ -70,14 +70,28 @@ def setRetainSizeWhenHidden(
 
 def setDropShadowEffect(
     widget: QWidget,
-    Radius: float = 3.,
-    Color: Union[QColor, QRgba64] = Qt.gray
+    blurRadius: float = 3.,
+    color: Union[QColor, QRgba64] = Qt.gray,
+    offset_dx: float = 0.,
+    offset_dy: float = 0.,
 ):
-    DropShadowEffect = QGraphicsDropShadowEffect()
-    DropShadowEffect.setOffset(0, 0)
-    DropShadowEffect.setBlurRadius(Radius)
-    DropShadowEffect.setColor(Color)
-    widget.setGraphicsEffect(DropShadowEffect)
+    dropShadowEffect = QGraphicsDropShadowEffect()
+    dropShadowEffect.setOffset(0, 0)
+    dropShadowEffect.setBlurRadius(blurRadius)
+    dropShadowEffect.setColor(color)
+    dropShadowEffect.setOffset(offset_dx, offset_dy)
+    widget.setGraphicsEffect(dropShadowEffect)
+    return dropShadowEffect
+
+
+def setOpacityEffect(
+    widget: QWidget,
+    parent: Optional[QWidget] = None,
+    duration: int = 123,
+):
+    opacityAnim = QPropertyAnimation(widget, b'windowOpacity', parent)
+    opacityAnim.setDuration(duration)
+    return opacityAnim
 
 ##############################################################################################################################
 

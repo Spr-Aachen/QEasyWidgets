@@ -178,3 +178,92 @@ class BackgroundColorAnimationBase:
         self._updateBackgroundColor()
 
 ##############################################################################################################################
+
+class TextColorObject(QObject):
+    """
+    Text color object for animation
+    """
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._textColor = parent._normalTextColor() if hasattr(parent, '_normalTextColor') else QColor(0, 0, 0)
+
+    @Property(QColor)
+    def textColor(self):
+        return self._textColor
+
+    @textColor.setter
+    def textColor(self, color: QColor):
+        self._textColor = color
+        # Update the widget's palette to apply the new text color
+        if hasattr(self.parent(), 'palette'):
+            palette = self.parent().palette()
+            palette.setColor(palette.ColorRole.WindowText, color)
+            palette.setColor(palette.ColorRole.Text, color)
+            palette.setColor(palette.ColorRole.ButtonText, color)
+            self.parent().setPalette(palette)
+        self.parent().update()
+
+
+class TextColorAnimationBase:
+    """
+    Text color animation base for widgets
+    """
+    _lightTextColor = QColor(0, 0, 0)
+    _darkTextColor = QColor(255, 255, 255)
+
+    def __init__(self, *args, **kwargs) -> None:
+        self.textColorObject = TextColorObject(self)
+        
+        self.textColorAnim = QPropertyAnimation(self.textColorObject, b'textColor', self)
+        self.textColorAnim.setDuration(210)
+        
+        componentsSignals.setTheme.connect(self._updateTextColor)
+        
+        # Set initial text color
+        self._updateTextColor()
+
+    def _normalTextColor(self):
+        return self._darkTextColor if isDarkTheme() else self._lightTextColor
+
+    def _hoverTextColor(self):
+        return self._normalTextColor()
+
+    def _pressedTextColor(self):
+        return self._normalTextColor()
+
+    def _disabledTextColor(self):
+        # Slightly transparent version of normal color for disabled state
+        color = self._normalTextColor()
+        color.setAlpha(128)
+        return color
+
+    def _updateTextColor(self):
+        if not self.isEnabled():
+            color = self._disabledTextColor()
+        elif hasattr(self, 'isPressed') and self.isPressed:
+            color = self._pressedTextColor()
+        elif hasattr(self, 'isHover') and self.isHover:
+            color = self._hoverTextColor()
+        else:
+            color = self._normalTextColor()
+        
+        self.textColorAnim.stop()
+        self.textColorAnim.setEndValue(color)
+        self.textColorAnim.start()
+
+    def setTextColor(self, color: Union[QColor, str, int]):
+        self.textColorObject.textColor = QColor(color)
+
+    def getTextColor(self):
+        return self.textColorObject.textColor
+
+    @property
+    def textColor(self):
+        return self.getTextColor()
+
+    def setCustomTextColor(self, light: Union[QColor, str, int], dark: Union[QColor, str, int]):
+        self._lightTextColor = QColor(light)
+        self._darkTextColor = QColor(dark)
+        self._updateTextColor()
+
+##############################################################################################################################

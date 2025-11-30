@@ -7,8 +7,9 @@ from PySide6.QtWidgets import *
 from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
-from .ScrollArea import ScrollDelegate
+from .ToolTip import ToolTipBase, ToolTipEventFilter
 from .Menu import MenuBase
+from .ScrollArea import ScrollDelegate
 from .Button import ClearButton, FileButton
 
 ##############################################################################################################################
@@ -36,7 +37,6 @@ class LineEditBase(QLineEdit):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
 
-        self.installEventFilter(self)
         self.textChanged.connect(lambda: self.interacted.emit())
         self.textChanged.connect(lambda: self.setClearButtonEnabled(True if len(self.text()) > 0 else False))
 
@@ -47,9 +47,11 @@ class LineEditBase(QLineEdit):
         HBoxLayout.setContentsMargins(0, 0, 0, 0)
         HBoxLayout.addSpacerItem(self.spacer)
 
-        self.ToolTip = QToolTip() # TODO Change it to a custom tooltip
+        self._toolTip = ToolTipBase(self)
 
         self.isAlerted = False
+
+        self.installEventFilter(ToolTipEventFilter(self, self._toolTip))
 
         StyleSheetBase.Edit.apply(self)
 
@@ -61,10 +63,10 @@ class LineEditBase(QLineEdit):
     def showToolTip(self, content: Optional[str] = None) -> None:
         XPos = 0
         YPos = 0 - self.height()
-        self.ToolTip.showText(self.mapToGlobal(QPoint(XPos, YPos)), content) if not self.ToolTip.isVisible() and content is not None else None
+        self._toolTip.showText(self.mapToGlobal(QPoint(XPos, YPos)), content) if not self._toolTip.isVisible() and content is not None else None
 
     def hideToolTip(self) -> None:
-        self.ToolTip.hideText() if self.ToolTip.isVisible() else None
+        self._toolTip.hideText() if self._toolTip.isVisible() else None
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         super().mouseMoveEvent(event)
@@ -74,18 +76,27 @@ class LineEditBase(QLineEdit):
 
     def moveEvent(self, event: QMoveEvent) -> None:
         self.rectChanged.emit(self.rect())
+        super().moveEvent(event)
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.rectChanged.emit(self.rect())
+        super().resizeEvent(event)
 
-    def dragEnterEvent(self, event: QDragEnterEvent):
+    def sizeHint(self) -> QSize:
+        hint = super().sizeHint()
+        hint.setWidth(max(hint.width(), self.width())) if self.width() > 0 else None # Ensure we don't shrink below current width if already set
+        return hint
+
+    def dragEnterEvent(self, event: QDragEnterEvent) -> None:
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
+        super().dragEnterEvent(event)
 
     def dropEvent(self, event: QDropEvent):
         if event.mimeData().hasUrls():
             paths = [url.toLocalFile() for url in event.mimeData().urls()]
             self.setText(paths[0] if len(paths) == 1 else ", ".join(paths))
+        super().dropEvent(event)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched is self:

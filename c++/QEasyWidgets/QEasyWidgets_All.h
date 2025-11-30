@@ -46,6 +46,7 @@
 #include "Components/Tab.h"
 #include "Components/Table.h"
 #include "Components/ToolBox.h"
+#include "Components/ToolTip.h"
 #include "Components/Tree.h"
 #include "Components/Widget.h"
 

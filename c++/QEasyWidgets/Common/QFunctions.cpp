@@ -28,14 +28,25 @@ void setRetainSizeWhenHidden(QWidget *widget, bool retainSize) {
 }
 
 
-void setDropShadowEffect(QWidget *widget, qreal radius, const QColor &color) {
-    if (!widget) return;
+QGraphicsDropShadowEffect *setDropShadowEffect(QWidget *widget, qreal blurRadius, const QColor &color, qreal offset_dx, qreal offset_dy) {
+    if (!widget) return nullptr;
 
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(widget);
     effect->setOffset(0, 0);
-    effect->setBlurRadius(radius);
+    effect->setBlurRadius(blurRadius);
     effect->setColor(color);
+    effect->setOffset(offset_dx, offset_dy);
     widget->setGraphicsEffect(effect);
+    return effect;
+}
+
+
+QPropertyAnimation *setOpacityEffect(QWidget *widget, QWidget *parent, int duration) {
+    if (!widget) return nullptr;
+
+    QPropertyAnimation *opacityAnim = new QPropertyAnimation(widget, "windowOpacity", parent);
+    opacityAnim->setDuration(duration);
+    return opacityAnim;
 }
 
 

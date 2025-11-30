@@ -39,17 +39,17 @@ void AvatarDisplay::mouseDoubleClickEvent(QMouseEvent *event) {
  * MessageDisplay implementation
  */
 
-MessageDisplay::MessageDisplay(const QString &text, const QString &role, QWidget *parent)
+MessageDisplay::MessageDisplay(const QString &text, const ChatRole role, QWidget *parent)
     : QLabel(text, parent)
     , m_role(role) {
     init(role);
 }
 
-QString MessageDisplay::role() const {
+ChatRole MessageDisplay::role() const {
     return m_role;
 }
 
-void MessageDisplay::init(const QString &role) {
+void MessageDisplay::init(const ChatRole role) {
     m_role = role;
     
     QFont font("Microsoft YaHei", 12);
@@ -86,7 +86,7 @@ void MessageDisplay::setMarkdown(const QString &text) {
 /**
  * Triangle implementation
  */
-Triangle::Triangle(const QString &role, QWidget *parent)
+Triangle::Triangle(const ChatRole role, QWidget *parent)
     : QWidget(parent)
     , m_role(role) {
     setFixedSize(6, 45);
@@ -115,8 +115,7 @@ void Triangle::paintEvent(QPaintEvent *event) {
 /**
  * MessageLayout implementation
  */
-MessageLayout::MessageLayout(const QString &message, const QString &role, 
-                           StatusWidgetBase *status, QWidget *parent)
+MessageLayout::MessageLayout(const QString &message, const ChatRole role, StatusWidgetBase *status, QWidget *parent)
     : QHBoxLayout(parent)
     , m_avatarDisplay(nullptr)
     , m_messageDisplay(new MessageDisplay(message, role))
@@ -189,8 +188,8 @@ ChatWidgetBase::ChatWidgetBase(QWidget *parent)
     init();
 }
 
-void ChatWidgetBase::addMessage(const QString &text, const QString &role, const QString &status) {
-    StatusWidgetBase *statusWidget = status.isEmpty() ? nullptr : new StatusWidgetBase(status);
+void ChatWidgetBase::addMessage(const QString &text, const ChatRole role, const Status status) {
+    StatusWidgetBase *statusWidget = new StatusWidgetBase(status);
     MessageLayout *messageLayout = new MessageLayout(text, role, statusWidget);
     
     // Store avatar if this is a new role
@@ -200,8 +199,7 @@ void ChatWidgetBase::addMessage(const QString &text, const QString &role, const 
     
     // Connect avatar clicked signal
     if (messageLayout->avatarDisplay()) {
-        connect(messageLayout->avatarDisplay(), &AvatarDisplay::clicked, 
-                this, &ChatWidgetBase::onAvatarClicked);
+        connect(messageLayout->avatarDisplay(), &AvatarDisplay::clicked, this, &ChatWidgetBase::onAvatarClicked);
     }
     
     // Create a widget to hold the layout
@@ -228,7 +226,7 @@ void ChatWidgetBase::clear() {
     m_scrollAreaContentLayout->addItem(m_scrollAreaContentSpacer);
 }
 
-void ChatWidgetBase::setAvatar(const QPixmap &avatar, const QString &role) {
+void ChatWidgetBase::setAvatar(const QPixmap &avatar, const ChatRole role) {
     m_avatars[role] = avatar;
     
     // Update all existing avatars with this role
@@ -268,7 +266,7 @@ void ChatWidgetBase::_removeAllWidgets(QLayout *layout, bool selfIgnored) {
     }
 }
 
-void ChatWidgetBase::_storeAvatar(AvatarDisplay *avatarDisplay, const QString &role) {
+void ChatWidgetBase::_storeAvatar(AvatarDisplay *avatarDisplay, const ChatRole role) {
     if (!avatarDisplay) {
         return;
     }

@@ -10,21 +10,34 @@
 
 
 /**
+ * Position enumeration
+ */
+enum class Position {
+    Top = 0,
+    Bottom = 1,
+    Left = 2,
+    Right = 3,
+    TopLeft = 4,
+    TopRight = 5,
+    BottomLeft = 6,
+    BottomRight = 7
+};
+
+
+/**
  * Status enumeration
  */
-class Status {
-public:
-    static const QString Loading;
+enum class Status {
+    Loading = 0
 };
 
 
 /**
  * Chat role enumeration
  */
-class ChatRole {
-public:
-    static const QString User;
-    static const QString Contact;
+enum class ChatRole {
+    User = 0,
+    Contact = 1
 };
 
 
@@ -42,14 +55,14 @@ public:
     // Theme management
     Theme theme() const;
     void setTheme(Theme theme);
-    
+
     // Theme color management
     QColor themeColor() const;
     void setThemeColor(const QColor &color);
-    
+
     // Save configuration
     void save();
-    
+
     // Load configuration
     void load();
 
@@ -59,7 +72,7 @@ signals:
 
 private:
     void initConfig();
-    
+
     QSettings *m_settings;
     Theme m_theme;
     QColor m_themeColor;

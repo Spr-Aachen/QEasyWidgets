@@ -86,10 +86,11 @@ class MonitorFile(QThread):
     '''
     contentChanged = Signal(str)
 
-    def __init__(self, filePath):
+    def __init__(self, filePath, mode: str = 'append'):
         super().__init__()
 
         self.filePath = filePath
+        self.mode = mode
 
         if Path(self.filePath).exists():
             self.clear()
@@ -98,28 +99,45 @@ class MonitorFile(QThread):
             with open(self.filePath, 'w') as fileContent:
                 pass
 
+        self.pos: int = 0
+        self.content_prev: str = ''
+
+    def _resetPos(self):
         self.pos = 0
+
+    def _resetContentPrev(self):
+        self.content_prev = ''
 
     def run(self):
         while True:
-            if Path(self.filePath).stat().st_size < self.pos:
-                self.pos = 0
-
-            with open(self.filePath, 'rb') as fileContent:
-                fileContent.seek(self.pos)
-                chunk = fileContent.read()
-
-            if chunk:
-                text = chunk.decode(encoding = 'utf-8', errors = 'replace')
-                self.contentChanged.emit(text)
-                self.pos += len(chunk)
-            else:
-                self.msleep(100)
+            if self.mode == 'append':
+                if Path(self.filePath).stat().st_size < self.pos:
+                    self._resetPos()
+                with open(self.filePath, 'rb') as fileContent:
+                    fileContent.seek(self.pos)
+                    chunk = fileContent.read()
+                if chunk:
+                    text = chunk.decode(encoding = 'utf-8', errors = 'replace')
+                    self.contentChanged.emit(text)
+                    self.pos += len(chunk)
+                else:
+                    self.msleep(100)
+            if self.mode == 'all':
+                with open(self.filePath, 'rb') as fileContent:
+                    chunk = fileContent.read()
+                if chunk:
+                    content = chunk.decode(encoding = 'utf-8', errors = 'replace')
+                    if content == self.content_prev:
+                        self.msleep(100)
+                    else:
+                        self.contentChanged.emit(content)
+                        self.content_prev = content
 
     def clear(self):
         with open(self.filePath, 'r+') as fileContent:
             fileContent.seek(0)
             fileContent.truncate()
-        self.pos = 0
+        self._resetPos()
+        self._resetContentPrev()
 
 ##############################################################################################################################

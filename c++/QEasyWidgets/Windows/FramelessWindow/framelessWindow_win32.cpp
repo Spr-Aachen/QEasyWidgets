@@ -107,6 +107,11 @@ FramelessWindowBase::FramelessWindowBase(QWidget *parent, Qt::WindowFlags flags)
     , m_resizing(false)
     , m_resizeDirection(0) {
     setupUI();
+
+    // Create animation helper objects as members (composition) instead of multiple QObject
+    // inheritance which is not supported by Qt.
+    m_backgroundAnimation = new BackgroundColorAnimationBase(this);
+    m_textAnimation = new TextColorAnimationBase(this);
 }
 
 void FramelessWindowBase::setupUI() {
@@ -245,7 +250,7 @@ void FramelessWindowBase::paintEvent(QPaintEvent *event) {
 
 void FramelessWindowBase::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton && m_stretchable) {
-        m_dragStartPosition = event->globalPos() - pos();
+        m_dragStartPosition = event->globalPosition().toPoint() - pos();
         
         // Check for resize on borders
         QPoint localPos = event->pos();
@@ -268,10 +273,10 @@ void FramelessWindowBase::mousePressEvent(QMouseEvent *event) {
 void FramelessWindowBase::mouseMoveEvent(QMouseEvent *event) {
     if (m_dragging && (event->buttons() & Qt::LeftButton)) {
         setCursor(Qt::OpenHandCursor);
-        QPoint newPos = event->globalPos() - m_dragStartPosition;
+        QPoint newPos = event->globalPosition().toPoint() - m_dragStartPosition;
         move(newPos);
     } else if (m_resizing && (event->buttons() & Qt::LeftButton)) {
-        QPoint globalPos = event->globalPos();
+        QPoint globalPos = event->globalPosition().toPoint();
         QRect newGeometry = geometry();
         
         if (m_resizeDirection & 0x01) {  // Left

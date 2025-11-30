@@ -91,6 +91,10 @@ private slots:
     void onCloseRequested();
 
 private:
+    // Theme animation helpers (composition instead of multiple QObject inheritance)
+    BackgroundColorAnimationBase *m_backgroundAnimation;
+    TextColorAnimationBase *m_textAnimation;
+
     void updateWindowGeometry();
     void restoreWindow();
     void maximizeWindow();

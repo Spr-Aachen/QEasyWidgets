@@ -91,7 +91,13 @@ void setRetainSizeWhenHidden(QWidget *widget, bool retainSize = true);
 /**
  * Set drop shadow effect
  */
-void setDropShadowEffect(QWidget *widget, qreal radius = 3.0, const QColor &color = Qt::gray);
+QGraphicsDropShadowEffect* setDropShadowEffect(QWidget *widget, qreal blurRadius = 3.0, const QColor &color = Qt::gray, qreal offset_dx = 0.0, qreal offset_dy = 0.0);
+
+
+/**
+ * Set opacity effect
+ */
+QPropertyAnimation* setOpacityEffect(QWidget *widget, QWidget *parent = nullptr, int duration = 123);
 
 
 /**

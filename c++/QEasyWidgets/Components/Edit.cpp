@@ -155,7 +155,8 @@ void LineEditBase::init() {
         setClearButtonEnabled(!text().isEmpty());
     });
 
-    m_toolTip = new QToolTip(this);
+    m_toolTip = new ToolTipBase(this);
+    installEventFilter(new ToolTipEventFilter(this, m_toolTip));
 
     m_layout = new QHBoxLayout(this);
     m_layout->setSpacing(0);
@@ -165,6 +166,14 @@ void LineEditBase::init() {
     m_layout->addItem(m_spacer);
 
     StyleSheetBase::apply(this, StyleSheetBase::Edit);
+}
+
+QSize LineEditBase::sizeHint() const {
+    QSize hint = QLineEdit::sizeHint();
+    if (width() > 0) {
+        hint.setWidth(qMax(hint.width(), width()));
+    }
+    return hint;
 }
 
 /**

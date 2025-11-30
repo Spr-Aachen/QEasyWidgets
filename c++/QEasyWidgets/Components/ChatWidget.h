@@ -46,10 +46,10 @@ class MessageDisplay : public QLabel {
     Q_OBJECT
 
 public:
-    explicit MessageDisplay(const QString &text, const QString &role, QWidget *parent = nullptr);
+    explicit MessageDisplay(const QString &text, const ChatRole role, QWidget *parent = nullptr);
     ~MessageDisplay() override = default;
 
-    QString role() const;
+    ChatRole role() const;
 
     void setMarkdown(const QString &text);
 
@@ -57,9 +57,9 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    void init(const QString &role);
+    void init(const ChatRole role);
 
-    QString m_role;
+    ChatRole m_role;
 };
 
 
@@ -70,10 +70,10 @@ class Triangle : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Triangle(const QString &role, QWidget *parent = nullptr);
+    explicit Triangle(const ChatRole role, QWidget *parent = nullptr);
     ~Triangle() override = default;
 
-    QString role() const {
+    ChatRole role() const {
         return m_role;
     }
 
@@ -81,7 +81,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    QString m_role;
+    ChatRole m_role;
 };
 
 /**
@@ -91,7 +91,7 @@ class MessageLayout : public QHBoxLayout {
     Q_OBJECT
 
 public:
-    explicit MessageLayout(const QString &message, const QString &role, 
+    explicit MessageLayout(const QString &message, const ChatRole role, 
                          StatusWidgetBase *status, QWidget *parent = nullptr);
     ~MessageLayout() override = default;
 
@@ -136,10 +136,10 @@ public:
     explicit ChatWidgetBase(QWidget *parent = nullptr);
     ~ChatWidgetBase() override = default;
 
-    void addMessage(const QString &text, const QString &role, const QString &status = QString());
+    void addMessage(const QString &text, const ChatRole role, const Status status = Status::Loading);
     void addNotice(const QString &notice);
     void clear();
-    void setAvatar(const QPixmap &avatar, const QString &role);
+    void setAvatar(const QPixmap &avatar, const ChatRole role);
 
 signals:
     void messageSent(const QString &text);
@@ -149,7 +149,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     void update();
     void _removeAllWidgets(QLayout *layout, bool selfIgnored = true);
-    void _storeAvatar(AvatarDisplay *avatarDisplay, const QString &role);
+    void _storeAvatar(AvatarDisplay *avatarDisplay, const ChatRole role);
 
 private slots:
     void onSendClicked();
@@ -167,7 +167,7 @@ private:
     QTextEdit *m_inputEdit;
     ButtonBase *m_sendButton;
     QVBoxLayout *m_mainLayout;
-    QMap<QString, QPixmap> m_avatars;
+    QMap<ChatRole, QPixmap> m_avatars;
 };
 
 

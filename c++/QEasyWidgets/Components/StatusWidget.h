@@ -61,11 +61,11 @@ class StatusWidgetBase : public QWidget
     Q_OBJECT
 
 public:
-    explicit StatusWidgetBase(const QString &status = Status::Loading, QWidget *parent = nullptr);
-    explicit StatusWidgetBase(const QString &status, const QSize &size, QWidget *parent = nullptr);
+    explicit StatusWidgetBase(const Status status = Status::Loading, QWidget *parent = nullptr);
+    explicit StatusWidgetBase(const Status status, const QSize &size, QWidget *parent = nullptr);
     ~StatusWidgetBase() override = default;
 
-    void setStatus(const QString &status);
+    void setStatus(const Status status);
 
 private:
     QWidget *m_currentStatus = nullptr;

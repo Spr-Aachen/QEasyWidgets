@@ -1,5 +1,6 @@
 from .Widget import WidgetBase
 from .Label import LabelBase
+from .ToolTip import ToolTipBase, ToolTipEventFilter
 from .Button import ButtonBase, MenuButton, NavigationButton, HollowButton
 from .CheckBox import CheckBoxBase
 from .ScrollArea import ScrollAreaBase, VerticalScrollArea

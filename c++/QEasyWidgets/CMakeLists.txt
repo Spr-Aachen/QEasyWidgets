@@ -67,6 +67,7 @@ set(SOURCES
     Components/Tab.cpp
     Components/Table.cpp
     Components/ToolBox.cpp
+    Components/ToolTip.cpp
     Components/Tree.cpp
     Components/Widget.cpp
     ${PLATFORM_SOURCES}
@@ -110,6 +111,7 @@ set(HEADERS
     Components/Tab.h
     Components/Table.h
     Components/ToolBox.h
+    Components/ToolTip.h
     Components/Tree.h
     Components/Widget.h
     Windows/FramelessWindow/framelessWindow.h

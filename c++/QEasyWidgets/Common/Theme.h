@@ -11,6 +11,7 @@
  * Forward declarations
  */
 class BackgroundColorAnimationBase;
+class TextColorAnimationBase;
 
 
 /**
@@ -122,6 +123,36 @@ protected:
     QPropertyAnimation *m_bgColorAnim;
     bool m_isHover;
     bool m_isPressed;
+};
+
+
+/**
+ * Text color animation base class
+ */
+class TextColorAnimationBase : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor)
+
+public:
+    explicit TextColorAnimationBase(QWidget *widget = nullptr);
+    ~TextColorAnimationBase() override = default;
+
+    QColor textColor() const;
+    void setTextColor(const QColor &color);
+
+    void setCustomTextColor(const QColor &lightColor, const QColor &darkColor);
+    void updateTextColor();
+
+protected:
+    virtual QColor normalTextColor() const;
+    virtual QColor hoverTextColor() const;
+    virtual QColor pressedTextColor() const;
+    virtual QColor disabledTextColor() const;
+
+    QWidget *m_widget;
+    QColor m_lightTextColor;
+    QColor m_darkTextColor;
+    QPropertyAnimation *m_textColorAnim;
 };
 
 

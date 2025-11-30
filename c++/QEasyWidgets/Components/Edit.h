@@ -4,10 +4,10 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QHBoxLayout>
-#include <QToolTip>
 #include <QStyle>
 
 #include "Button.h"
+#include "ToolTip.h"
 
 
 /**
@@ -61,6 +61,7 @@ protected:
     void focusOutEvent(QFocusEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    QSize sizeHint() const override;
 
 private:
     void init();
@@ -69,7 +70,7 @@ private:
     FileButton *m_fileButton;
     QSpacerItem *m_spacer;
     QHBoxLayout *m_layout;
-    QToolTip *m_toolTip;
+    ToolTipBase *m_toolTip;
     bool m_isClearButtonEnabled;
     bool m_isFileButtonEnabled;
     bool m_isAlerted;

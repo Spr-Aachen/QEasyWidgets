@@ -4,15 +4,6 @@
 #include <QDir>
 
 
-// Status class static members
-const QString Status::Loading = "Loading";
-
-
-// ChatRole class static members
-const QString ChatRole::User = "User";
-const QString ChatRole::Contact = "Contact";
-
-
 QConfig::QConfig(QObject *parent)
     : QObject(parent)
     , m_settings(nullptr)
