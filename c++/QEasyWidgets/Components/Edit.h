@@ -91,6 +91,8 @@ public:
     void blockKeyEnter(bool block);
     bool isKeyEnterBlocked() const;
 
+    void setMaximumLines(int maxLines);
+
     void setBorderless(bool borderless);
     void setTransparent(bool transparent);
 

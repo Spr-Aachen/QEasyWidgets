@@ -1,7 +1,39 @@
 MenuBase {
-    color: rgb(45, 33, 21);
-    background-color: rgba(234, 234, 234, 246);
-    padding: 0px;
+    background-color: transparent;
     border: none;
-	border-radius: 3px;
+}
+
+MenuActionListWidget {
+    font: 12px --FontFamilies;
+    background-color: rgba(24, 24, 24, 6);
+    border: 1.2px solid rgba(54, 45, 33, 12);
+    border-radius: 3px;
+    outline: none;
+}
+MenuActionListWidget[transparent=true] {
+    background-color: transparent;
+}
+
+MenuActionListWidget::item {
+    padding-left: 9px;
+    padding-right: 9px;
+    border-radius: 3px;
+    margin-left: 6px;
+    margin-right: 6px;
+    color: rgb(45, 33, 21);
+    border: none;
+}
+MenuActionListWidget::item:hover {
+    background-color: rgba(24, 24, 24, 12);
+}
+MenuActionListWidget::item:selected {
+    color: rgba(45, 33, 21, 123);
+    background-color: rgba(120, 180, 240, 246);
+}
+MenuActionListWidget::item:disabled {
+    padding-left: 9px;
+    padding-right: 9px;
+    border-radius: 3px;
+    color: rgba(45, 33, 21, 90);
+    border: none;
 }

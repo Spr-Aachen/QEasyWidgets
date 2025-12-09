@@ -127,7 +127,7 @@ QPropertyAnimation* setWidgetOpacityAnimation(QWidget *widget, qreal originalOpa
 /**
  * Set font for widget
  */
-void setFont(QWidget *widget, int fontSize = 12, QFont::Weight weight = QFont::Normal, const QStringList &families = QStringList("Microsoft YaHei"));
+QFont setFont(QWidget *widget, int fontSize = 12, QFont::Weight weight = QFont::Normal, const QStringList &families = QStringList("Microsoft YaHei"));
 
 
 /**

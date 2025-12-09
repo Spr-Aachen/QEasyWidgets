@@ -183,6 +183,7 @@ def setFont(
     font.setPixelSize(fontSize)
     font.setWeight(weight)
     widget.setFont(font)
+    return font
 
 
 def setText(

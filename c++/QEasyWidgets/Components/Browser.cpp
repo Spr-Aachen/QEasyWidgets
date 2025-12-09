@@ -43,6 +43,17 @@ void TextBrowserBase::loadHtml(const QString &filePath) {
     }
 }
 
+void TextBrowserBase::setMaximumLines(int maxLines) {
+    QTextDocument *document = this->document();
+    while (document->blockCount() > maxLines) {
+        QTextCursor cursor(document);
+        cursor.movePosition(QTextCursor::Start);
+        cursor.select(QTextCursor::BlockUnderCursor);
+        cursor.removeSelectedText();
+        cursor.deleteChar(); // Remove the newline character
+    }
+}
+
 void TextBrowserBase::setBorderless(bool borderless) {
     setProperty("isBorderless", borderless);
 }

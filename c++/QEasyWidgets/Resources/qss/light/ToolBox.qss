@@ -1,4 +1,4 @@
-ToolBox {
+ToolBoxBase {
     background-color: transparent;
     padding: 0px;
     border: none;
@@ -22,12 +22,4 @@ ToolPage Folder {
 }
 ToolPage Folder:hover {
 	background-color: rgba(54, 45, 33, 12);
-}
-
-
-QToolTip {
-    color: rgb(45, 33, 21);
-    background-color: white;
-	border-width: 0px;
-	border-style: solid;
 }

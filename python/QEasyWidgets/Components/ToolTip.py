@@ -19,7 +19,7 @@ class ToolTipBase(QFrame):
 
         self._text = text
 
-        self._duration = 333
+        self._duration = -1
 
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
@@ -27,15 +27,9 @@ class ToolTipBase(QFrame):
 
         # set layout
         self.setLayout(QHBoxLayout())
-        self.layout().setContentsMargins(12, 8, 12, 12)
-
-        # set container
-        self.container = self._createContainer()
-        self.containerLayout = QHBoxLayout(self.container)
-        self.layout().addWidget(self.container)
+        self.layout().setContentsMargins(21, 12, 21, 12)
         self.label = QLabel(text, self)
-        self.containerLayout.addWidget(self.label)
-        self.containerLayout.setContentsMargins(8, 6, 8, 6)
+        self.layout().addWidget(self.label)
 
         # add shadow
         setDropShadowEffect(self,
@@ -50,18 +44,10 @@ class ToolTipBase(QFrame):
         # set style
         self.setAttribute(Qt.WA_TransparentForMouseEvents)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint)
-        self._setQSS()
+        self.setAttribute(Qt.WA_ShowWithoutActivating)
+        self.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 
-    def _createContainer(self):
-        return QFrame(self)
-
-    def _setQSS(self):
-        self.container.setObjectName("container")
-        self.label.setObjectName("contentLabel")
         StyleSheetBase.ToolTip.apply(self)
-        self.label.adjustSize()
-        self.adjustSize()
 
     def showEvent(self, e):
         self.opacityAnim.setStartValue(0)
@@ -78,7 +64,6 @@ class ToolTipBase(QFrame):
     def setText(self, text):
         self._text = text
         self.label.setText(text)
-        self.container.adjustSize()
         self.adjustSize()
 
     @singledispatchmethod

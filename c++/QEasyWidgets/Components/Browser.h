@@ -27,6 +27,8 @@ public:
     void loadMarkdown(const QString &filePath);
     void loadHtml(const QString &filePath);
 
+    void setMaximumLines(int maxLines);
+
     void setBorderless(bool borderless);
 
     void clearDefaultStyleSheet();

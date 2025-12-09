@@ -1,0 +1,15 @@
+ToolTipBase {
+    background-color: rgba(246, 246, 246, 18);
+    border: 1.2px solid rgba(210, 222, 234, 12);
+    border-radius: 3px;
+}
+ToolTipBase[isTransparent=true] {
+    background-color: transparent;
+}
+
+
+QLabel {
+    color: rgb(210, 222, 234);
+    background-color: transparent;
+    border: none;
+}

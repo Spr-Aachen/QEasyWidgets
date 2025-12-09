@@ -33,7 +33,7 @@ SpinBoxBase::up-button, DoubleSpinBoxBase::up-button {
 	border-width: 0px;
 }
 SpinBoxBase::up-arrow, DoubleSpinBoxBase::up-arrow {
-	border-image: url(:/Icons/Icons/Light/Chevron-Up.svg);
+	border-image: url(:/Icons/icons/light/Chevron-Up.svg);
 }
 
 SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
@@ -43,13 +43,5 @@ SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
 	border-width: 0px;
 }
 SpinBoxBase::down-arrow, DoubleSpinBoxBase::down-arrow {
-	border-image: url(:/Icons/Icons/Light/Chevron-Down.svg);
-}
-
-
-QToolTip {
-    color: rgb(45, 33, 21);
-    background-color: rgba(210, 222, 234, 15);
-	border-width: 0px;
-	border-style: solid;
+	border-image: url(:/Icons/icons/light/Chevron-Down.svg);
 }

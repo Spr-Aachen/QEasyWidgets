@@ -13,8 +13,8 @@ GroupBoxBase::title {
 }
 
 GroupBoxBase::indicator:checked {
-	border-image: url(:/Icons/Icons/Dark/Chevron-Down.svg);
+	border-image: url(:/Icons/icons/dark/Chevron-Down.svg);
 }
 GroupBoxBase::indicator:unchecked {
-	border-image: url(:/Icons/Icons/Dark/Chevron-Up.svg);
+	border-image: url(:/Icons/icons/dark/Chevron-Up.svg);
 }

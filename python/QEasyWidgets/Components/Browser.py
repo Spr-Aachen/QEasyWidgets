@@ -36,6 +36,15 @@ class TextBrowserBase(QTextBrowser, SizableWidget):
             html = f.read()
         self.setHtml(html)
 
+    def setMaximumLines(self, maxLines: int) -> None:
+        document = self.document()
+        while document.blockCount() > maxLines:
+            cursor = QTextCursor(document)
+            cursor.movePosition(QTextCursor.Start)
+            cursor.select(QTextCursor.BlockUnderCursor)
+            cursor.removeSelectedText()
+            cursor.deleteChar() # Remove the newline character
+
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)
 

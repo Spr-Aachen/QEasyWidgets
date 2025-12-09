@@ -133,14 +133,14 @@ QPropertyAnimation* setWidgetOpacityAnimation(QWidget *widget, qreal originalOpa
 }
 
 
-void setFont(QWidget *widget, int fontSize, QFont::Weight weight, const QStringList &families) {
-    if (!widget) return;
-
+QFont setFont(QWidget *widget, int fontSize, QFont::Weight weight, const QStringList &families) {
     QFont font;
+    if (!widget) return font;
     font.setFamilies(families);
     font.setPixelSize(fontSize);
     font.setWeight(weight);
     widget->setFont(font);
+    return font;
 }
 
 

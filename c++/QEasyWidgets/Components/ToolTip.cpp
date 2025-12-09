@@ -8,10 +8,8 @@
 ToolTipBase::ToolTipBase(QWidget *parent, const QString &text)
     : QFrame(parent)
     , m_text(text)
-    , m_duration(333)
+    , m_duration(-1)
     , m_timer(nullptr)
-    , m_container(nullptr)
-    , m_containerLayout(nullptr)
     , m_label(nullptr)
     , m_opacityAnim(nullptr) {
     
@@ -21,15 +19,9 @@ ToolTipBase::ToolTipBase(QWidget *parent, const QString &text)
     
     // Set layout
     setLayout(new QHBoxLayout());
-    layout()->setContentsMargins(12, 8, 12, 12);
-    
-    // Set container
-    m_container = createContainer();
-    m_containerLayout = new QHBoxLayout(m_container);
-    layout()->addWidget(m_container);
+    layout()->setContentsMargins(21, 12, 21, 12);
     m_label = new QLabel(text, this);
-    m_containerLayout->addWidget(m_label);
-    m_containerLayout->setContentsMargins(8, 6, 8, 6);
+    layout()->addWidget(m_label);
     
     // Add shadow
     setDropShadowEffect(this, 21.0, QColor(0, 0, 0, 60), 0.0, 3.0);
@@ -40,22 +32,10 @@ ToolTipBase::ToolTipBase(QWidget *parent, const QString &text)
     // Set style
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
-    setQSS();
-}
-
-
-QFrame* ToolTipBase::createContainer() {
-    return new QFrame(this);
-}
-
-
-void ToolTipBase::setQSS() {
-    m_container->setObjectName("container");
-    m_label->setObjectName("contentLabel");
+    setAttribute(Qt::WA_ShowWithoutActivating);
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    
     StyleSheetBase::apply(this, StyleSheetBase::ToolTip);
-    m_label->adjustSize();
-    adjustSize();
 }
 
 
@@ -85,7 +65,6 @@ QString ToolTipBase::text() const {
 void ToolTipBase::setText(const QString &text) {
     m_text = text;
     m_label->setText(text);
-    m_container->adjustSize();
     adjustSize();
 }
 

@@ -7,8 +7,9 @@
 #include <Qt>
 
 
-IconEngine::IconEngine()
+IconEngine::IconEngine(const QIcon *icon)
     : m_isIconSVG(false) {
+    Q_UNUSED(icon);
 }
 
 
@@ -62,6 +63,8 @@ QString iconName(IconBase icon) {
         case IconBase::Chevron_Down: return "Chevron-Down";
         case IconBase::Ellipsis: return "Ellipsis";
         case IconBase::OpenedFolder: return "OpenedFolder";
+        case IconBase::Copy: return "Copy";
+        case IconBase::Scissors: return "Scissors";
         case IconBase::Clipboard: return "Clipboard";
         case IconBase::Download: return "Download";
         case IconBase::Send: return "Send";

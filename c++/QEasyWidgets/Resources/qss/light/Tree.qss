@@ -23,10 +23,10 @@ QTreeView::branch {
 	border: none;
 }
 QTreeView::branch:open:has-children {
-	image: url(:/Icons/Icons/Light/Chevron-Down.svg);
+	image: url(:/Icons/icons/light/Chevron-Down.svg);
 	padding: 3px;
 }
 QTreeView::branch:closed:has-children {
-	image: url(:/Icons/Icons/Light/Chevron-Right.svg);
+	image: url(:/Icons/icons/light/Chevron-Right.svg);
 	padding: 3px;
 }

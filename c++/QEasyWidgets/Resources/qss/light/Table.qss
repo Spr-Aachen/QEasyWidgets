@@ -40,4 +40,5 @@ QTableView::item::selected {
 	border-color: rgba(54, 45, 33, 210);
 }
 QTableView::item:!alternate:!selected {
+    
 }

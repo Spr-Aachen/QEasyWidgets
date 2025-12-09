@@ -13,14 +13,16 @@ from .Theme import Theme, currentTheme
 class IconEngine(QIconEngine):
     '''
     '''
-    def __init__(self):
+    def __init__(self, icon: Optional[QIcon] = None):
         super().__init__()
+
+        self.icon = icon
 
         self.isIconSVG = False
 
-    def loadSVG(self, SVGString: str):
+    def loadSVG(self, svgString: str):
         self.isIconSVG = True
-        self.icon = SVGString.encode(errors = 'replace')
+        self.icon = svgString.encode(errors = 'replace')
 
     def paint(self, painter: QPainter, rect: QRect, mode: QIcon.Mode, state: QIcon.State) -> None:
         if self.isIconSVG:
@@ -58,6 +60,8 @@ class IconBase(Enum):
     Chevron_Down = 'Chevron-Down'
     Ellipsis = 'Ellipsis'
     OpenedFolder = 'OpenedFolder'
+    Copy = 'Copy'
+    Scissors = 'Scissors'
     Clipboard = 'Clipboard'
     Download = 'Download'
     Send = 'Send'

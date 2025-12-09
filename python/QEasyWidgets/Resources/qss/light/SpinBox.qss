@@ -45,11 +45,3 @@ SpinBoxBase::down-button, DoubleSpinBoxBase::down-button {
 SpinBoxBase::down-arrow, DoubleSpinBoxBase::down-arrow {
 	border-image: url(:/Icons/icons/light/Chevron-Down.svg);
 }
-
-
-QToolTip {
-    color: rgb(45, 33, 21);
-    background-color: rgba(210, 222, 234, 15);
-	border-width: 0px;
-	border-style: solid;
-}

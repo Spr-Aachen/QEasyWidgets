@@ -16,7 +16,7 @@
  */
 class IconEngine : public QIconEngine {
 public:
-    IconEngine();
+    IconEngine(const QIcon *icon = nullptr);
     ~IconEngine() override = default;
 
     void loadSVG(const QString &svgString);
@@ -45,6 +45,8 @@ enum class IconBase {
     Chevron_Down,
     Ellipsis,
     OpenedFolder,
+    Copy,
+    Scissors,
     Clipboard,
     Download,
     Send,

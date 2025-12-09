@@ -248,8 +248,7 @@ class MenuButton(ButtonBase):
     @singledispatchmethod
     def setMenu(self, menu: QMenu) -> None:
         def _showMenu():
-            menuWidth = menu.sizeHint().width()
-            xPos = self.width() - menuWidth
+            xPos = 0
             yPos = self.height()
             menu.exec(self.mapToGlobal(QPoint(xPos, yPos)))
         self.clicked.connect(_showMenu)

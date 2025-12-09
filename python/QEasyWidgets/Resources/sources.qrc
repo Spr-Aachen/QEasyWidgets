@@ -14,6 +14,8 @@
         <file>icons/light/CompactChevron-Right.svg</file>
         <file>icons/light/Ellipsis.svg</file>
         <file>icons/light/OpenedFolder.svg</file>
+        <file>icons/light/Copy.svg</file>
+        <file>icons/light/Scissors.svg</file>
         <file>icons/light/Clipboard.svg</file>
         <file>icons/light/Download.svg</file>
         <file>icons/light/Send.svg</file>
@@ -34,6 +36,8 @@
         <file>icons/dark/CompactChevron-Right.svg</file>
         <file>icons/dark/Ellipsis.svg</file>
         <file>icons/dark/OpenedFolder.svg</file>
+        <file>icons/dark/Copy.svg</file>
+        <file>icons/dark/Scissors.svg</file>
         <file>icons/dark/Clipboard.svg</file>
         <file>icons/dark/Download.svg</file>
         <file>icons/dark/Send.svg</file>
@@ -43,6 +47,7 @@
     </qresource>
     <qresource prefix="QSS">
         <file>qss/light/Label.qss</file>
+        <file>qss/light/ToolTip.qss</file>
         <file>qss/light/Button.qss</file>
         <file>qss/light/CheckBox.qss</file>
         <file>qss/light/ComboBox.qss</file>
@@ -64,6 +69,7 @@
         <file>qss/light/DockWidget.qss</file>
         <file>qss/light/Menu.qss</file>
         <file>qss/dark/Label.qss</file>
+        <file>qss/dark/ToolTip.qss</file>
         <file>qss/dark/Button.qss</file>
         <file>qss/dark/CheckBox.qss</file>
         <file>qss/dark/ComboBox.qss</file>

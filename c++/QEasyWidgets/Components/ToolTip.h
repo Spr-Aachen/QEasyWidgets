@@ -39,16 +39,11 @@ public:
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
-    
-    QFrame* createContainer();
-    void setQSS();
 
 private:
     QString m_text;
     int m_duration;
     QTimer *m_timer;
-    QFrame *m_container;
-    QHBoxLayout *m_containerLayout;
     QLabel *m_label;
     QPropertyAnimation *m_opacityAnim;
 };

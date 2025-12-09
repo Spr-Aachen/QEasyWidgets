@@ -487,8 +487,7 @@ void MenuButton::setMenu(QMenu *menu) {
     connect(this, &QPushButton::clicked, this, [this]()
             {
         if (m_menu) {
-            QSize menuSize = m_menu->sizeHint();
-            QPoint pos = mapToGlobal(QPoint(width() - menuSize.width(), height()));
+            QPoint pos = mapToGlobal(QPoint(0, height()));
             m_menu->exec(pos);
         } });
 }
