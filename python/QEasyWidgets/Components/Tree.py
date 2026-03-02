@@ -46,6 +46,11 @@ class TreeWidgetBase(QTreeWidget):
 
         StyleSheetBase.Tree.apply(self)
 
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+
     def drawBranches(self, painter: QPainter, rect: QRect, index: Union[QModelIndex, QPersistentModelIndex]) -> None:
         #rect.moveLeft(3)
         super().drawBranches(painter, rect, index)

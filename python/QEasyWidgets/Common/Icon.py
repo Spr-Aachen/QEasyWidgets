@@ -13,23 +13,31 @@ from .Theme import Theme, currentTheme
 class IconEngine(QIconEngine):
     '''
     '''
-    def __init__(self, icon: Optional[QIcon] = None):
+    def __init__(self, icon: Optional[Union[QPixmap, QIcon]] = None):
         super().__init__()
 
-        self.icon = icon
+        if isinstance(icon, QPixmap):
+            self._pixmap = icon
+        elif isinstance(icon, QIcon):
+            self._pixmap = icon.pixmap(QSize(16, 16))
+        else:
+            self._pixmap = None
 
         self.isIconSVG = False
 
     def loadSVG(self, svgString: str):
         self.isIconSVG = True
-        self.icon = svgString.encode(errors = 'replace')
+        self._pixmap = svgString.encode(errors = 'replace')
 
     def paint(self, painter: QPainter, rect: QRect, mode: QIcon.Mode, state: QIcon.State) -> None:
         if self.isIconSVG:
-            renderer = QSvgRenderer(self.icon)
+            renderer = QSvgRenderer(self._pixmap)
             renderer.render(painter, QRectF(rect))
+        elif self._pixmap:
+            painter.drawPixmap(rect, self._pixmap)
         else:
-            super().paint(painter, rect, mode, state)
+            # 如果既不是SVG也没有pixmap，绘制默认的灰色方块
+            painter.fillRect(rect, Qt.gray)
 
     def pixmap(self, size: QSize, mode: QIcon.Mode, state: QIcon.State) -> QPixmap:
         image = QImage(size, QImage.Format_ARGB32)

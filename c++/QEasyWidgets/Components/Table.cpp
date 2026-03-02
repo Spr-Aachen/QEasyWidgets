@@ -38,6 +38,7 @@ void TableItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMod
 TableBase::TableBase(QWidget *parent)
     : QTableView(parent)
     , m_model(nullptr)
+    , m_delegate(nullptr)
     , m_isIndexShown(false) {
     init();
 }
@@ -45,6 +46,8 @@ TableBase::TableBase(QWidget *parent)
 void TableBase::init() {
     m_model = new QStandardItemModel(this);
     setModel(m_model);
+
+    m_delegate = new ScrollDelegate(this);
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -169,4 +172,15 @@ void TableBase::setIndexHeaderVisible(bool showIndexHeader) {
         hideColumn(0);
         m_isIndexShown = false;
     }
+}
+
+void TableBase::updateGeometries() {
+    QTableView::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+    }
+}
+
+void TableBase::showEvent(QShowEvent *event) {
+    QTableView::showEvent(event);
 }

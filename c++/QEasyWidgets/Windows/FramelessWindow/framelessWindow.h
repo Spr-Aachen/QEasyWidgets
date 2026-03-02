@@ -107,12 +107,8 @@ private:
     QRect m_normalGeometry;
 
     bool m_stretchable;
-    bool m_dragging;
-    QPoint m_dragStartPosition;
 
     int m_edgeSize;  // Border edge size for resize detection
-    bool m_resizing;
-    int m_resizeDirection;
 };
 
 

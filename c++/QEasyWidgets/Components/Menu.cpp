@@ -13,6 +13,12 @@
 #include <QGuiApplication>
 #include <QWindow>
 #include <QShortcut>
+#include <QLineEdit>
+#include <QTextEdit>
+#include <QClipboard>
+#include <QApplication>
+#include <QMimeData>
+#include <QTextCursor>
 #include <algorithm>
 
 
@@ -186,7 +192,7 @@ void PullUpMenuAnimationManager::exec(const QPoint &pos) {
  */
 
 MenuActionListWidget::MenuActionListWidget(QWidget *parent)
-    : QListWidget(parent), m_itemHeight(28), m_maxVisibleItems(-1) {
+    : QListWidget(parent), m_itemHeight(28), m_maxVisibleItems(-1), m_delegate(nullptr) {
     setViewportMargins(0, 6, 0, 6);
     setTextElideMode(Qt::ElideNone);
     setDragEnabled(false);
@@ -195,7 +201,7 @@ MenuActionListWidget::MenuActionListWidget(QWidget *parent)
     setIconSize(QSize(14, 14));
     setItemDelegate(new MenuItemDelegate(this));
 
-    new ScrollDelegate(this);
+    m_delegate = new ScrollDelegate(this);
 
     setStyleSheet("MenuActionListWidget{font: 14px \"Segoe UI\", \"Microsoft YaHei\", \"PingFang SC\"}");
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -280,6 +286,13 @@ int MenuActionListWidget::heightForAnimation(const QPoint &pos, Direction animTy
     int sh = manager->availableViewSize(pos).height();
     delete manager;
     return std::min(ih, sh);
+}
+
+void MenuActionListWidget::updateGeometries() {
+    QListWidget::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+    }
 }
 
 /**
@@ -724,4 +737,175 @@ void MenuBase::exec(const QPoint &pos, Direction animType) {
 
 void MenuBase::clearDefaultStyleSheet() {
     StyleSheetBase::deregistrate(this);
+}
+
+
+/**
+ * EditMenu implementation
+ */
+
+EditMenu::EditMenu(const QString &title, QWidget *parent)
+    : MenuBase(title, parent) {
+}
+
+void EditMenu::exec(const QPoint &pos, Direction animType) {
+    clear();
+    createActions();
+    
+    QClipboard *clipboard = QApplication::clipboard();
+    bool hasText = clipboard->mimeData() && clipboard->mimeData()->hasText();
+    bool isReadOnly = _isParentReadOnly();
+    bool hasParentText = !_parentText().isEmpty();
+    bool hasSelectedText = !_parentSelectedText().isEmpty();
+
+    if (hasText) {
+        if (hasParentText) {
+            if (hasSelectedText) {
+                if (isReadOnly) {
+                    addActions({m_copyAct, m_selectAllAct});
+                } else {
+                    addActions(m_actionList);
+                }
+            } else {
+                if (isReadOnly) {
+                    addAction(m_selectAllAct);
+                } else {
+                    // Paste, Cancel, SelectAll (from index 2 onwards)
+                    for (int i = 2; i < m_actionList.size(); ++i) {
+                        addAction(m_actionList[i]);
+                    }
+                }
+            }
+        } else if (!isReadOnly) {
+            addAction(m_pasteAct);
+        } else {
+            return;
+        }
+    } else {
+        if (!hasParentText) {
+            return;
+        }
+        if (hasSelectedText) {
+            if (isReadOnly) {
+                addActions({m_copyAct, m_selectAllAct});
+            } else {
+                // Cut, Copy, Cancel, SelectAll (skipping Paste at index 2)
+                QList<QAction*> actions = {m_cutAct, m_copyAct, m_cancelAct, m_selectAllAct};
+                addActions(actions);
+            }
+        } else {
+            if (isReadOnly) {
+                addAction(m_selectAllAct);
+            } else {
+                // Cancel, SelectAll (from index 3 onwards)
+                for (int i = 3; i < m_actionList.size(); ++i) {
+                    addAction(m_actionList[i]);
+                }
+            }
+        }
+    }
+    MenuBase::exec(pos, animType);
+}
+
+void EditMenu::createActions() {
+    m_cutAct = new QAction(createIcon(IconBase::Scissors), tr("Cut"), this);
+    m_cutAct->setShortcut(QKeySequence::Cut);
+    connect(m_cutAct, &QAction::triggered, [this](){
+        if (auto p = qobject_cast<QLineEdit*>(parent())) p->cut();
+        else if (auto p = qobject_cast<QTextEdit*>(parent())) p->cut();
+    });
+
+    m_copyAct = new QAction(createIcon(IconBase::Copy), tr("Copy"), this);
+    m_copyAct->setShortcut(QKeySequence::Copy);
+    connect(m_copyAct, &QAction::triggered, [this](){
+        if (auto p = qobject_cast<QLineEdit*>(parent())) p->copy();
+        else if (auto p = qobject_cast<QTextEdit*>(parent())) p->copy();
+    });
+
+    m_pasteAct = new QAction(createIcon(IconBase::Clipboard), tr("Paste"), this);
+    m_pasteAct->setShortcut(QKeySequence::Paste);
+    connect(m_pasteAct, &QAction::triggered, [this](){
+        if (auto p = qobject_cast<QLineEdit*>(parent())) p->paste();
+        else if (auto p = qobject_cast<QTextEdit*>(parent())) p->paste();
+    });
+
+    m_cancelAct = new QAction(createIcon(IconBase::X), tr("Cancel"), this);
+    m_cancelAct->setShortcut(QKeySequence::Undo);
+    connect(m_cancelAct, &QAction::triggered, [this](){
+        if (auto p = qobject_cast<QLineEdit*>(parent())) p->undo();
+        else if (auto p = qobject_cast<QTextEdit*>(parent())) p->undo();
+    });
+
+    m_selectAllAct = new QAction(tr("Select all"), this);
+    m_selectAllAct->setShortcut(QKeySequence::SelectAll);
+    connect(m_selectAllAct, &QAction::triggered, [this](){
+        if (auto p = qobject_cast<QLineEdit*>(parent())) p->selectAll();
+        else if (auto p = qobject_cast<QTextEdit*>(parent())) p->selectAll();
+    });
+
+    m_actionList = {m_cutAct, m_copyAct, m_pasteAct, m_cancelAct, m_selectAllAct};
+}
+
+
+/**
+ * LineEditMenu implementation
+ */
+
+LineEditMenu::LineEditMenu(QLineEdit *parent)
+    : EditMenu("", parent) {
+    m_selectionStart = parent->selectionStart();
+    m_selectionLength = parent->selectionLength();
+}
+
+QString LineEditMenu::_parentText() const {
+    return qobject_cast<QLineEdit*>(parent())->text();
+}
+
+QString LineEditMenu::_parentSelectedText() const {
+    return qobject_cast<QLineEdit*>(parent())->selectedText();
+}
+
+bool LineEditMenu::_isParentReadOnly() const {
+    return qobject_cast<QLineEdit*>(parent())->isReadOnly();
+}
+
+void LineEditMenu::onItemClicked(QListWidgetItem *item) {
+    if (m_selectionStart >= 0) {
+        qobject_cast<QLineEdit*>(parent())->setSelection(m_selectionStart, m_selectionLength);
+    }
+    EditMenu::onItemClicked(item);
+}
+
+
+/**
+ * TextEditMenu implementation
+ */
+
+TextEditMenu::TextEditMenu(QTextEdit *parent)
+    : EditMenu("", parent) {
+    QTextCursor cursor = parent->textCursor();
+    m_selectionStart = cursor.selectionStart();
+    m_selectionLength = cursor.selectionEnd() - m_selectionStart;
+}
+
+QString TextEditMenu::_parentText() const {
+    return qobject_cast<QTextEdit*>(parent())->toPlainText();
+}
+
+QString TextEditMenu::_parentSelectedText() const {
+    return qobject_cast<QTextEdit*>(parent())->textCursor().selectedText();
+}
+
+bool TextEditMenu::_isParentReadOnly() const {
+    return qobject_cast<QTextEdit*>(parent())->isReadOnly();
+}
+
+void TextEditMenu::onItemClicked(QListWidgetItem *item) {
+    if (m_selectionStart >= 0) {
+        QTextCursor cursor = qobject_cast<QTextEdit*>(parent())->textCursor();
+        cursor.setPosition(m_selectionStart);
+        cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, m_selectionLength);
+        qobject_cast<QTextEdit*>(parent())->setTextCursor(cursor);
+    }
+    EditMenu::onItemClicked(item);
 }

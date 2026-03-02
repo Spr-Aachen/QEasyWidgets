@@ -35,12 +35,7 @@ class ButtonBase(QPushButton):
         StyleSheetBase.Button.apply(self)
 
     @__init__.register
-    def _(self, text: str, parent: Optional[QWidget] = None) -> None:
-        self.__init__(parent)
-        self.setText(text)
-
-    @__init__.register
-    def _(self, text: str, icon: Union[QIcon, QPixmap], parent: Optional[QWidget] = None) -> None:
+    def _(self, text: str, icon: Union[QIcon, QPixmap, None] = None, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setIcon(icon)
         self.setText(text)

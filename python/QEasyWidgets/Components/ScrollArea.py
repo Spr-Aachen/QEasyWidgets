@@ -115,6 +115,8 @@ class ScrollBar(QWidget):
     rangeChanged = Signal(tuple)
     valueChanged = Signal(int)
 
+    visibilityChanged = Signal(bool)
+
     sliderPressed = Signal()
     sliderReleased = Signal()
     sliderMoved = Signal()
@@ -139,6 +141,7 @@ class ScrollBar(QWidget):
         self._isEnter = False
         self._isExpanded = False
         self._isAlwaysOff = False
+        self._isLogicalVisible = False
 
         self._orientation = arg__1
 
@@ -335,19 +338,25 @@ class ScrollBar(QWidget):
         self.timer.singleShot(210, self.collapse)
 
     def _adjustPos(self, size):
+        delegate = getattr(self.parent(), 'scrollDelegate', None)
+        v_visible = delegate.vScrollBar.isVisible() if delegate else False
+        h_visible = delegate.hScrollBar.isVisible() if delegate else False
+
         if self.orientation() == Qt.Vertical:
-            self.resize(12, size.height() - 2)
+            h_offset = 13 if h_visible else 1
+            self.resize(12, size.height() - h_offset - 1)
             self.move(size.width() - 13, 1)
         else:
-            self.resize(size.width() - 2, 12)
+            v_offset = 13 if v_visible else 1
+            self.resize(size.width() - v_offset - 1, 12)
             self.move(1, size.height() - 13)
 
     def eventFilter(self, obj, e: QEvent):
         if obj is not self.parent():
             return super().eventFilter(obj, e)
 
-        if e.type() == QEvent.Resize:
-            self._adjustPos(e.size())
+        if e.type() in [QEvent.Resize, QEvent.Show]:
+            self._adjustPos(self.parent().size())
 
         return super().eventFilter(obj, e)
 
@@ -459,6 +468,13 @@ class ScrollBar(QWidget):
         self._isAlwaysOff = alwaysOff
         self.setVisible(not alwaysOff and self.maximum() > 0)
 
+    def setVisible(self, visible: bool):
+        was_visible = self._isLogicalVisible
+        self._isLogicalVisible = visible
+        super().setVisible(visible)
+        if was_visible != visible:
+            self.visibilityChanged.emit(visible)
+
 ##############################################################################################################################
 
 class ScrollDelegate(QObject):
@@ -472,9 +488,26 @@ class ScrollDelegate(QObject):
         self.vScrollBar = ScrollBar(Qt.Vertical, parent)
         self.hScrollBar = ScrollBar(Qt.Horizontal, parent)
 
+        self.vScrollBar.visibilityChanged.connect(self._updateViewportMargins)
+        self.hScrollBar.visibilityChanged.connect(self._updateViewportMargins)
+
         parent.viewport().installEventFilter(self)
         parent.setVerticalScrollBarPolicy = self.setVerticalScrollBarPolicy
         parent.setHorizontalScrollBarPolicy = self.setHorizontalScrollBarPolicy
+
+        self._updateViewportMargins()
+
+    def _updateViewportMargins(self):
+        v_visible = self.vScrollBar._isLogicalVisible
+        h_visible = self.hScrollBar._isLogicalVisible
+        v_width = 13 if v_visible else 0
+        h_height = 13 if h_visible else 0
+
+        m = self.parent_area.viewportMargins()
+        self.parent_area.setViewportMargins(m.left(), m.top(), v_width, h_height)
+
+        self.vScrollBar._adjustPos(self.parent_area.size())
+        self.hScrollBar._adjustPos(self.parent_area.size())
 
     def eventFilter(self, obj, e: QEvent):
         if e.type() == QEvent.Wheel:
@@ -484,6 +517,8 @@ class ScrollDelegate(QObject):
             elif wheel_event.angleDelta().x() != 0:
                 self.hScrollBar.wheelEvent(wheel_event)
             return True
+        elif e.type() == QEvent.Show:
+            self._updateViewportMargins()
         return super().eventFilter(obj, e)
 
     def setVerticalScrollBarPolicy(self, policy):
@@ -511,6 +546,11 @@ class ScrollAreaBase(QScrollArea):
 
         StyleSheetBase.ScrollArea.apply(self)
 
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+
     def setWidget(self, widget: QWidget) -> None:
         self.widget().deleteLater() if self.widget() is not None else None
         super().setWidget(widget)
@@ -518,6 +558,9 @@ class ScrollAreaBase(QScrollArea):
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.viewportSizeChanged.emit(self.viewport().size())
         super().resizeEvent(event)
+
+    def showEvent(self, event: QShowEvent) -> None:
+        super().showEvent(event)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

@@ -8,8 +8,8 @@ from ..Common.Icon import *
 from ..Common.StyleSheet import *
 from ..Common.QFunctions import *
 from .ToolTip import ToolTipBase, ToolTipEventFilter
-from .Menu import MenuBase
 from .ScrollArea import ScrollDelegate
+from .Menu import LineEditMenu, TextEditMenu
 from .Button import ClearButton, FileButton
 
 ##############################################################################################################################
@@ -59,6 +59,10 @@ class LineEditBase(QLineEdit):
     def _(self, arg__1: str, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setText(arg__1)
+
+    def contextMenuEvent(self, e: QContextMenuEvent):
+        menu = LineEditMenu(self)
+        menu.exec(e.globalPos())
 
     def showToolTip(self, content: Optional[str] = None) -> None:
         XPos = 0
@@ -204,12 +208,25 @@ class TextEditBase(QTextEdit):
 
         self.scrollDelegate = ScrollDelegate(self)
 
+        self.document().setDocumentMargin(0)
+
         StyleSheetBase.Edit.apply(self)
+
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+            # Ensure document width matches viewport to prevent horizontal scrollbars
+            self.document().setTextWidth(self.viewport().width())
 
     @__init__.register
     def _(self, text: str, parent: Optional[QWidget] = None) -> None:
         self.__init__(parent)
         self.setText(text)
+
+    def contextMenuEvent(self, e: QContextMenuEvent):
+        menu = TextEditMenu(self)
+        menu.exec(e.globalPos())
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
         super().keyPressEvent(e)
@@ -220,13 +237,7 @@ class TextEditBase(QTextEdit):
         self.keyEnterBlocked = block
 
     def setMaximumLines(self, maxLines: int) -> None:
-        document = self.document()
-        while document.blockCount() > maxLines:
-            cursor = QTextCursor(document)
-            cursor.movePosition(QTextCursor.Start)
-            cursor.select(QTextCursor.BlockUnderCursor)
-            cursor.removeSelectedText()
-            cursor.deleteChar() # Remove the newline character
+        self.document().setMaximumBlockCount(maxLines)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

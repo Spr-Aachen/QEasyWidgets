@@ -20,10 +20,7 @@ FramelessWindowBase::FramelessWindowBase(QWidget *parent, Qt::WindowFlags flags)
     , m_maskWidget(nullptr)
     , m_windowState(Normal)
     , m_stretchable(true)
-    , m_dragging(false)
-    , m_edgeSize(3)
-    , m_resizing(false)
-    , m_resizeDirection(0) {
+    , m_edgeSize(3) {
     setupUI();
 
     // Create animation helper objects as members (composition) instead of multiple QObject
@@ -133,8 +130,6 @@ void FramelessWindowBase::resizeEvent(QResizeEvent *event) {
     if (m_maskWidget && m_maskWidget->isVisible()) {
         m_maskWidget->setGeometry(rect());
     }
-    
-    setCursor(Qt::ArrowCursor);
 }
 
 void FramelessWindowBase::moveEvent(QMoveEvent *event) {
@@ -156,25 +151,18 @@ void FramelessWindowBase::paintEvent(QPaintEvent *event) {
 void FramelessWindowBase::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton && m_stretchable) {
         if (checkIfDraggable(event->pos())) {
-            setCursor(Qt::OpenHandCursor);
             windowHandle()->startSystemMove();
-            QApplication::instance()->postEvent(
-                windowHandle(),
-                new QMouseEvent(QEvent::MouseButtonRelease, QPoint(-1, -1), Qt::LeftButton, Qt::NoButton, Qt::NoModifier)
-            );
         }
     }
     QWidget::mousePressEvent(event);
 }
 
 void FramelessWindowBase::mouseMoveEvent(QMouseEvent *event) {
-    // Linux simplification: just update cursor
     QWidget::mouseMoveEvent(event);
 }
 
 void FramelessWindowBase::mouseReleaseEvent(QMouseEvent *event) {
     if (checkIfDraggable(event->pos())) {
-        setCursor(Qt::ArrowCursor);
         windowHandle()->startSystemResize(Qt::Edges());
     }
     QWidget::mouseReleaseEvent(event);

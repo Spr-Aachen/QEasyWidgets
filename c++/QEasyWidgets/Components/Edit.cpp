@@ -3,8 +3,10 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QContextMenuEvent>
 
 #include "../Common/StyleSheet.h"
+#include "Menu.h"
 
 
 /**
@@ -31,6 +33,20 @@ LineEditBase::LineEditBase(const QString &text, QWidget *parent)
 
 void LineEditBase::setClearButtonEnabled(bool enable) {
     m_isClearButtonEnabled = enable;
+    if (!m_clearButton && enable) {
+        m_clearButton = new ClearButton(this);
+        m_clearButton->setBorderless(true);
+        m_clearButton->setTransparent(true);
+        connect(m_clearButton, &QPushButton::clicked, this, &QLineEdit::clear);
+        connect(m_clearButton, &QPushButton::clicked, this, [this]() { emit interacted(); });
+        
+        int index = m_layout->indexOf(m_spacer);
+        m_layout->insertWidget(index + 1, m_clearButton, 0, Qt::AlignRight);
+        
+        int rightMargin = m_clearButton->minimumSizeHint().width() + textMargins().right() + 3;
+        setTextMargins(0, 0, rightMargin, 0);
+    }
+    
     if (m_clearButton) {
         m_clearButton->setVisible(enable && hasFocus());
     }
@@ -42,6 +58,19 @@ bool LineEditBase::isClearButtonEnabled() const {
 
 void LineEditBase::setFileButtonEnabled(bool enable) {
     m_isFileButtonEnabled = enable;
+    if (!m_fileButton && enable) {
+        m_fileButton = new FileButton(this);
+        m_fileButton->setBorderless(true);
+        m_fileButton->setTransparent(true);
+        connect(m_fileButton, &QPushButton::clicked, this, [this]() {
+            emit interacted();
+        });
+        m_layout->addWidget(m_fileButton, 0, Qt::AlignRight);
+        
+        int rightMargin = m_fileButton->minimumSizeHint().width() + textMargins().right() + 3;
+        setTextMargins(0, 0, rightMargin, 0);
+    }
+    
     if (m_fileButton) {
         m_fileButton->setVisible(enable);
     }
@@ -52,19 +81,8 @@ bool LineEditBase::isFileButtonEnabled() const {
 }
 
 void LineEditBase::setFileDialog(QFileDialog::FileMode mode, const QString &fileType, const QString &directory, const QString &buttonTooltip) {
-    if (!m_fileButton) {
-        // Create file button if it doesn't exist
-        m_fileButton = new FileButton(this);
-        m_fileButton->setBorderless(true);
-        m_fileButton->setTransparent(true);
-        connect(m_fileButton, &QPushButton::clicked, this, [this]() {
-            emit interacted();
-        });
-        m_layout->addWidget(m_fileButton, 0, Qt::AlignRight);
-    }
-
-    m_fileButton->setFileDialog(this, mode, fileType, directory, buttonTooltip);
     setFileButtonEnabled(true);
+    m_fileButton->setFileDialog(this, mode, fileType, directory, buttonTooltip);
 }
 
 void LineEditBase::setBorderless(bool borderless) {
@@ -85,13 +103,32 @@ void LineEditBase::clearDefaultStyleSheet() {
 
 void LineEditBase::alert(bool enable, const QString &content) {
     m_isAlerted = enable;
-    if (enable && !content.isEmpty()) {
-        m_toolTip->showText(mapToGlobal(QPoint(0, -height())), content);
+    if (enable) {
+        showToolTip(content);
     } else {
+        hideToolTip();
+    }
+    // Force stylesheet update to apply alert style
+    style()->unpolish(this);
+    style()->polish(this);
+}
+
+void LineEditBase::showToolTip(const QString &content) {
+    if (!m_toolTip->isVisible() && !content.isEmpty()) {
+        m_toolTip->showText(mapToGlobal(QPoint(0, -height())), content);
+    }
+}
+
+void LineEditBase::hideToolTip() {
+    if (m_toolTip->isVisible()) {
         m_toolTip->hideText();
     }
-    // Force stylesheet update
-    setStyleSheet(styleSheet());
+}
+
+void LineEditBase::contextMenuEvent(QContextMenuEvent *event) {
+    LineEditMenu *menu = new LineEditMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->exec(event->globalPos());
 }
 
 void LineEditBase::mouseMoveEvent(QMouseEvent *event) {
@@ -165,6 +202,9 @@ void LineEditBase::init() {
     m_spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_layout->addItem(m_spacer);
 
+    // Initialize buttons as nullptr, they will be created lazily if needed
+    // or we can create them here if we want to follow Python's logic of property getters
+    
     StyleSheetBase::apply(this, StyleSheetBase::Edit);
 }
 
@@ -182,13 +222,49 @@ QSize LineEditBase::sizeHint() const {
 
 TextEditBase::TextEditBase(QWidget *parent)
     : QTextEdit(parent)
-    , m_keyEnterBlocked(false) {
+    , m_keyEnterBlocked(false)
+    , m_delegate(nullptr) {
     init();
 }
 
 TextEditBase::TextEditBase(const QString &text, QWidget *parent)
     : TextEditBase(parent) {
     setText(text);
+}
+
+void TextEditBase::init() {
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    m_delegate = new ScrollDelegate(this);
+
+    document()->setDocumentMargin(0);
+
+    StyleSheetBase::apply(this, StyleSheetBase::Edit);
+}
+
+void TextEditBase::updateGeometries() {
+    QTextEdit::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+        // Ensure document width matches viewport to prevent horizontal scrollbars with img { width: 100%; }
+        document()->setTextWidth(viewport()->width());
+    }
+}
+
+void TextEditBase::contextMenuEvent(QContextMenuEvent *event) {
+    TextEditMenu *menu = new TextEditMenu(this);
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->exec(event->globalPos());
+}
+
+void TextEditBase::keyPressEvent(QKeyEvent *event) {
+    QTextEdit::keyPressEvent(event);
+    if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) &&
+        !(event->modifiers() & Qt::ShiftModifier) && !m_keyEnterBlocked) {
+        emit keyEnterPressed();
+    }
 }
 
 void TextEditBase::blockKeyEnter(bool block) {
@@ -200,14 +276,7 @@ bool TextEditBase::isKeyEnterBlocked() const {
 }
 
 void TextEditBase::setMaximumLines(int maxLines) {
-    QTextDocument *document = this->document();
-    while (document->blockCount() > maxLines) {
-        QTextCursor cursor(document);
-        cursor.movePosition(QTextCursor::Start);
-        cursor.select(QTextCursor::BlockUnderCursor);
-        cursor.removeSelectedText();
-        cursor.deleteChar(); // Remove the newline character
-    }
+    document()->setMaximumBlockCount(maxLines);
 }
 
 void TextEditBase::setBorderless(bool borderless) {
@@ -224,20 +293,4 @@ void TextEditBase::setTransparent(bool transparent) {
 
 void TextEditBase::clearDefaultStyleSheet() {
     StyleSheetBase::deregistrate(this);
-}
-
-void TextEditBase::keyPressEvent(QKeyEvent *event) {
-    QTextEdit::keyPressEvent(event);
-    if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) &&
-        !(event->modifiers() & Qt::ShiftModifier) && !m_keyEnterBlocked) {
-        emit keyEnterPressed();
-    }
-}
-
-void TextEditBase::init() {
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    StyleSheetBase::apply(this, StyleSheetBase::Edit);
 }

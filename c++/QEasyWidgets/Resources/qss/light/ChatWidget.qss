@@ -1,11 +1,10 @@
 ChatWidgetBase {
     background-color: transparent;
     border: none;
-	border-radius: 3px;
+    border-radius: 3px;
 }
 ChatWidgetBase:hover {
 }
-
 
 ChatWidgetBase QWidget {
     background-color: transparent;
@@ -13,7 +12,6 @@ ChatWidgetBase QWidget {
 }
 ChatWidgetBase QWidget:hover {
 }
-
 
 ChatWidgetBase MessageDisplay {
     background-color: transparent;

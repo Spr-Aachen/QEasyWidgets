@@ -15,13 +15,16 @@
 
 ListBase::ListBase(QWidget *parent)
     : QListView(parent)
-    , m_model(nullptr) {
+    , m_model(nullptr)
+    , m_delegate(nullptr) {
     init();
 }
 
 void ListBase::init() {
     m_model = new QStandardItemModel(this);
     setModel(m_model);
+
+    m_delegate = new ScrollDelegate(this);
 
     connect(this, &QListView::clicked, this, &ListBase::onItemClicked);
 
@@ -143,6 +146,13 @@ void ListBase::setBorderless(bool borderless) {
 
 void ListBase::clearDefaultStyleSheet() {
     StyleSheetBase::deregistrate(this);
+}
+
+void ListBase::updateGeometries() {
+    QListView::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+    }
 }
 
 void ListBase::currentChanged(const QModelIndex &current, const QModelIndex &previous) {

@@ -33,6 +33,11 @@ class ListBase(QListView):
 
         StyleSheetBase.List.apply(self)
 
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+
     def model(self) -> QStandardItemModel:
         return self.StandardItemModel
 

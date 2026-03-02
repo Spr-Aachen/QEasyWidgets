@@ -5,6 +5,8 @@
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 
+#include "ScrollArea.h"
+
 
 /**
  * Custom item delegate for table
@@ -66,6 +68,10 @@ public:
 
     void clearDefaultStyleSheet();
 
+protected:
+    void updateGeometries() override;
+    void showEvent(QShowEvent *event) override;
+
 signals:
     void sorted();
 
@@ -76,6 +82,7 @@ private:
     void init();
 
     QStandardItemModel *m_model;
+    ScrollDelegate *m_delegate;
     bool m_isIndexShown;
 };
 

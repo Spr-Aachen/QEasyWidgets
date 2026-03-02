@@ -123,6 +123,10 @@ public:
         return m_isAlwaysOff;
     }
 
+    bool isLogicalVisible() const {
+        return m_isLogicalVisible;
+    }
+
     // Slider signals and control
     bool isSliderDown() const;
     void setSliderDown(bool isDown);
@@ -130,6 +134,7 @@ public:
 signals:
     void valueChanged(int value);
     void rangeChanged(int min, int max);
+    void visibilityChanged(bool visible);
     void sliderPressed();
     void sliderReleased();
     void sliderMoved();
@@ -162,6 +167,7 @@ private:
     int slideLength() const;
     
     void setValueProperty(int value);
+    void setVisible(bool visible) override;
 
     Qt::Orientation m_orientation;
     QAbstractScrollArea *m_scrollArea;
@@ -183,6 +189,7 @@ private:
     int m_pressedValue;
     bool m_isEnter;
     bool m_isExpanded;
+    bool m_isLogicalVisible;
     
     QPropertyAnimation *m_animation;
     QTimer *m_timer;
@@ -205,6 +212,8 @@ public:
 
     void setVerticalScrollBarPolicy(Qt::ScrollBarPolicy policy);
     void setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy);
+
+    void updateViewportMargins();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -243,10 +252,14 @@ public:
     // Widget helpers
     void setWidget(QWidget *widget);
     void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
     void setBorderless(bool borderless);
     void setTransparent(bool transparent);
     void clearDefaultStyleSheet();
+
+protected:
+    void updateGeometries() override;
 
 private:
     void init();

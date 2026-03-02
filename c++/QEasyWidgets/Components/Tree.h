@@ -38,8 +38,13 @@ public:
 
     void clearDefaultStyleSheet();
 
+protected:
+    void updateGeometries() override;
+
 private:
     void init();
+
+    ScrollDelegate *m_delegate;
 };
 
 

@@ -37,11 +37,13 @@ void TreeItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMode
  */
 
 TreeWidgetBase::TreeWidgetBase(QWidget *parent)
-    : QTreeWidget(parent) {
+    : QTreeWidget(parent)
+    , m_delegate(nullptr) {
     init();
 }
 
 void TreeWidgetBase::init() {
+    m_delegate = new ScrollDelegate(this);
     setColumnCount(1);
     header()->setHighlightSections(false);
     header()->setDefaultAlignment(Qt::AlignCenter);
@@ -95,4 +97,11 @@ QStringList TreeWidgetBase::childItemTexts(QTreeWidgetItem *root) const {
 
 void TreeWidgetBase::clearDefaultStyleSheet() {
     StyleSheetBase::deregistrate(this);
+}
+
+void TreeWidgetBase::updateGeometries() {
+    QTreeWidget::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+    }
 }

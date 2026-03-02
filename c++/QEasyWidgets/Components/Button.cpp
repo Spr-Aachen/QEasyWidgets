@@ -162,34 +162,61 @@ void ButtonBase::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
     style()->drawPrimitive(QStyle::PE_Widget, &option, &painter, this);
 
-    // Calculate content dimensions
+    // Calculate content dimensions using minimumSizeHint logic
+    QSize contentSize = minimumSizeHint();
+    int contentWidth = contentSize.width();
+    int contentHeight = contentSize.height();
+
+    // Calculate content rect
+    QRect contentRect;
+    if (property("isHorizontal").toBool()) {
+        contentRect = QRect(
+            rect().center().x() - contentWidth / 2,
+            rect().center().y() - contentHeight / 2,
+            contentWidth,
+            contentHeight
+        );
+    } else {
+        contentRect = QRect(
+            0,
+            rect().center().y() - contentHeight / 2,
+            contentWidth,
+            contentHeight
+        );
+    }
+
+    if (m_alignment == Qt::AlignCenter) {
+        contentRect.moveCenter(rect().center());
+    }
+
+    // Calculate icon and text positions
     QSize iconSize = !icon().isNull() ? this->iconSize() : QSize(0, 0);
     int textWidth = !text().isEmpty() ? fontMetrics().horizontalAdvance(text()) : 0;
 
-    int contentWidth = 0;
-    if (!icon().isNull()) {
-        contentWidth += iconSize.width() + m_spacing;
-    }
-    if (!text().isEmpty()) {
-        contentWidth += textWidth;
-    }
-
-    int contentHeight = qMax(iconSize.height(), fontMetrics().height());
-
-    // Calculate starting position based on alignment
-    int x = (rect().width() - contentWidth) / 2;
-    int y = (rect().height() - contentHeight) / 2;
-
     // Draw icon
     if (!icon().isNull()) {
-        QRect iconRect(x, y, iconSize.width(), iconSize.height());
-        drawIcon(icon(), &painter, iconRect);
-        x += iconSize.width() + m_spacing;
+        QRect iconRect(
+            contentRect.left() + m_spacing,
+            contentRect.top() + (contentRect.height() - iconSize.height()) / 2,
+            iconSize.width(),
+            iconSize.height()
+        );
+        _drawIcon(icon(), &painter, iconRect);
     }
 
     // Draw text
     if (!text().isEmpty()) {
-        QRect textRect(x, y, textWidth, contentHeight);
+        int textX = contentRect.left() + m_spacing;
+        if (!icon().isNull()) {
+            textX += iconSize.width() + m_spacing;
+        }
+        
+        QRect textRect(
+            textX,
+            contentRect.top(),
+            textWidth,
+            contentRect.height()
+        );
         painter.drawText(textRect, Qt::AlignVCenter | Qt::AlignLeft, text());
     }
 }

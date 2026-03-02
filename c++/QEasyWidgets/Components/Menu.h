@@ -1,4 +1,4 @@
-﻿#ifndef QEASYWIDGETS_MENU_H
+#ifndef QEASYWIDGETS_MENU_H
 #define QEASYWIDGETS_MENU_H
 
 #include <QMenu>
@@ -117,9 +117,13 @@ public:
     int itemsHeight() const;
     int heightForAnimation(const QPoint &pos, Direction animType);
 
+protected:
+    void updateGeometries() override;
+
 private:
     int m_itemHeight;
     int m_maxVisibleItems;
+    ScrollDelegate *m_delegate;
 };
 
 /**
@@ -154,7 +158,7 @@ public:
     explicit MenuBase(const QString &title, QWidget *parent = nullptr);
     ~MenuBase() override = default;
 
-    void exec(const QPoint &pos, Direction animType = Direction::Down);
+    virtual void exec(const QPoint &pos, Direction animType = Direction::Down);
     
     void setMaxVisibleItems(int num);
     void setItemHeight(int height);
@@ -211,10 +215,12 @@ private:
 
 private slots:
     void onActionChanged();
-    void onItemClicked(QListWidgetItem *item);
     void onItemEntered(QListWidgetItem *item);
     void onShowMenuTimeOut();
     void onSubMenuShowSignal(QListWidgetItem *item);
+
+protected slots:
+    virtual void onItemClicked(QListWidgetItem *item);
 
 private:
     QString m_title;
@@ -239,6 +245,74 @@ private:
     QHash<QAction*, QListWidgetItem*> m_actionToItem;
     QHash<QListWidgetItem*, QAction*> m_itemToAction;
 };
+
+/**
+ * Edit menu
+ */
+class EditMenu : public MenuBase {
+    Q_OBJECT
+
+public:
+    explicit EditMenu(const QString &title = "", QWidget *parent = nullptr);
+    virtual ~EditMenu() = default;
+
+    void exec(const QPoint &pos, Direction animType = Direction::Down) override;
+
+protected:
+    virtual void createActions();
+    virtual QString _parentText() const = 0;
+    virtual QString _parentSelectedText() const = 0;
+    virtual bool _isParentReadOnly() const = 0;
+
+    QAction *m_cutAct;
+    QAction *m_copyAct;
+    QAction *m_pasteAct;
+    QAction *m_cancelAct;
+    QAction *m_selectAllAct;
+    QList<QAction*> m_actionList;
+};
+
+/**
+ * Line edit menu
+ */
+class LineEditMenu : public EditMenu {
+    Q_OBJECT
+
+public:
+    explicit LineEditMenu(QLineEdit *parent);
+    ~LineEditMenu() override = default;
+
+protected:
+    QString _parentText() const override;
+    QString _parentSelectedText() const override;
+    bool _isParentReadOnly() const override;
+    void onItemClicked(QListWidgetItem *item) override;
+
+private:
+    int m_selectionStart;
+    int m_selectionLength;
+};
+
+/**
+ * Text edit menu
+ */
+class TextEditMenu : public EditMenu {
+    Q_OBJECT
+
+public:
+    explicit TextEditMenu(QTextEdit *parent);
+    ~TextEditMenu() override = default;
+
+protected:
+    QString _parentText() const override;
+    QString _parentSelectedText() const override;
+    bool _isParentReadOnly() const override;
+    void onItemClicked(QListWidgetItem *item) override;
+
+private:
+    int m_selectionStart;
+    int m_selectionLength;
+
 
 
 #endif // QEASYWIDGETS_MENU_H

@@ -34,10 +34,13 @@ public:
     void clearDefaultStyleSheet();
 
 protected:
+    void updateGeometries() override;
     void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
     void init();
+
+    ScrollDelegate *m_delegate;
 };
 
 

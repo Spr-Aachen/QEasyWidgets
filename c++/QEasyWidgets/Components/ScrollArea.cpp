@@ -13,6 +13,9 @@
 #include "../Common/StyleSheet.h"
 
 
+#include <QHeaderView>
+#include <QTableView>
+
 /**
  * ArrowButton implementation
  */
@@ -156,6 +159,7 @@ ScrollBar::ScrollBar(Qt::Orientation orientation, QAbstractScrollArea *parent)
     , m_isExpanded(false)
     , m_handlePressed(false)
     , m_pressedValue(0)
+    , m_isLogicalVisible(false)
     , m_isAlwaysOff(false)
     , m_animation(nullptr)
     , m_timer(nullptr) {
@@ -165,6 +169,15 @@ ScrollBar::ScrollBar(Qt::Orientation orientation, QAbstractScrollArea *parent)
 void ScrollBar::setAlwaysOff(bool alwaysOff) {
     m_isAlwaysOff = alwaysOff;
     setVisible(!m_isAlwaysOff && m_maximum > 0);
+}
+
+void ScrollBar::setVisible(bool visible) {
+    bool wasVisible = m_isLogicalVisible;
+    m_isLogicalVisible = visible;
+    QWidget::setVisible(visible);
+    if (wasVisible != visible) {
+        emit visibilityChanged(visible);
+    }
 }
 
 void ScrollBar::init() {
@@ -318,11 +331,27 @@ void ScrollBar::adjustHandlePos() {
 }
 
 void ScrollBar::adjustPos(const QSize &size) {
+    bool vVisible = false;
+    bool hVisible = false;
+    
+    // Try to find the other scrollbar's visibility
+    // In our architecture, both scrollbars are children of the same parent area
+    const auto children = parent()->children();
+    for (QObject *child : children) {
+        ScrollBar *sb = qobject_cast<ScrollBar*>(child);
+        if (sb) {
+            if (sb->m_orientation == Qt::Vertical) vVisible = sb->m_isLogicalVisible;
+            if (sb->m_orientation == Qt::Horizontal) hVisible = sb->m_isLogicalVisible;
+        }
+    }
+
     if (m_orientation == Qt::Vertical) {
-        resize(12, size.height() - 2);
+        int hOffset = hVisible ? 13 : 1;
+        resize(12, size.height() - hOffset - 1);
         move(size.width() - 13, 1);
     } else {
-        resize(size.width() - 2, 12);
+        int vOffset = vVisible ? 13 : 1;
+        resize(size.width() - vOffset - 1, 12);
         move(1, size.height() - 13);
     }
 }
@@ -482,6 +511,9 @@ ScrollDelegate::ScrollDelegate(QAbstractScrollArea *parentArea)
     // create custom scrollbars with the scroll area as parent
     m_vScrollBar = new ScrollBar(Qt::Vertical, m_parentArea);
     m_hScrollBar = new ScrollBar(Qt::Horizontal, m_parentArea);
+    
+    connect(m_vScrollBar, &ScrollBar::visibilityChanged, this, &ScrollDelegate::updateViewportMargins);
+    connect(m_hScrollBar, &ScrollBar::visibilityChanged, this, &ScrollDelegate::updateViewportMargins);
 
     // forward wheel events from viewport to our scrollbars
     if (m_parentArea->viewport()) {
@@ -505,6 +537,22 @@ void ScrollDelegate::setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy policy) {
     if (m_hScrollBar) m_hScrollBar->setAlwaysOff(policy == Qt::ScrollBarAlwaysOff);
 }
 
+void ScrollDelegate::updateViewportMargins() {
+    if (!m_parentArea) return;
+
+    bool vVisible = m_vScrollBar ? m_vScrollBar->isLogicalVisible() : false;
+    bool hVisible = m_hScrollBar ? m_hScrollBar->isLogicalVisible() : false;
+
+    int vWidth = vVisible ? 13 : 0;
+    int hHeight = hVisible ? 13 : 0;
+
+    QMargins m = m_parentArea->viewportMargins();
+    m_parentArea->setViewportMargins(m.left(), m.top(), vWidth, hHeight);
+
+    if (m_vScrollBar) m_vScrollBar->adjustPos(m_parentArea->size());
+    if (m_hScrollBar) m_hScrollBar->adjustPos(m_parentArea->size());
+}
+
 bool ScrollDelegate::eventFilter(QObject *obj, QEvent *event) {
     if (obj != m_parentArea->viewport()) {
         return QObject::eventFilter(obj, event);
@@ -516,19 +564,21 @@ bool ScrollDelegate::eventFilter(QObject *obj, QEvent *event) {
         if (delta == 0) return QObject::eventFilter(obj, event);
 
         // prefer vertical scrolling when possible
-        if (m_vScrollBar && m_vScrollBar->isVisible()) {
+        if (m_vScrollBar && m_vScrollBar->isLogicalVisible()) {
             int newValue = m_vScrollBar->value() - delta;
             newValue = qMax(m_vScrollBar->minimum(), qMin(m_vScrollBar->maximum(), newValue));
             m_vScrollBar->setValue(newValue);
             return true;
         }
 
-        if (m_hScrollBar && m_hScrollBar->isVisible()) {
+        if (m_hScrollBar && m_hScrollBar->isLogicalVisible()) {
             int newValue = m_hScrollBar->value() - delta;
             newValue = qMax(m_hScrollBar->minimum(), qMin(m_hScrollBar->maximum(), newValue));
             m_hScrollBar->setValue(newValue);
             return true;
         }
+    } else if (event->type() == QEvent::Show) {
+        updateViewportMargins();
     }
 
     return QObject::eventFilter(obj, event);
@@ -599,6 +649,17 @@ void ScrollAreaBase::setWidget(QWidget *widget) {
 void ScrollAreaBase::resizeEvent(QResizeEvent *event) {
     emit viewportSizeChanged(viewport()->size());
     QScrollArea::resizeEvent(event);
+}
+
+void ScrollAreaBase::showEvent(QShowEvent *event) {
+    QScrollArea::showEvent(event);
+}
+
+void ScrollAreaBase::updateGeometries() {
+    QScrollArea::updateGeometries();
+    if (m_delegate) {
+        m_delegate->updateViewportMargins();
+    }
 }
 
 void ScrollAreaBase::setBorderless(bool borderless) {

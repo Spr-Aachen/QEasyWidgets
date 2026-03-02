@@ -57,12 +57,14 @@ private slots:
     void onItemClicked(const QModelIndex &index);
 
 protected:
+    void updateGeometries() override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 
 private:
     void init();
 
     QStandardItemModel *m_model;
+    ScrollDelegate *m_delegate;
     MenuBase *m_contextMenu = nullptr;
 };
 

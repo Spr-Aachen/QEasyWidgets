@@ -102,10 +102,7 @@ FramelessWindowBase::FramelessWindowBase(QWidget *parent, Qt::WindowFlags flags)
     , m_maskWidget(nullptr)
     , m_windowState(Normal)
     , m_stretchable(true)
-    , m_dragging(false)
-    , m_edgeSize(3)
-    , m_resizing(false)
-    , m_resizeDirection(0) {
+    , m_edgeSize(3) {
     setupUI();
 
     // Create animation helper objects as members (composition) instead of multiple QObject
@@ -228,8 +225,6 @@ void FramelessWindowBase::resizeEvent(QResizeEvent *event) {
     if (m_maskWidget && m_maskWidget->isVisible()) {
         m_maskWidget->setGeometry(rect());
     }
-    
-    setCursor(Qt::ArrowCursor);
 }
 
 void FramelessWindowBase::moveEvent(QMoveEvent *event) {
@@ -250,81 +245,21 @@ void FramelessWindowBase::paintEvent(QPaintEvent *event) {
 
 void FramelessWindowBase::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton && m_stretchable) {
-        m_dragStartPosition = event->globalPosition().toPoint() - pos();
-        
-        // Check for resize on borders
-        QPoint localPos = event->pos();
-        m_resizeDirection = 0;
-        
-        if (localPos.x() <= m_edgeSize) m_resizeDirection |= 0x01;  // Left
-        if (localPos.x() >= width() - m_edgeSize) m_resizeDirection |= 0x02;  // Right
-        if (localPos.y() <= m_edgeSize) m_resizeDirection |= 0x04;  // Top
-        if (localPos.y() >= height() - m_edgeSize) m_resizeDirection |= 0x08;  // Bottom
-        
-        if (m_resizeDirection != 0) {
-            m_resizing = true;
-        } else if (checkIfDraggable(localPos)) {
-            m_dragging = true;
+        if (checkIfDraggable(event->pos())) {
+            windowHandle()->startSystemMove();
         }
     }
     QWidget::mousePressEvent(event);
 }
 
 void FramelessWindowBase::mouseMoveEvent(QMouseEvent *event) {
-    if (m_dragging && (event->buttons() & Qt::LeftButton)) {
-        setCursor(Qt::OpenHandCursor);
-        QPoint newPos = event->globalPosition().toPoint() - m_dragStartPosition;
-        move(newPos);
-    } else if (m_resizing && (event->buttons() & Qt::LeftButton)) {
-        QPoint globalPos = event->globalPosition().toPoint();
-        QRect newGeometry = geometry();
-        
-        if (m_resizeDirection & 0x01) {  // Left
-            newGeometry.setLeft(globalPos.x());
-        }
-        if (m_resizeDirection & 0x02) {  // Right
-            newGeometry.setRight(globalPos.x());
-        }
-        if (m_resizeDirection & 0x04) {  // Top
-            newGeometry.setTop(globalPos.y());
-        }
-        if (m_resizeDirection & 0x08) {  // Bottom
-            newGeometry.setBottom(globalPos.y());
-        }
-        
-        setGeometry(newGeometry);
-    } else {
-        // Update cursor based on position
-        QPoint localPos = event->pos();
-        int direction = 0;
-        
-        if (localPos.x() <= m_edgeSize) direction |= 0x01;
-        if (localPos.x() >= width() - m_edgeSize) direction |= 0x02;
-        if (localPos.y() <= m_edgeSize) direction |= 0x04;
-        if (localPos.y() >= height() - m_edgeSize) direction |= 0x08;
-        
-        if (direction == 0x01 || direction == 0x02) {
-            setCursor(Qt::SizeHorCursor);
-        } else if (direction == 0x04 || direction == 0x08) {
-            setCursor(Qt::SizeVerCursor);
-        } else if (direction == 0x05 || direction == 0x0A) {
-            setCursor(Qt::SizeBDiagCursor);
-        } else if (direction == 0x06 || direction == 0x09) {
-            setCursor(Qt::SizeFDiagCursor);
-        } else {
-            setCursor(Qt::ArrowCursor);
-        }
-    }
     QWidget::mouseMoveEvent(event);
 }
 
 void FramelessWindowBase::mouseReleaseEvent(QMouseEvent *event) {
     if (checkIfDraggable(event->pos())) {
-        setCursor(Qt::ArrowCursor);
+        windowHandle()->startSystemResize(Qt::Edges());
     }
-    m_dragging = false;
-    m_resizing = false;
-    m_resizeDirection = 0;
     QWidget::mouseReleaseEvent(event);
 }
 

@@ -5,17 +5,21 @@
 #include <functional>
 
 #include "../Components/Button.h"
+#include "../Components/Label.h"
+#include "../Components/Edit.h"
+#include "../Components/Browser.h"
 
 
 /**
  * DialogBase implementation
  */
 
-DialogBase::DialogBase(QWidget *parent, Qt::WindowFlags flags)
+DialogBase::DialogBase(QWidget *parent, Qt::WindowFlags flags, int minWidth, int minHeight)
     : FramelessWindowBase(parent, flags)
     , m_mainLayout(nullptr)
     , m_eventLoop(nullptr)
     , m_result(0) {
+    setMinimumSize(minWidth, minHeight);
     setFrameless(false); // Dialogs don't stretch
     setupUI();
     
@@ -70,6 +74,7 @@ int DialogBase::exec() {
 
     emit finished(m_result);
     // closed() signal is emitted by closeEvent
+    emit closed();
 
     return m_result;
 }
@@ -107,20 +112,42 @@ void DialogBase::mouseDoubleClickEvent(QMouseEvent *event) {
 
 // MessageBoxBase implementation
 MessageBoxBase::MessageBoxBase(QWidget *parent, int minWidth, int minHeight)
-    : DialogBase(parent)
+    : DialogBase(parent, Qt::Dialog, minWidth, minHeight)
     , m_iconLabel(nullptr)
     , m_textLabel(nullptr)
-    , m_buttonBox(nullptr)
+    , m_buttonLayout(nullptr)
+    , m_buttonGroup(nullptr)
     , m_detailedTextBrowser(nullptr)
     , m_clickedButton(QMessageBox::NoButton) {
-    setMinimumSize(minWidth, minHeight);
     
+    m_buttonTextMap = {
+        {QMessageBox::Ok, "OK"},
+        {QMessageBox::Cancel, "Cancel"},
+        {QMessageBox::Yes, "Yes"},
+        {QMessageBox::No, "No"},
+        {QMessageBox::Retry, "Retry"},
+        {QMessageBox::Ignore, "Ignore"},
+        {QMessageBox::Open, "Open"},
+        {QMessageBox::Close, "Close"},
+        {QMessageBox::Save, "Save"},
+        {QMessageBox::Discard, "Discard"},
+        {QMessageBox::Apply, "Apply"},
+        {QMessageBox::RestoreDefaults, "Restore Defaults"},
+        {QMessageBox::Help, "Help"},
+        {QMessageBox::Abort, "Abort"}
+    };
+
+    m_acceptRoles = {
+        QMessageBox::Ok, QMessageBox::Yes, QMessageBox::Save,
+        QMessageBox::Open, QMessageBox::Retry, QMessageBox::Apply
+    };
+
     // Create icon and text layout
     m_iconLabel = new QLabel(this);
     m_iconLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_iconLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     
-    m_textLabel = new QLabel(this);
+    m_textLabel = new LabelBase(this);
     m_textLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_textLabel->setWordWrap(true);
     m_textLabel->setAlignment(Qt::AlignCenter);
@@ -131,40 +158,68 @@ MessageBoxBase::MessageBoxBase(QWidget *parent, int minWidth, int minHeight)
     labelLayout->addWidget(m_iconLabel, 0);
     labelLayout->addWidget(m_textLabel, 1);
     
-    // Create button box
-    m_buttonBox = new QDialogButtonBox(this);
-    m_buttonBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_buttonBox->setOrientation(Qt::Horizontal);
-    m_buttonBox->setStyleSheet("padding: 6px 18px 6px 18px;");
-    
-    connect(m_buttonBox, &QDialogButtonBox::clicked, this, &MessageBoxBase::onButtonClicked);
-    connect(m_buttonBox, &QDialogButtonBox::accepted, this, &DialogBase::accept);
-    connect(m_buttonBox, &QDialogButtonBox::rejected, this, &DialogBase::reject);
+    // Create button group
+    m_buttonLayout = new QHBoxLayout();
+    m_buttonLayout->setContentsMargins(0, 0, 0, 0);
+    m_buttonLayout->setSpacing(12);
+    m_buttonLayout->setAlignment(Qt::AlignRight);
+
+    m_buttonGroup = new QFrame(this);
+    m_buttonGroup->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_buttonGroup->setLayout(m_buttonLayout);
+    m_buttonGroup->setStyleSheet("padding: 6px 18px 6px 18px;");
     
     // Add to main layout
     m_mainLayout->setContentsMargins(21, 12, 21, 12);
     m_mainLayout->setSpacing(12);
     m_mainLayout->addLayout(labelLayout);
-    m_mainLayout->addWidget(m_buttonBox);
+    m_mainLayout->addWidget(m_buttonGroup);
 }
 
 void MessageBoxBase::setStandardButtons(QMessageBox::StandardButtons buttons) {
-    QDialogButtonBox::StandardButtons dialogButtons = QDialogButtonBox::NoButton;
-    
-    if (buttons & QMessageBox::Ok) dialogButtons |= QDialogButtonBox::Ok;
-    if (buttons & QMessageBox::Cancel) dialogButtons |= QDialogButtonBox::Cancel;
-    if (buttons & QMessageBox::Yes) dialogButtons |= QDialogButtonBox::Yes;
-    if (buttons & QMessageBox::No) dialogButtons |= QDialogButtonBox::No;
-    if (buttons & QMessageBox::Retry) dialogButtons |= QDialogButtonBox::Retry;
-    if (buttons & QMessageBox::Ignore) dialogButtons |= QDialogButtonBox::Ignore;
-    if (buttons & QMessageBox::Open) dialogButtons |= QDialogButtonBox::Open;
-    if (buttons & QMessageBox::Close) dialogButtons |= QDialogButtonBox::Close;
-    if (buttons & QMessageBox::Save) dialogButtons |= QDialogButtonBox::Save;
-    if (buttons & QMessageBox::Discard) dialogButtons |= QDialogButtonBox::Discard;
-    if (buttons & QMessageBox::Apply) dialogButtons |= QDialogButtonBox::Apply;
-    if (buttons & QMessageBox::RestoreDefaults) dialogButtons |= QDialogButtonBox::RestoreDefaults;
-    
-    m_buttonBox->setStandardButtons(dialogButtons);
+    // Clear existing buttons
+    QLayoutItem *child;
+    while ((child = m_buttonLayout->takeAt(0)) != nullptr) {
+        if (child->widget()) {
+            child->widget()->deleteLater();
+        }
+        delete child;
+    }
+
+    QList<QMessageBox::StandardButton> orderedFlags = {
+        QMessageBox::Help,
+        QMessageBox::RestoreDefaults,
+        QMessageBox::Open,
+        QMessageBox::Save,
+        QMessageBox::Apply,
+        QMessageBox::Yes,
+        QMessageBox::Ok,
+        QMessageBox::Retry,
+        QMessageBox::No,
+        QMessageBox::Discard,
+        QMessageBox::Cancel,
+        QMessageBox::Close,
+        QMessageBox::Abort,
+        QMessageBox::Ignore
+    };
+
+    bool hasDefault = false;
+    for (QMessageBox::StandardButton flag : orderedFlags) {
+        if (buttons & flag) {
+            addButton(flag, !hasDefault);
+            hasDefault = true;
+        }
+    }
+}
+
+void MessageBoxBase::addButton(QMessageBox::StandardButton flag, bool isDefault) {
+    QString text = m_buttonTextMap.value(flag, "Button");
+    ButtonBase *btn = new ButtonBase(text, this);
+    connect(btn, &ButtonBase::clicked, this, [this, flag]() { onButtonClicked(flag); });
+    m_buttonLayout->addWidget(btn);
+    if (isDefault) {
+        btn->setFocus();
+    }
 }
 
 void MessageBoxBase::setIcon(QMessageBox::Icon icon) {
@@ -188,17 +243,15 @@ void MessageBoxBase::setIcon(QMessageBox::Icon icon) {
     }
     
     int length = qMin(width(), height()) / 6;
-    if (length < 32) length = 32;
     
     QIcon standardIcon = QApplication::style()->standardIcon(pixmap);
-    QPixmap iconPixmap = standardIcon.pixmap(QSize(length, length));
+    QPixmap iconPixmap = standardIcon.pixmap(standardIcon.actualSize(QSize(length, length)));
     m_iconLabel->setPixmap(iconPixmap);
 }
 
 void MessageBoxBase::setIcon(const QIcon &icon) {
     int length = qMin(width(), height()) / 6;
-    if (length < 32) length = 32;
-    m_iconLabel->setPixmap(icon.pixmap(QSize(length, length)));
+    m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(length, length))));
 }
 
 void MessageBoxBase::setIcon(const QPixmap &pixmap) {
@@ -235,9 +288,9 @@ void MessageBoxBase::setText(const QString &text, float textSize, int textWeight
 
 void MessageBoxBase::setDetailedText(const QString &text) {
     if (!m_detailedTextBrowser) {
-        m_detailedTextBrowser = new QTextBrowser(this);
+        m_detailedTextBrowser = new TextBrowserBase(this);
         m_detailedTextBrowser->setReadOnly(true);
-        int buttonIndex = m_mainLayout->indexOf(m_buttonBox);
+        int buttonIndex = m_mainLayout->indexOf(m_buttonGroup);
         m_mainLayout->insertWidget(buttonIndex, m_detailedTextBrowser, 1);
     }
     m_detailedTextBrowser->setMarkdown(text);
@@ -245,9 +298,9 @@ void MessageBoxBase::setDetailedText(const QString &text) {
 
 QTextBrowser *MessageBoxBase::detailedTextBrowser() {
     if (!m_detailedTextBrowser) {
-        m_detailedTextBrowser = new QTextBrowser(this);
+        m_detailedTextBrowser = new TextBrowserBase(this);
         m_detailedTextBrowser->setReadOnly(true);
-        int buttonIndex = m_mainLayout->indexOf(m_buttonBox);
+        int buttonIndex = m_mainLayout->indexOf(m_buttonGroup);
         m_mainLayout->insertWidget(buttonIndex, m_detailedTextBrowser, 1);
     }
     return m_detailedTextBrowser;
@@ -264,10 +317,10 @@ QPair<QString, bool> MessageBoxBase::getText(
     setWindowFlags(flags);
     setText(title);
     
-    QLabel *inputLabel = new QLabel(label, this);
-    inputLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    LabelBase *inputLabel = new LabelBase(label, this);
+    inputLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     
-    QLineEdit *inputArea = new QLineEdit(this);
+    LineEditBase *inputArea = new LineEditBase(this);
     inputArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     inputArea->setEchoMode(echo);
     inputArea->setText(text);
@@ -322,22 +375,13 @@ int MessageBoxBase::exec() {
     return static_cast<int>(m_clickedButton);
 }
 
-void MessageBoxBase::onButtonClicked(QAbstractButton *button) {
-    QDialogButtonBox::StandardButton dialogBtn = m_buttonBox->standardButton(button);
-    
-    m_clickedButton = QMessageBox::NoButton;
-    if (dialogBtn & QDialogButtonBox::Ok) m_clickedButton = QMessageBox::Ok;
-    else if (dialogBtn & QDialogButtonBox::Cancel) m_clickedButton = QMessageBox::Cancel;
-    else if (dialogBtn & QDialogButtonBox::Yes) m_clickedButton = QMessageBox::Yes;
-    else if (dialogBtn & QDialogButtonBox::No) m_clickedButton = QMessageBox::No;
-    else if (dialogBtn & QDialogButtonBox::Retry) m_clickedButton = QMessageBox::Retry;
-    else if (dialogBtn & QDialogButtonBox::Ignore) m_clickedButton = QMessageBox::Ignore;
-    else if (dialogBtn & QDialogButtonBox::Open) m_clickedButton = QMessageBox::Open;
-    else if (dialogBtn & QDialogButtonBox::Close) m_clickedButton = QMessageBox::Close;
-    else if (dialogBtn & QDialogButtonBox::Save) m_clickedButton = QMessageBox::Save;
-    else if (dialogBtn & QDialogButtonBox::Discard) m_clickedButton = QMessageBox::Discard;
-    else if (dialogBtn & QDialogButtonBox::Apply) m_clickedButton = QMessageBox::Apply;
-    else if (dialogBtn & QDialogButtonBox::RestoreDefaults) m_clickedButton = QMessageBox::RestoreDefaults;
+void MessageBoxBase::onButtonClicked(QMessageBox::StandardButton flag) {
+    m_clickedButton = flag;
+    if (m_acceptRoles.contains(flag)) {
+        accept();
+    } else {
+        reject();
+    }
 }
 
 /**

@@ -25,7 +25,7 @@ class DialogBase : public FramelessWindowBase {
     Q_OBJECT
 
 public:
-    explicit DialogBase(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Dialog);
+    explicit DialogBase(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::Dialog, int minWidth = 630, int minHeight = 420);
     ~DialogBase() override = default;
 
     // Modal execution
@@ -49,6 +49,9 @@ signals:
 };
 
 
+class LabelBase;
+class TextBrowserBase;
+
 /**
  * Message box with standard buttons and icons
  */
@@ -61,24 +64,20 @@ public:
 
     // Standard buttons
     void setStandardButtons(QMessageBox::StandardButtons buttons);
-    QMessageBox::StandardButton clickedButton() const {
-        return m_clickedButton;
-    }
+    void addButton(QMessageBox::StandardButton flag, bool isDefault = false);
 
-    // Icon support
+    // Icon and text
     void setIcon(QMessageBox::Icon icon);
     void setIcon(const QIcon &icon);
     void setIcon(const QPixmap &pixmap);
     void setWindowIcon(QMessageBox::Icon icon);
-
-    // Text
     void setText(const QString &text, float textSize = 11.1f, int textWeight = 420);
-    
+
     // Detailed text
     void setDetailedText(const QString &text);
-    QTextBrowser *detailedTextBrowser();
+    TextBrowserBase *detailedTextBrowser();
 
-    // Input dialog functionality
+    // Input text
     QPair<QString, bool> getText(
         const QString &title,
         const QString &label,
@@ -96,20 +95,25 @@ public:
         const QString &text = QString(),
         const QString &detailedText = QString(),
         QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-        const QMap<QMessageBox::StandardButton, std::function<void()>> &buttonEvents = QMap<QMessageBox::StandardButton, std::function<void()>>()
+        const QMap<QMessageBox::StandardButton, std::function<void()>> &buttonEvents = {}
     );
 
     int exec() override;
+    QMessageBox::StandardButton clickedButton() const { return m_clickedButton; }
 
 protected:
     QLabel *m_iconLabel;
-    QLabel *m_textLabel;
-    QDialogButtonBox *m_buttonBox;
-    QTextBrowser *m_detailedTextBrowser;
+    LabelBase *m_textLabel;
+    QHBoxLayout *m_buttonLayout;
+    QFrame *m_buttonGroup;
+    TextBrowserBase *m_detailedTextBrowser;
+
     QMessageBox::StandardButton m_clickedButton;
+    QMap<QMessageBox::StandardButton, QString> m_buttonTextMap;
+    QList<QMessageBox::StandardButton> m_acceptRoles;
 
 private slots:
-    void onButtonClicked(QAbstractButton *button);
+    void onButtonClicked(QMessageBox::StandardButton flag);
 };
 
 

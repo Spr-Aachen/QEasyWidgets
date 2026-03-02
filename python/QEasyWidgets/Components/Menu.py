@@ -188,6 +188,11 @@ class MenuActionListWidget(QListWidget):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+
     def adjustSize(self, pos = None, animType = None):
         size = QSize()
         for i in range(self.count()):
@@ -325,8 +330,8 @@ class MenuBase(QMenu):
     
     @__init__.register
     def _(self, parent: Optional[QWidget] = None):
-        self.__init__(parent)
         self._title = ""
+        self.__init__(self._title, parent)
 
     def setMaxVisibleItems(self, num: int):
         self.view.setMaxVisibleItems(num)
@@ -369,7 +374,7 @@ class MenuBase(QMenu):
     def _hasItemIcon(self):
         return any(not i.icon().isNull() for i in self._actions+self._subMenus)
 
-    def _createItemIcon(self, item):
+    def _createItemIcon(self, item: QListWidgetItem):
         hasIcon = self._hasItemIcon()
         icon = QIcon(IconEngine(item.icon()))
         if hasIcon and item.icon().isNull():
@@ -658,5 +663,145 @@ class MenuBase(QMenu):
 
     def clearDefaultStyleSheet(self) -> None:
         StyleSheetBase.Menu.deregistrate(self)
+
+
+class EditMenu(MenuBase):
+    """
+    Edit menu
+    """
+    def createActions(self):
+        self.cutAct = QAction(
+            IconBase.Scissors.create(),
+            self.tr("Cut"),
+            self,
+            shortcut="Ctrl+X",
+            triggered=self.parent().cut,
+        )
+        self.copyAct = QAction(
+            IconBase.Copy.create(),
+            self.tr("Copy"),
+            self,
+            shortcut="Ctrl+C",
+            triggered=self.parent().copy,
+        )
+        self.pasteAct = QAction(
+            IconBase.Clipboard.create(),
+            self.tr("Paste"),
+            self,
+            shortcut="Ctrl+V",
+            triggered=self.parent().paste,
+        )
+        self.cancelAct = QAction(
+            IconBase.X.create(),
+            self.tr("Cancel"),
+            self,
+            shortcut="Ctrl+Z",
+            triggered=self.parent().undo,
+        )
+        self.selectAllAct = QAction(
+            self.tr("Select all"),
+            self,
+            shortcut="Ctrl+A",
+            triggered=self.parent().selectAll
+        )
+        self.action_list = [
+            self.cutAct, self.copyAct,
+            self.pasteAct, self.cancelAct, self.selectAllAct
+        ]
+
+    def _parentText(self):
+        raise NotImplementedError
+
+    def _parentSelectedText(self):
+        raise NotImplementedError
+
+    def exec(self, pos, animType=Direction.Down):
+        self.clear()
+        self.createActions()
+        if QApplication.clipboard().mimeData().hasText():
+            if self._parentText():
+                if self._parentSelectedText():
+                    if self.parent().isReadOnly():
+                        self.addActions([self.copyAct, self.selectAllAct])
+                    else:
+                        self.addActions(self.action_list)
+                else:
+                    if self.parent().isReadOnly():
+                        self.addAction(self.selectAllAct)
+                    else:
+                        self.addActions(self.action_list[2:])
+            elif not self.parent().isReadOnly():
+                self.addAction(self.pasteAct)
+            else:
+                return
+        else:
+            if not self._parentText():
+                return
+            if self._parentSelectedText():
+                if self.parent().isReadOnly():
+                    self.addActions([self.copyAct, self.selectAllAct])
+                else:
+                    self.addActions(
+                        self.action_list[:2] + self.action_list[3:])
+            else:
+                if self.parent().isReadOnly():
+                    self.addAction(self.selectAllAct)
+                else:
+                    self.addActions(self.action_list[3:])
+        super().exec(pos, animType)
+
+
+class LineEditMenu(EditMenu):
+    """
+    Line edit menu
+    """
+    def __init__(self, parent: QLineEdit):
+        super().__init__("", parent)
+
+        self.selectionStart = parent.selectionStart()
+        self.selectionLength = parent.selectionLength()
+
+    def _parentText(self):
+        return self.parent().text()
+
+    def _parentSelectedText(self):
+        return self.parent().selectedText()
+
+    def _onItemClicked(self, item):
+        if self.selectionStart >= 0:
+            self.parent().setSelection(self.selectionStart, self.selectionLength)
+        super()._onItemClicked(item)
+
+    def exec(self, pos, animType = Direction.Down):
+        return super().exec(pos, animType)
+
+
+class TextEditMenu(EditMenu):
+    """
+    Text edit menu
+    """
+    def __init__(self, parent: QTextEdit):
+        super().__init__("", parent)
+
+        cursor = parent.textCursor()
+        self.selectionStart = cursor.selectionStart()
+        self.selectionLength = cursor.selectionEnd() - self.selectionStart + 1
+
+    def _parentText(self):
+        return self.parent().toPlainText()
+
+    def _parentSelectedText(self):
+        return self.parent().textCursor().selectedText()
+
+    def _onItemClicked(self, item):
+        if self.selectionStart >= 0:
+            cursor = self.parent().textCursor()
+            cursor.setPosition(self.selectionStart)
+            cursor.movePosition(
+                QTextCursor.Right, QTextCursor.KeepAnchor, self.selectionLength)
+        super()._onItemClicked(item)
+
+    def exec(self, pos, animType=Direction.Down):
+        return super().exec(pos, animType)
 
 ##############################################################################################################################

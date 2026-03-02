@@ -6,13 +6,18 @@ A modern Qt widget library that provides enhanced components with theme support,
 
 [![PyPI](https://img.shields.io/pypi/v/QEasyWidgets?color=blue&logo=PYPY&logoColor=blue&style=for-the-badge)](https://pypi.org/project/QEasyWidgets/)&nbsp;
 
-[**简体中文**](./docs/README_CN.md) | **English**
-
-![Title](./docs/media/Title.png)
+![Title](./docs/media/Cover.png)
 
 </div>
 
 ---
+
+<div align = "center">
+
+[**简体中文**](./docs/README_ZH.md) | **English**
+
+</div>
+
 
 ## Python
 
@@ -34,21 +39,21 @@ A modern Qt widget library that provides enhanced components with theme support,
 
 ### Build Command
 
-- Using qmake
-```bash
-cd QEasyWidgets
-qmake QEasyWidgets.pro
-make          # Linux/macOS
-nmake         # Windows (MSVC)
-mingw32-make  # Windows (MinGW)
-```
-
 - Using CMake
 ```bash
 cd QEasyWidgets
 mkdir build && cd build
 cmake ..
 cmake --build .
+```
+
+- Using QMake
+```bash
+cd QEasyWidgets
+qmake QEasyWidgets.pro
+make          # Linux/macOS
+nmake         # Windows (MSVC)
+mingw32-make  # Windows (MinGW)
 ```
 
 ### Build Output
@@ -69,7 +74,7 @@ The library will be built as a static library:
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    QEWIns.setTheme(LIGHT); // Initialize QEasyWidgets
+    QEWIns.setTheme(LIGHT); // Set Theme
     WindowBase window; // Create a window
     PrimaryButton *button = new PrimaryButton("Click Me", &window); // Create a button
     button->setIcon(IconBase::Play);

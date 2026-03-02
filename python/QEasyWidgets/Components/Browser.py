@@ -20,7 +20,17 @@ class TextBrowserBase(QTextBrowser, SizableWidget):
 
         self.scrollDelegate = ScrollDelegate(self)
 
+        self.document().setDocumentMargin(0)
+        self.document().setDefaultStyleSheet("img { width: 100%; }")
+
         StyleSheetBase.Browser.apply(self)
+
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
+            # Ensure document width matches viewport to prevent horizontal scrollbars
+            self.document().setTextWidth(self.viewport().width())
 
     def contextMenuEvent(self, e):
         menu = MenuBase(self)
@@ -29,21 +39,17 @@ class TextBrowserBase(QTextBrowser, SizableWidget):
     def loadMarkdown(self, file: Union[str, Path]):
         with open(file, mode = 'r', encoding = 'utf-8') as f:
             md = f.read()
+        self.document().setBaseUrl(QUrl.fromLocalFile(str(Path(file).parent) + "/"))
         self.setMarkdown(md)
 
     def loadHtml(self, file: Union[str, Path]):
         with open(file, mode = 'r', encoding = 'utf-8') as f:
             html = f.read()
+        self.document().setBaseUrl(QUrl.fromLocalFile(str(Path(file).parent) + "/"))
         self.setHtml(html)
 
     def setMaximumLines(self, maxLines: int) -> None:
-        document = self.document()
-        while document.blockCount() > maxLines:
-            cursor = QTextCursor(document)
-            cursor.movePosition(QTextCursor.Start)
-            cursor.select(QTextCursor.BlockUnderCursor)
-            cursor.removeSelectedText()
-            cursor.deleteChar() # Remove the newline character
+        self.document().setMaximumBlockCount(maxLines)
 
     def setBorderless(self, borderless: bool) -> None:
         self.setProperty("isBorderless", borderless)

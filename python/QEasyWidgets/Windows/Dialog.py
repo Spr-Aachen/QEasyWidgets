@@ -8,6 +8,7 @@ from .Window import WindowBase
 from ..Components.Label import LabelBase
 from ..Components.Browser import TextBrowserBase
 from ..Components.Edit import LineEditBase
+from ..Components.Button import ButtonBase
 
 ##############################################################################################################################
 
@@ -49,28 +50,31 @@ class MessageBoxBase(DialogBase):
     """
     _detailedTextBrowser = None
 
-    standardButtonDict = {
-        QMessageBox.NoButton:        QDialogButtonBox.NoButton,
-        QMessageBox.Ok:              QDialogButtonBox.Ok,
-        QMessageBox.Cancel:          QDialogButtonBox.Cancel,
-        QMessageBox.Yes:             QDialogButtonBox.Yes,
-        QMessageBox.No:              QDialogButtonBox.No,
-        QMessageBox.Retry:           QDialogButtonBox.Retry,
-        QMessageBox.Ignore:          QDialogButtonBox.Ignore,
-        QMessageBox.Open:            QDialogButtonBox.Open,
-        QMessageBox.Close:           QDialogButtonBox.Close,
-        QMessageBox.Save:            QDialogButtonBox.Save,
-        QMessageBox.Discard:         QDialogButtonBox.Discard,
-        QMessageBox.Apply:           QDialogButtonBox.Apply,
-        QMessageBox.RestoreDefaults: QDialogButtonBox.RestoreDefaults,
-    }
-
     standardIconDict = {
         QMessageBox.Question:    QStyle.SP_MessageBoxQuestion,
         QMessageBox.Information: QStyle.SP_MessageBoxInformation,
         QMessageBox.Warning:     QStyle.SP_MessageBoxWarning,
         QMessageBox.Critical:    QStyle.SP_MessageBoxCritical
     }
+
+    _buttonTextMap = {
+        QMessageBox.Ok:              "OK",
+        QMessageBox.Cancel:          "Cancel",
+        QMessageBox.Yes:             "Yes",
+        QMessageBox.No:              "No",
+        QMessageBox.Retry:           "Retry",
+        QMessageBox.Ignore:          "Ignore",
+        QMessageBox.Open:            "Open",
+        QMessageBox.Close:           "Close",
+        QMessageBox.Save:            "Save",
+        QMessageBox.Discard:         "Discard",
+        QMessageBox.Apply:           "Apply",
+        QMessageBox.RestoreDefaults: "Restore Defaults",
+        QMessageBox.Help:            "Help",
+        QMessageBox.Abort:           "Abort",
+    }
+
+    _acceptRoles = [QMessageBox.Ok, QMessageBox.Yes, QMessageBox.Save, QMessageBox.Open, QMessageBox.Retry, QMessageBox.Apply]
 
     def __init__(self,
         parent: Optional[QWidget] = None,
@@ -89,36 +93,72 @@ class MessageBoxBase(DialogBase):
         labelLayout.addWidget(self.iconLabel, stretch = 0)
         labelLayout.addWidget(self.textLabel, stretch = 1)
 
-        self.buttonBox = QDialogButtonBox()
-        self.buttonBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.buttonBox.clicked.connect(self.updateClickedButton)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
-        self.buttonBox.setOrientation(Qt.Horizontal)
-        self.buttonBox.setStyleSheet("padding: 6px 18px 6px 18px;")
+        self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.setContentsMargins(0, 0, 0, 0)
+        self.buttonLayout.setSpacing(12)
+        self.buttonLayout.setAlignment(Qt.AlignRight)
+
+        self.buttonGroup = QFrame()
+        self.buttonGroup.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.buttonGroup.setLayout(self.buttonLayout)
+        self.buttonGroup.setStyleSheet("padding: 6px 18px 6px 18px;")
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(21, 12, 21, 12)
         layout.setSpacing(12)
         layout.addLayout(labelLayout)
-        layout.addWidget(self.buttonBox)
-
-    def updateClickedButton(self, button: QAbstractButton):
+        layout.addWidget(self.buttonGroup)
+        
         self.clickedButton = QMessageBox.NoButton
-        for messageBoxButton, dialogBoxButton in self.standardButtonDict.items():
-            if self.buttonBox.standardButton(button) & dialogBoxButton:
-                self.clickedButton |= messageBoxButton
 
     def exec(self) -> int:
         result = super().exec()
         return self.clickedButton if hasattr(self, 'clickedButton') else result
 
+    def _onButtonClicked(self, flag):
+        self.clickedButton = flag
+        if flag in self._acceptRoles:
+            self.accept()
+        else:
+            self.reject()
+
+    def _addButton(self, flag, is_default=False):
+        text = self._buttonTextMap.get(flag, "Button")
+        btn = ButtonBase(text)
+        btn.clicked.connect(lambda: self._onButtonClicked(flag))
+        self.buttonLayout.addWidget(btn)
+        if is_default:
+            btn.setFocus()
+
     def setStandardButtons(self, buttons: QMessageBox.StandardButton) -> None:
-        standardButtons = QDialogButtonBox.NoButton
-        for messageBoxButton, dialogBoxButton in self.standardButtonDict.items():
-            if buttons & messageBoxButton:
-                standardButtons |= dialogBoxButton
-        self.buttonBox.setStandardButtons(standardButtons)
+        while self.buttonLayout.count():
+            item = self.buttonLayout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+        
+        ordered_flags = [
+            QMessageBox.Help,
+            QMessageBox.RestoreDefaults,
+            QMessageBox.Open,
+            QMessageBox.Save,
+            QMessageBox.Apply,
+            QMessageBox.Yes,
+            QMessageBox.Ok,
+            QMessageBox.Retry,
+            QMessageBox.No,
+            QMessageBox.Discard,
+            QMessageBox.Cancel,
+            QMessageBox.Close,
+            QMessageBox.Abort,
+            QMessageBox.Ignore,
+        ]
+        
+        has_default = False
+        for flag in ordered_flags:
+            if buttons & flag:
+                self._addButton(flag, not has_default)
+                has_default = True
 
     def setWindowIcon(self, icon: Union[QIcon, QPixmap, QStyle.StandardPixmap]) -> None:
         icon = self.standardIconDict.get(icon, icon)
@@ -160,7 +200,7 @@ class MessageBoxBase(DialogBase):
     @detailedTextBrowser.setter
     def detailedTextBrowser(self, detailedTextBrowser: TextBrowserBase):
         detailedTextBrowser.setBorderless(False)
-        self.layout().insertWidget(self.layout().indexOf(self.buttonBox), detailedTextBrowser, stretch = 1)
+        self.layout().insertWidget(self.layout().indexOf(self.buttonGroup), detailedTextBrowser, stretch = 1)
         self._detailedTextBrowser = detailedTextBrowser
 
     def setDetailedText(self, text: str):

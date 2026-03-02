@@ -10,8 +10,8 @@ from .ScrollArea import ScrollDelegate
 ##############################################################################################################################
 
 class TableItemDelegate(QStyledItemDelegate):
-    '''
-    '''
+    """
+    """
     _margin = 3
 
     def sizeHint(self, option, index):
@@ -74,6 +74,11 @@ class TableBase(QTableView):
         self.scrollDelegate = ScrollDelegate(self)
 
         StyleSheetBase.Table.apply(self)
+
+    def updateGeometries(self):
+        super().updateGeometries()
+        if hasattr(self, 'scrollDelegate'):
+            self.scrollDelegate._updateViewportMargins()
 
     def model(self) -> QStandardItemModel:
         return self.StandardItemModel

@@ -16,7 +16,9 @@
  */
 class IconEngine : public QIconEngine {
 public:
-    IconEngine(const QIcon *icon = nullptr);
+    IconEngine(const QIcon &icon);
+    IconEngine(const QPixmap &pixmap);
+    IconEngine();
     ~IconEngine() override = default;
 
     void loadSVG(const QString &svgString);
@@ -28,6 +30,7 @@ public:
 private:
     bool m_isIconSVG;
     QByteArray m_iconData;
+    QPixmap m_pixmap;
 };
 
 

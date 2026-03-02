@@ -7,9 +7,17 @@
 #include <Qt>
 
 
-IconEngine::IconEngine(const QIcon *icon)
+IconEngine::IconEngine()
     : m_isIconSVG(false) {
-    Q_UNUSED(icon);
+}
+
+IconEngine::IconEngine(const QIcon &icon)
+    : m_isIconSVG(false) {
+    m_pixmap = icon.pixmap(16, 16);
+}
+
+IconEngine::IconEngine(const QPixmap &pixmap)
+    : m_isIconSVG(false), m_pixmap(pixmap) {
 }
 
 
@@ -26,6 +34,10 @@ void IconEngine::paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, Q
     if (m_isIconSVG) {
         QSvgRenderer renderer(m_iconData);
         renderer.render(painter, QRectF(rect));
+    } else if (!m_pixmap.isNull()) {
+        painter->drawPixmap(rect, m_pixmap);
+    } else {
+        painter->fillRect(rect, Qt::gray);
     }
 }
 
@@ -47,6 +59,7 @@ QIconEngine *IconEngine::clone() const {
     IconEngine *engine = new IconEngine();
     engine->m_isIconSVG = m_isIconSVG;
     engine->m_iconData = m_iconData;
+    engine->m_pixmap = m_pixmap;
     return engine;
 }
 

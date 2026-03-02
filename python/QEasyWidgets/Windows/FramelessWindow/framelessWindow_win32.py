@@ -178,16 +178,6 @@ class WindowBase(BackgroundColorAnimationBase, TextColorAnimationBase):
 
     def _move_window(self, pos) -> None:
         self.windowHandle().startSystemMove()
-        QApplication.instance().postEvent(
-            self.windowHandle(),
-            QMouseEvent(
-                QEvent.MouseButtonRelease,
-                QPoint(-1, -1),
-                Qt.LeftButton,
-                Qt.NoButton,
-                Qt.NoModifier
-            )
-        )
 
     def _resize_window(self, pos, edges) -> None:
         self.windowHandle().startSystemResize(edges) if edges is not None else None
@@ -197,16 +187,14 @@ class WindowBase(BackgroundColorAnimationBase, TextColorAnimationBase):
         return super().event(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        if self._check_ifdraggable(event.position()) == True and event.buttons() == Qt.MouseButton.LeftButton:
-            self.setCursor(Qt.CursorShape.OpenHandCursor)
-            self._move_window(event.position())
+        return
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-            return
+        if self._check_ifdraggable(event.position()) == True and event.button() == Qt.MouseButton.LeftButton:
+            self._move_window(event.position())
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         if self._check_ifdraggable(event.position()) == True:
-            self.setCursor(Qt.CursorShape.ArrowCursor)
             self._resize_window(event.position(), None)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
@@ -227,7 +215,6 @@ class WindowBase(BackgroundColorAnimationBase, TextColorAnimationBase):
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.rectChanged.emit(self.rect())
         self.titleBar.resize(self.width(), self.titleBar.height()) if isinstance(self.titleBar, TitleBarBase) else None
-        self.setCursor(Qt.CursorShape.ArrowCursor)
 
     def nativeEvent(self, eventType, message):
         Message = MSG.from_address(int(message))

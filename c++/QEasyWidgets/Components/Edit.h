@@ -15,6 +15,7 @@
  */
 class QMouseEvent;
 class QKeyEvent;
+class QContextMenuEvent;
 
 
 /**
@@ -46,6 +47,9 @@ public:
 
     void alert(bool enable, const QString &content = QString());
 
+    void showToolTip(const QString &content);
+    void hideToolTip();
+
 signals:
     void cursorPositionChanged(int x, int y);
     void focusedIn();
@@ -61,6 +65,7 @@ protected:
     void focusOutEvent(QFocusEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
     QSize sizeHint() const override;
 
 private:
@@ -102,12 +107,15 @@ signals:
     void keyEnterPressed();
 
 protected:
+    void updateGeometries() override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void init();
 
     bool m_keyEnterBlocked;
+    ScrollDelegate *m_delegate;
 };
 
 
