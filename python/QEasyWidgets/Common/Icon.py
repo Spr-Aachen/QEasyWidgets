@@ -35,8 +35,7 @@ class IconEngine(QIconEngine):
             renderer.render(painter, QRectF(rect))
         elif self._pixmap:
             painter.drawPixmap(rect, self._pixmap)
-        else:
-            # 如果既不是SVG也没有pixmap，绘制默认的灰色方块
+        else: # If neither an SVG nor a pixmap is available, draw a default gray square
             painter.fillRect(rect, Qt.gray)
 
     def pixmap(self, size: QSize, mode: QIcon.Mode, state: QIcon.State) -> QPixmap:

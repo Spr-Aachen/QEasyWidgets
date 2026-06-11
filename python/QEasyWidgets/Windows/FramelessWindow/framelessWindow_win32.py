@@ -153,11 +153,11 @@ class WindowBase(BackgroundColorAnimationBase, TextColorAnimationBase):
 
     rectChanged = Signal(QRect)
 
-    edge_size = 3 # 窗体边缘尺寸（出现缩放标记的范围）
+    edge_size = 3 # Resize indicator range
 
     def __init__(self,
-        min_width = 630, # 窗体的最小宽度
-        min_height = 420, # 窗体的最小高度
+        min_width = 630, # Minimum window width
+        min_height = 420, # Minimum window height
         *args, **kwargs
     ):
         super().__init__(*args, **kwargs)

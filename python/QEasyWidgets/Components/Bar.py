@@ -13,7 +13,7 @@ class TitleBarBase(QWidget):
     """
     Base class for titleBar components
     """
-    DEFAULT_TITILE_BAR_HEIGHT = 30 # 默认标题栏高度
+    DEFAULT_TITILE_BAR_HEIGHT = 30 # Default title bar height
 
     _closeButton = None
     _maximizeButton = None
