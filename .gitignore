@@ -1,3 +1,8 @@
+# Editor config
+**/.vscode/
+**/.idea/
+*.user
+
 # C++ contents
 *.o
 *.obj
@@ -6,46 +11,25 @@
 *.so
 *.dll
 *.dylib
+*.pdb
 *.exe
-
-# Python contents
-**/__pycache__/
-**/*.ipynb
-
-# Built contents
-**/build/
-**/build-*/
-**/dist/
-**/debug/
-**/release/
-**/x64/
-**/x86/
 
 # CMake
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
-*.cmake
-!CMakeLists.txt
 
-# IDE specific
-**/.vscode/
-**/.idea/
-*.user
-*.suo
-*.sdf
-*.opensdf
-*.vcxproj
-*.vcxproj.filters
+# Python contents
+**/__pycache__/
 
-# Output directories
-../bin/*.a
-../bin/*.lib
-../bin/*.so
-../bin/*.dll
-../bin/*.exe
-../bin/examples/
+# Built contents
+**/build/
+**/build-*/
+**/dist/
+**/*.egg-info/
+**/debug/
+**/release/
 
 # Temporary files
 *~
