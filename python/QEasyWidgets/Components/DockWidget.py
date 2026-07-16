@@ -47,7 +47,6 @@ class DockTitleBar(TitleBarBase):
         button.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         button.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         button.setIcon(IconBase.FullScreen)
-        button.setCursor(Qt.PointingHandCursor)
         button.clicked.connect(self._toggleFloating)
         index = self.layout().indexOf(self.closeButton) - 1
         self.layout().insertWidget(index, button, stretch = 0, alignment = Qt.AlignRight)

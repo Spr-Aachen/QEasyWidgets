@@ -4,8 +4,8 @@ from PySide6.QtWidgets import QWidget, QMainWindow, QDialog, QDockWidget, QLabel
 
 from ..Common.Icon import IconBase
 from ..Common.StyleSheet import StyleSheetBase
-from .Button import ButtonBase
 from .Label import LabelBase
+from .Button import ButtonBase
 
 ##############################################################################################################################
 
@@ -68,7 +68,6 @@ class TitleBarBase(QWidget):
         button.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         button.setHoverBackgroundColor(QColor(210, 123, 123, 210))
         button.setIcon(IconBase.X)
-        button.setCursor(Qt.PointingHandCursor)
         button.clicked.connect(self._closeEvent)
         index = self.layout().count()
         self.layout().insertWidget(index, button, stretch = 0, alignment = Qt.AlignRight)
@@ -87,7 +86,6 @@ class TitleBarBase(QWidget):
         button.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         button.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         button.setIcon(IconBase.FullScreen)
-        button.setCursor(Qt.PointingHandCursor)
         button.clicked.connect(self._maximizeEvent)
         index = self.layout().indexOf(self.closeButton)
         self.layout().insertWidget(index, button, stretch = 0, alignment = Qt.AlignRight)
@@ -106,7 +104,6 @@ class TitleBarBase(QWidget):
         button.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding))
         button.setHoverBackgroundColor(QColor(123, 123, 123, 123))
         button.setIcon(IconBase.Dash)
-        button.setCursor(Qt.PointingHandCursor)
         button.clicked.connect(self._minimizeEvent)
         index = self.layout().indexOf(self.maximizeButton)
         self.layout().insertWidget(index, button, stretch = 0, alignment = Qt.AlignRight)

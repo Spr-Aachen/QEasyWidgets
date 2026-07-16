@@ -32,6 +32,8 @@ class ButtonBase(QPushButton):
 
         setFont(self, 12)
 
+        self.setCursor(Qt.PointingHandCursor)
+
         StyleSheetBase.Button.apply(self)
 
     @__init__.register
@@ -138,8 +140,6 @@ class ClearButton(ButtonBase):
 
         self.setFocusPolicy(Qt.NoFocus)
 
-        self.setCursor(Qt.PointingHandCursor)
-
         self.setIcon(IconBase.X)
 
     def mousePressEvent(self, e):
@@ -214,8 +214,6 @@ class FileButton(ButtonBase):
         super().__init__(parent)
 
         self.setFocusPolicy(Qt.NoFocus)
-
-        self.setCursor(Qt.PointingHandCursor)
 
         self.setIcon(IconBase.OpenedFolder)
 

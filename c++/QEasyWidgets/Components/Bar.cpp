@@ -65,7 +65,6 @@ void TitleBarBase::setupButtons() {
     m_closeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_closeButton->setHoverBackgroundColor(QColor(210, 123, 123, 210));
     m_closeButton->setIcon(IconBase::X);
-    m_closeButton->setCursor(Qt::PointingHandCursor);
     m_closeButton->setIconSize(iconSize);
     connect(m_closeButton, &QPushButton::clicked, this, &TitleBarBase::closeWindow);
     m_layout->addWidget(m_closeButton, 0, Qt::AlignRight);
@@ -77,7 +76,6 @@ void TitleBarBase::setupButtons() {
     m_maximizeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_maximizeButton->setHoverBackgroundColor(QColor(123, 123, 123, 123));
     m_maximizeButton->setIcon(IconBase::FullScreen);
-    m_maximizeButton->setCursor(Qt::PointingHandCursor);
     m_maximizeButton->setIconSize(iconSize);
     connect(m_maximizeButton, &QPushButton::clicked, this, &TitleBarBase::maximizeWindow);
     m_layout->insertWidget(m_layout->indexOf(m_closeButton), m_maximizeButton, 0, Qt::AlignRight);
@@ -89,7 +87,6 @@ void TitleBarBase::setupButtons() {
     m_minimizeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_minimizeButton->setHoverBackgroundColor(QColor(123, 123, 123, 123));
     m_minimizeButton->setIcon(IconBase::Dash);
-    m_minimizeButton->setCursor(Qt::PointingHandCursor);
     m_minimizeButton->setIconSize(iconSize);
     connect(m_minimizeButton, &QPushButton::clicked, this, &TitleBarBase::minimizeWindow);
     m_layout->insertWidget(m_layout->indexOf(m_maximizeButton), m_minimizeButton, 0, Qt::AlignRight);

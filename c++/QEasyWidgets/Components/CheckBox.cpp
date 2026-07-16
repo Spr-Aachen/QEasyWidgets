@@ -43,7 +43,7 @@ void Indicator::init() {
         m_ellipseAnimation->start();
     });
 
-    StyleSheetBase::apply(this, StyleSheetBase::CheckBox);
+    setCursor(Qt::PointingHandCursor);
 }
 
 bool Indicator::isChecked() const {

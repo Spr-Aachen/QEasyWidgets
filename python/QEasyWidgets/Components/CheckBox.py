@@ -42,6 +42,8 @@ class Indicator(QPushButton):
             self.ellipseAnimation.start()
         ))
 
+        self.setCursor(Qt.PointingHandCursor)
+
     def toggle(self):
         self.setChecked(not self.isChecked())
 

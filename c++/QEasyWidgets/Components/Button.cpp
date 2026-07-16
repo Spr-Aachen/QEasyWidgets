@@ -53,6 +53,8 @@ void ButtonBase::init() {
     m_bgColorAnim = new QPropertyAnimation(this, "backgroundColor", this);
     m_bgColorAnim->setDuration(210);
 
+    setCursor(Qt::PointingHandCursor);
+
     StyleSheetBase::apply(this, StyleSheetBase::Button);
 }
 
@@ -359,7 +361,6 @@ ClearButton::ClearButton(QWidget *parent)
     : ButtonBase(parent)
     , m_isPressed(false) {
     setFocusPolicy(Qt::NoFocus);
-    setCursor(Qt::PointingHandCursor);
     setIcon(IconBase::X);
 }
 
@@ -447,7 +448,6 @@ FileButton::FileButton(QWidget *parent)
 
 void FileButton::init() {
     setFocusPolicy(Qt::NoFocus);
-    setCursor(Qt::PointingHandCursor);
     setIcon(IconBase::OpenedFolder);
 }
 

@@ -30,7 +30,6 @@ DockTitleBar::DockTitleBar(QDockWidget *parent)
     closeButton()->setHoverBackgroundColor(QColor(210, 123, 123, 210));
     closeButton()->setIcon(IconBase::X);
     closeButton()->setIconSize(iconSize);
-    closeButton()->setCursor(Qt::PointingHandCursor);
     
     // Configure minimize button from base class
     minimizeButton()->setBorderless(true);
@@ -38,7 +37,6 @@ DockTitleBar::DockTitleBar(QDockWidget *parent)
     minimizeButton()->setHoverBackgroundColor(QColor(123, 123, 123, 123));
     minimizeButton()->setIcon(IconBase::Dash);
     minimizeButton()->setIconSize(iconSize);
-    minimizeButton()->setCursor(Qt::PointingHandCursor);
     
     // Configure float button
     m_floatButton->setIcon(IconBase::FullScreen_Exit);
@@ -55,7 +53,6 @@ void DockTitleBar::setupButtons() {
     m_floatButton->setTransparent(true);
     m_floatButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_floatButton->setHoverBackgroundColor(QColor(123, 123, 123, 123));
-    m_floatButton->setCursor(Qt::PointingHandCursor);
     
     // Add the float button to the layout (after minimize button, before close button)
     QHBoxLayout* barLayout = qobject_cast<QHBoxLayout*>(layout());
