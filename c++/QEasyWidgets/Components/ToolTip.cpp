@@ -195,6 +195,7 @@ bool ToolTipEventFilter::eventFilter(QObject *obj, QEvent *event) {
             return true;
         case QEvent::Hide:
         case QEvent::Leave:
+        case QEvent::Wheel:
             hideToolTip();
             break;
         case QEvent::Enter:

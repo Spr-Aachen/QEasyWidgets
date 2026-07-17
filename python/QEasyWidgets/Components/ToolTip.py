@@ -160,7 +160,7 @@ class ToolTipEventFilter(QObject):
     def eventFilter(self, obj: QObject, e: QEvent) -> bool:
         if e.type() == QEvent.ToolTip:
             return True
-        elif e.type() in [QEvent.Hide, QEvent.Leave]:
+        elif e.type() in [QEvent.Hide, QEvent.Leave, QEvent.Wheel]:
             self.hideToolTip()
         elif e.type() == QEvent.Enter:
             self.isEnter = True
