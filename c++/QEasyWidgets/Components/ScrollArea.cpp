@@ -322,10 +322,10 @@ void ScrollBar::adjustHandlePos() {
     int delta = m_value * slideLength() / total;
     
     if (m_orientation == Qt::Vertical) {
-        int x = width() - m_handle->width() - 3;
+        int x = (width() - m_handle->width()) / 2;
         m_handle->move(x, m_padding + delta);
     } else {
-        int y = height() - m_handle->height() - 3;
+        int y = (height() - m_handle->height()) / 2;
         m_handle->move(m_padding + delta, y);
     }
 }

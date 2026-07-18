@@ -239,10 +239,10 @@ class ScrollBar(QWidget):
         delta = int(self.value() / total * self._slideLength())
 
         if self.orientation() == Qt.Vertical:
-            x = self.width() - self.handle.width() - 3
+            x = (self.width() - self.handle.width()) // 2
             self.handle.move(x, self._padding + delta)
         else:
-            y = self.height() - self.handle.height() - 3
+            y = (self.height() - self.handle.height()) // 2
             self.handle.move(self._padding + delta, y)
 
     @Property(int, notify = valueChanged)
