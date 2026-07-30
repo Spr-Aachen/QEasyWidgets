@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
+#include <QThread>
 
 #include "Config.h"
 
@@ -14,6 +15,27 @@
  */
 class BackgroundColorAnimationBase;
 class TextColorAnimationBase;
+
+
+/**
+ * System theme listener class
+ */
+class SystemThemeListener : public QThread {
+    Q_OBJECT
+
+public:
+    explicit SystemThemeListener(QObject *parent = nullptr);
+    ~SystemThemeListener() override;
+
+protected:
+    void run() override;
+
+signals:
+    void systemThemeChanged();
+
+private:
+    void onThemeChanged();
+};
 
 
 /**

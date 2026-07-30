@@ -87,7 +87,8 @@ class QConfig(QObject):
         self._theme = value
         self.themeMode.value = value
         self.save()
-        self.themeChanged.emit(self.theme)
+        # Emit the value being set instead of the resolving getter
+        self.themeChanged.emit(value if isinstance(value, Theme) else Theme(value))
 
     def load(self):
         try:

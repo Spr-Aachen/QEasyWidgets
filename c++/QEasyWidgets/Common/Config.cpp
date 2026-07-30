@@ -35,7 +35,8 @@ void QConfig::setTheme(Theme theme) {
         
         themeItem->setValue(themeStr);
         save();
-        emit themeChanged(this->theme());
+        // Emit the value being set instead of the resolving getter
+        emit themeChanged(theme);
     }
 }
 

@@ -1,13 +1,44 @@
+import sys
 import darkdetect
 from enum import Enum
 from typing import Union
-from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
+from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property, QThread, Signal
 from PySide6.QtGui import Qt, QColor, QPainter
 
 from .Signals import componentsSignals
 from .Config import qconfig, Theme as ConfigTheme
 
 ##############################################################################################################################
+
+class SystemThemeListener(QThread):
+    """
+    System theme listener to detect OS theme changes
+    """
+    systemThemeChanged = Signal()
+
+    def run(self):
+        if sys.platform == "win32":
+            # Windows can use darkdetect's listener which is more efficient
+            darkdetect.listener(self._onThemeChanged)
+            return
+
+        # Fallback for other platforms or if listener fails
+        last_theme = darkdetect.theme()
+        while not self.isInterruptionRequested():
+            current_theme = darkdetect.theme()
+            if current_theme != last_theme:
+                last_theme = current_theme
+                self._onThemeChanged(current_theme)
+            self.msleep(1000)
+
+    def _onThemeChanged(self, theme: str):
+        if qconfig.themeMode.value != ConfigTheme.Auto:
+            return
+        
+        # When in Auto mode, notify components that the theme has effectively changed
+        componentsSignals.setTheme.emit(qconfig.theme.value)
+        self.systemThemeChanged.emit()
+
 
 # Bridge qconfig to componentsSignals
 qconfig.themeChanged.connect(lambda t: componentsSignals.setTheme.emit(t.value))
@@ -24,6 +55,10 @@ class Theme:
 class ThemeBase:
     """
     """
+    def __init__(self):
+        self._listener = SystemThemeListener()
+        self._listener.start()
+
     @property
     def THEME(self):
         return qconfig.theme.value

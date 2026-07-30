@@ -12,6 +12,44 @@
 #endif
 
 
+SystemThemeListener::SystemThemeListener(QObject *parent)
+    : QThread(parent) {
+}
+
+SystemThemeListener::~SystemThemeListener() {
+    requestInterruption();
+    wait();
+}
+
+void SystemThemeListener::run() {
+    Theme lastTheme = detectSystemTheme();
+    
+    while (!isInterruptionRequested()) {
+        Theme currentTheme = detectSystemTheme();
+        if (currentTheme != lastTheme) {
+            lastTheme = currentTheme;
+            onThemeChanged();
+        }
+        msleep(1000); // Poll every second
+    }
+}
+
+void SystemThemeListener::onThemeChanged() {
+    if (qconfig->themeMode() != Theme::Auto) {
+        return;
+    }
+    
+    if (componentsSignals) {
+        emit componentsSignals->setTheme(ThemeString(detectSystemTheme()));
+    }
+    emit systemThemeChanged();
+}
+
+
+// Static instance of listener
+static SystemThemeListener* g_systemThemeListener = nullptr;
+
+
 // Detect system theme based on OS
 Theme detectSystemTheme() {
     #ifdef Q_OS_WIN
@@ -57,6 +95,11 @@ QColor currentColor() {
 
 // Bridge qconfig to componentsSignals
 static bool bridgeSignals() {
+    if (!g_systemThemeListener) {
+        g_systemThemeListener = new SystemThemeListener();
+        g_systemThemeListener->start();
+    }
+
     QObject::connect(qconfig, &QConfig::themeChanged, [](Theme theme) {
         if (componentsSignals) {
             emit componentsSignals->setTheme(ThemeString(theme));
