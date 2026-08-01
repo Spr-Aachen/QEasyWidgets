@@ -39,10 +39,10 @@ class StyleSheetBase(Enum):
     DockWidget = 'DockWidget'
     Menu = 'Menu'
 
-    def registrate(self, widget, value):
-        registratedWidgets[widget] = value
+    def registrate(self, widget: QWidget):
+        registratedWidgets[widget] = self
 
-    def deregistrate(self, widget):
+    def deregistrate(self, widget: QWidget):
         if widget in registratedWidgets:
             del registratedWidgets[widget]
 
@@ -56,34 +56,29 @@ class StyleSheetBase(Enum):
             current_theme = current_theme.value
         filePath = f'qss/{current_theme}/{self.value}.qss'
         file = QFile(Path(f':/{prefix}').joinpath(filePath))
-        file.open(QFile.ReadOnly | QFile.Text)
-        QSS = str(file.readAll(), encoding = 'utf-8')
-        file.close()
+        if file.open(QFile.ReadOnly | QFile.Text):
+            QSS = str(file.readAll(), encoding = 'utf-8')
+            file.close()
+            widget.setStyleSheet(QSS)
 
-        widget.setStyleSheet(QSS)
-
-        self.registrate(widget, self.value) if registrate else None
+        self.registrate(widget) if registrate else None
 
 
 def Function_UpdateStyleSheet(
     theme: Optional[str] = None
 ):
     '''
+    Update style sheet for all registered widgets
     '''
     # Use list() to avoid runtime error if dictionary changes during iteration
-    for widget, value in list(registratedWidgets.items()):
-        for Value in StyleSheetBase:
-            if Value.value != value:
-                continue
-            try:
-                # Check if widget is still valid (C++ object might be deleted)
-                if hasattr(widget, 'isVisible'): 
-                    Value.apply(widget, theme, registrate = False)
-            except RuntimeError:
-                # Widget C++ object deleted
-                pass
-            except Exception:
-                pass
+    for widget, styleSheet in list(registratedWidgets.items()):
+        try:
+            # Check if widget is still valid
+            if hasattr(widget, 'isVisible'): 
+                styleSheet.apply(widget, theme, registrate = False)
+        except Exception:
+            # Widget C++ object deleted or other error
+            pass
 
 
 componentsSignals.setTheme.connect(Function_UpdateStyleSheet)

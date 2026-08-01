@@ -10,13 +10,15 @@ QMap<QString, QString> StyleSheetBase::m_styleSheetCache;
 QMap<QPointer<QWidget>, StyleSheetBase::StyleType> StyleSheetBase::m_registeredWidgets;
 
 
-QString StyleSheetBase::loadStyleSheet(const QString &fileName, Theme theme) {
+bool StyleSheetBase::loadStyleSheet(const QString &fileName, Theme theme, QString &styleSheet) {
     QString themeName = ThemeString(theme);
     QString cacheKey = QString("%1_%2").arg(fileName).arg(themeName);
     
     // Check cache first
-    if (m_styleSheetCache.contains(cacheKey)) {
-        return m_styleSheetCache[cacheKey];
+    auto cached = m_styleSheetCache.constFind(cacheKey);
+    if (cached != m_styleSheetCache.constEnd()) {
+        styleSheet = cached.value();
+        return true;
     }
     
     // Load from resource file
@@ -24,50 +26,42 @@ QString StyleSheetBase::loadStyleSheet(const QString &fileName, Theme theme) {
     QFile file(filePath);
     
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        return QString();
+        return false;
     }
     
     QTextStream stream(&file);
-    QString styleSheet = stream.readAll();
+    styleSheet = stream.readAll();
     file.close();
     
     // Cache the stylesheet
     m_styleSheetCache[cacheKey] = styleSheet;
     
-    return styleSheet;
+    return true;
+}
+
+
+bool StyleSheetBase::tryGetStyleSheet(StyleType type, Theme theme, QString &styleSheet) {
+    static const char* const typeNames[] = {
+        "Label", "ToolTip", "Button", "CheckBox", "ScrollArea",
+        "Tree", "List", "ToolBox", "GroupBox", "Slider",
+        "SpinBox", "ComboBox", "Edit", "Browser", "ProgressBar",
+        "Player", "Tab", "Table", "ChatWidget", "Bar",
+        "DockWidget", "Menu"
+    };
+    const int typeCount = int(sizeof(typeNames) / sizeof(typeNames[0]));
+    
+    if (type < 0 || type >= typeCount) {
+        return false;
+    }
+    
+    return loadStyleSheet(QString::fromLatin1(typeNames[type]), theme, styleSheet);
 }
 
 
 QString StyleSheetBase::getStyleSheet(StyleType type, Theme theme) {
-    QString fileName;
-    
-    switch (type) {
-        case Label: fileName = "Label"; break;
-        case ToolTip: fileName = "ToolTip"; break;
-        case Button: fileName = "Button"; break;
-        case CheckBox: fileName = "CheckBox"; break;
-        case ScrollArea: fileName = "ScrollArea"; break;
-        case Tree: fileName = "Tree"; break;
-        case List: fileName = "List"; break;
-        case ToolBox: fileName = "ToolBox"; break;
-        case GroupBox: fileName = "GroupBox"; break;
-        case Slider: fileName = "Slider"; break;
-        case SpinBox: fileName = "SpinBox"; break;
-        case ComboBox: fileName = "ComboBox"; break;
-        case Edit: fileName = "Edit"; break;
-        case Browser: fileName = "Browser"; break;
-        case ProgressBar: fileName = "ProgressBar"; break;
-        case Player: fileName = "Player"; break;
-        case Tab: fileName = "Tab"; break;
-        case Table: fileName = "Table"; break;
-        case ChatWidget: fileName = "ChatWidget"; break;
-        case Bar: fileName = "Bar"; break;
-        case DockWidget: fileName = "DockWidget"; break;
-        case Menu: fileName = "Menu"; break;
-        default: return QString();
-    }
-    
-    return loadStyleSheet(fileName, theme);
+    QString styleSheet;
+    tryGetStyleSheet(type, theme, styleSheet);
+    return styleSheet;
 }
 
 
@@ -88,8 +82,11 @@ void StyleSheetBase::apply(QWidget *widget, StyleType type, Theme theme, bool re
         return;
     }
     
-    QString styleSheet = getStyleSheet(type, theme);
-    widget->setStyleSheet(styleSheet);
+    QString styleSheet;
+    // Skip setStyleSheet() if the resource is missing, otherwise the widget's current stylesheet would be cleared
+    if (tryGetStyleSheet(type, theme, styleSheet)) {
+        widget->setStyleSheet(styleSheet);
+    }
     
     if (registrate) {
         StyleSheetBase::registrate(widget, type);

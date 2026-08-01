@@ -41,7 +41,9 @@ public:
     };
 
 private:
-    static QString loadStyleSheet(const QString &fileName, Theme theme);
+    // Return false if the resource file cannot be opened (the stylesheet is left untouched)
+    static bool loadStyleSheet(const QString &fileName, Theme theme, QString &styleSheet);
+    static bool tryGetStyleSheet(StyleType type, Theme theme, QString &styleSheet);
     static QMap<QString, QString> m_styleSheetCache;
     static QMap<QPointer<QWidget>, StyleType> m_registeredWidgets;
 
