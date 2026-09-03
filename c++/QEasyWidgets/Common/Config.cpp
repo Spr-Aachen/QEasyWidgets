@@ -1,91 +1,87 @@
 #include "Config.h"
+#include "Theme.h"
 
-#include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
 #include <QDir>
+#include <QStandardPaths>
 
 
 QConfig::QConfig(QObject *parent)
-    : QObject(parent)
-    , m_settings(nullptr)
-    , m_theme(LIGHT)
-    , m_themeColor(120, 180, 240, 123) {
-    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation); // Default config path
-    QDir().mkpath(configDir);
-    m_configPath = configDir + "/qeasywidgets.ini";
+    : QObject(parent), m_themeMode(Theme::Auto) {
+    m_configPath = QDir::currentPath() + "/config/config.json";
     
-    initConfig();
-}
-
-
-QConfig::QConfig(const QString &configPath, QObject *parent)
-    : QObject(parent)
-    , m_settings(nullptr)
-    , m_theme(LIGHT)
-    , m_themeColor(120, 180, 240, 123)
-    , m_configPath(configPath) {
-    initConfig();
-}
-
-
-void QConfig::initConfig() {
-    if (m_settings) {
-        delete m_settings;
-    }
+    themeItem = new ConfigItem("General", "ThemeMode", "auto", this);
     
-    m_settings = new QSettings(m_configPath, QSettings::IniFormat, this);
     load();
 }
 
-
 Theme QConfig::theme() const {
-    return m_theme;
+    if (m_themeMode == Theme::Auto) {
+        return detectSystemTheme();
+    }
+    return m_themeMode;
 }
-
 
 void QConfig::setTheme(Theme theme) {
-    if (m_theme != theme) {
-        m_theme = theme;
+    if (m_themeMode != theme) {
+        m_themeMode = theme;
+        
+        QString themeStr;
+        if (theme == Theme::Light) themeStr = "light";
+        else if (theme == Theme::Dark) themeStr = "dark";
+        else themeStr = "auto";
+        
+        themeItem->setValue(themeStr);
         save();
-        emit themeChanged(theme);
+        emit themeChanged(this->theme());
     }
 }
-
-
-QColor QConfig::themeColor() const {
-    return m_themeColor;
-}
-
-
-void QConfig::setThemeColor(const QColor &color) {
-    if (m_themeColor != color) {
-        m_themeColor = color;
-        save();
-        emit themeColorChanged(color);
-    }
-}
-
 
 void QConfig::save() {
-    if (!m_settings) {
-        return;
+    QDir().mkpath(QFileInfo(m_configPath).absolutePath());
+    
+    QJsonObject generalObj;
+    QString themeStr;
+    if (m_themeMode == Theme::Light) themeStr = "light";
+    else if (m_themeMode == Theme::Dark) themeStr = "dark";
+    else themeStr = "auto";
+    
+    generalObj["ThemeMode"] = themeStr;
+    
+    QJsonObject root;
+    root["General"] = generalObj;
+    
+    QJsonDocument doc(root);
+    QFile file(m_configPath);
+    if (file.open(QFile::WriteOnly | QFile::Text)) {
+        file.write(doc.toJson());
+        file.close();
     }
-    
-    m_settings->beginGroup("Theme");
-    m_settings->setValue("theme", static_cast<int>(m_theme));
-    m_settings->setValue("themeColor", m_themeColor.name(QColor::HexArgb));
-    m_settings->endGroup();
-    
-    m_settings->sync();
 }
-
 
 void QConfig::load() {
-    if (!m_settings) {
+    QFile file(m_configPath);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
         return;
     }
     
-    m_settings->beginGroup("Theme");
-    m_theme = static_cast<Theme>(m_settings->value("theme", static_cast<int>(LIGHT)).toInt());
-    m_themeColor = QColor(m_settings->value("themeColor", "#7878F07B").toString());
-    m_settings->endGroup();
+    QByteArray data = file.readAll();
+    file.close();
+    
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (!doc.isNull()) {
+        QJsonObject root = doc.object();
+        QJsonObject general = root["General"].toObject();
+        QString themeStr = general["ThemeMode"].toString("auto");
+        
+        if (themeStr == "light") m_themeMode = Theme::Light;
+        else if (themeStr == "dark") m_themeMode = Theme::Dark;
+        else m_themeMode = Theme::Auto;
+        
+        themeItem->setValue(themeStr);
+    }
 }
+
+QConfig *qconfig = new QConfig();

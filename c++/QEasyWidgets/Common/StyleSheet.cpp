@@ -1,5 +1,6 @@
 #include "StyleSheet.h"
 #include "Signals.h"
+#include "Config.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -117,10 +118,12 @@ void StyleSheetBase::updateAllStyleSheets(Theme theme) {
 
 // Initialize connection to theme change signal
 static bool initStyleSheetSignals() {
-    QObject::connect(componentsSignals, &CustomSignals::setTheme, [](const QString &themeStr) {
-        Theme theme = currentTheme();
-        StyleSheetBase::updateAllStyleSheets(theme);
-    });
+    if (componentsSignals) {
+        QObject::connect(componentsSignals, &CustomSignals::setTheme, [](const QString &) {
+            Theme theme = currentTheme();
+            StyleSheetBase::updateAllStyleSheets(theme);
+        });
+    }
     return true;
 }
 

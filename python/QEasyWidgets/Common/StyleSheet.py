@@ -1,6 +1,7 @@
 from enum import Enum
 from pathlib import Path
 from typing import Union, Optional
+from weakref import WeakKeyDictionary
 from PySide6.QtCore import QFile
 from PySide6.QtWidgets import QApplication, QWidget
 
@@ -9,7 +10,7 @@ from .Theme import EasyTheme, currentTheme
 
 ##############################################################################################################################
 
-registratedWidgets = {}
+registratedWidgets = WeakKeyDictionary()
 
 
 class StyleSheetBase(Enum):
@@ -42,17 +43,22 @@ class StyleSheetBase(Enum):
         registratedWidgets[widget] = value
 
     def deregistrate(self, widget):
-        registratedWidgets.pop(widget)
+        if widget in registratedWidgets:
+            del registratedWidgets[widget]
 
     def apply(self, widget: QWidget, theme: Optional[str] = None, registrate: bool = True):
         EasyTheme.update(theme) if theme is not None else None
 
-        Prefix = 'QSS'
-        FilePath = f'qss/{currentTheme()}/{self.value}.qss'
-        File = QFile(Path(f':/{Prefix}').joinpath(FilePath))
-        File.open(QFile.ReadOnly | QFile.Text)
-        QSS = str(File.readAll(), encoding = 'utf-8')
-        File.close()
+        prefix = 'QSS'
+        # Ensure currentTheme() returns a string value
+        current_theme = currentTheme()
+        if hasattr(current_theme, 'value'):
+            current_theme = current_theme.value
+        filePath = f'qss/{current_theme}/{self.value}.qss'
+        file = QFile(Path(f':/{prefix}').joinpath(filePath))
+        file.open(QFile.ReadOnly | QFile.Text)
+        QSS = str(file.readAll(), encoding = 'utf-8')
+        file.close()
 
         widget.setStyleSheet(QSS)
 
@@ -64,17 +70,20 @@ def Function_UpdateStyleSheet(
 ):
     '''
     '''
+    # Use list() to avoid runtime error if dictionary changes during iteration
     for widget, value in list(registratedWidgets.items()):
         for Value in StyleSheetBase:
             if Value.value != value:
                 continue
             try:
-                Value.apply(widget, theme)
+                # Check if widget is still valid (C++ object might be deleted)
+                if hasattr(widget, 'isVisible'): 
+                    Value.apply(widget, theme, registrate = False)
             except RuntimeError:
-                Value.deregistrate(widget)
-            finally:
-                #QApplication.instance().processEvents()
-                continue
+                # Widget C++ object deleted
+                pass
+            except Exception:
+                pass
 
 
 componentsSignals.setTheme.connect(Function_UpdateStyleSheet)

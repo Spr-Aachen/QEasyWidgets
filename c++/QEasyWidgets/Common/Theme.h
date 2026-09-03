@@ -6,6 +6,8 @@
 #include <QPropertyAnimation>
 #include <QGraphicsOpacityEffect>
 
+#include "Config.h"
+
 
 /**
  * Forward declarations
@@ -15,23 +17,13 @@ class TextColorAnimationBase;
 
 
 /**
- * Theme enumeration
- */
-enum Theme {
-    LIGHT,
-    DARK,
-    AUTO
-};
-
-
-/**
  * Convert theme to string
  */
 inline QString ThemeString(Theme theme) {
     switch (theme) {
-        case LIGHT: return "light";
-        case DARK: return "dark";
-        case AUTO: return "auto";
+        case Theme::Light: return "light";
+        case Theme::Dark: return "dark";
+        case Theme::Auto: return "auto";
         default: return "light";
     }
 }

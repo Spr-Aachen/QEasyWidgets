@@ -5,26 +5,36 @@ from PySide6.QtCore import QEvent, QObject, QPropertyAnimation, Property
 from PySide6.QtGui import Qt, QColor, QPainter
 
 from .Signals import componentsSignals
+from .Config import qconfig, Theme as ConfigTheme
 
 ##############################################################################################################################
+
+# Bridge qconfig to componentsSignals
+qconfig.themeChanged.connect(lambda t: componentsSignals.setTheme.emit(t.value))
+
 
 class Theme:
     """
     """
-    Dark = 'dark'
-    Light = 'light'
-
-    Auto = darkdetect.theme().lower() if darkdetect.isDark() or darkdetect.isLight() else None
+    Dark = ConfigTheme.Dark.value
+    Light = ConfigTheme.Light.value
+    Auto = ConfigTheme.Auto.value
 
 
 class ThemeBase:
     """
     """
-    THEME = Theme.Auto if Theme.Auto is not None else Theme.Dark
+    @property
+    def THEME(self):
+        return qconfig.theme.value
 
     def update(self, theme: str):
-        if theme in (Theme.Dark, Theme.Light):
-            self.THEME = theme
+        if theme == ConfigTheme.Dark.value:
+            qconfig.theme = ConfigTheme.Dark
+        elif theme == ConfigTheme.Light.value:
+            qconfig.theme = ConfigTheme.Light
+        elif theme == ConfigTheme.Auto.value:
+            qconfig.theme = ConfigTheme.Auto
 
 
 EasyTheme = ThemeBase()
@@ -35,7 +45,7 @@ def currentTheme():
 
 
 def isDarkTheme():
-    return currentTheme() == Theme.Dark
+    return qconfig.theme == ConfigTheme.Dark
 
 ##############################################################################################################################
 

@@ -5,8 +5,11 @@
 #include <QSettings>
 #include <QColor>
 #include <QString>
-
-#include "Theme.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
+#include <QDir>
+#include <QStandardPaths>
 
 
 /**
@@ -51,6 +54,48 @@ enum class ChatRole {
 
 
 /**
+ * Theme enumeration
+ */
+enum class Theme {
+    Light,
+    Dark,
+    Auto
+};
+
+
+/**
+ * Configuration item
+ */
+class ConfigItem : public QObject {
+    Q_OBJECT
+
+public:
+    ConfigItem(const QString &group, const QString &name, const QVariant &defaultValue, QObject *parent = nullptr)
+        : QObject(parent), m_group(group), m_name(name), m_value(defaultValue), m_defaultValue(defaultValue) {}
+
+    QString key() const { return m_name.isEmpty() ? m_group : m_group + "." + m_name; }
+    QString group() const { return m_group; }
+    QString name() const { return m_name; }
+    QVariant value() const { return m_value; }
+    void setValue(const QVariant &value) {
+        if (m_value != value) {
+            m_value = value;
+            emit valueChanged(value);
+        }
+    }
+
+signals:
+    void valueChanged(const QVariant &value);
+
+private:
+    QString m_group;
+    QString m_name;
+    QVariant m_value;
+    QVariant m_defaultValue;
+};
+
+
+/**
  * Configuration manager for QEasyWidgets
  */
 class QConfig : public QObject {
@@ -58,16 +103,12 @@ class QConfig : public QObject {
 
 public:
     explicit QConfig(QObject *parent = nullptr);
-    explicit QConfig(const QString &configPath, QObject *parent = nullptr);
     ~QConfig() override = default;
 
     // Theme management
     Theme theme() const;
+    Theme themeMode() const { return m_themeMode; }
     void setTheme(Theme theme);
-
-    // Theme color management
-    QColor themeColor() const;
-    void setThemeColor(const QColor &color);
 
     // Save configuration
     void save();
@@ -77,16 +118,15 @@ public:
 
 signals:
     void themeChanged(Theme theme);
-    void themeColorChanged(const QColor &color);
 
 private:
-    void initConfig();
-
-    QSettings *m_settings;
-    Theme m_theme;
-    QColor m_themeColor;
     QString m_configPath;
+    Theme m_themeMode;
+    
+public:
+    ConfigItem *themeItem;
 };
 
+extern QConfig *qconfig;
 
 #endif // QEASYWIDGETS_CONFIG_H

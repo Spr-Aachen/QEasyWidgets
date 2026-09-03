@@ -20,6 +20,7 @@ LineEditBase::LineEditBase(QWidget *parent)
     , m_spacer(nullptr)
     , m_layout(nullptr)
     , m_toolTip(nullptr)
+    , m_rawStyleSheet("")
     , m_isClearButtonEnabled(false)
     , m_isFileButtonEnabled(false)
     , m_isAlerted(false) {
@@ -97,6 +98,12 @@ void LineEditBase::setTransparent(bool transparent) {
     style()->polish(this);
 }
 
+void LineEditBase::setStyleSheet(const QString &styleSheet) {
+    m_rawStyleSheet = styleSheet;
+    QString alertStyle = m_isAlerted ? "LineEditBase {border-color: red;}" : "";
+    QLineEdit::setStyleSheet(styleSheet + alertStyle);
+}
+
 void LineEditBase::clearDefaultStyleSheet() {
     StyleSheetBase::deregistrate(this);
 }
@@ -109,8 +116,7 @@ void LineEditBase::alert(bool enable, const QString &content) {
         hideToolTip();
     }
     // Force stylesheet update to apply alert style
-    style()->unpolish(this);
-    style()->polish(this);
+    setStyleSheet(m_rawStyleSheet);
 }
 
 void LineEditBase::showToolTip(const QString &content) {

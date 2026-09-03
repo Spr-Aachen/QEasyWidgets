@@ -43,6 +43,8 @@ public:
     void setBorderless(bool borderless);
     void setTransparent(bool transparent);
 
+    void setStyleSheet(const QString &styleSheet);
+
     void clearDefaultStyleSheet();
 
     void alert(bool enable, const QString &content = QString());
@@ -76,6 +78,7 @@ private:
     QSpacerItem *m_spacer;
     QHBoxLayout *m_layout;
     ToolTipBase *m_toolTip;
+    QString m_rawStyleSheet;
     bool m_isClearButtonEnabled;
     bool m_isFileButtonEnabled;
     bool m_isAlerted;

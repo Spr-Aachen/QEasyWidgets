@@ -7,6 +7,7 @@
 #include <QPointer>
 
 #include "Theme.h"
+#include "Config.h"
 
 
 /**
@@ -45,12 +46,12 @@ private:
     static QMap<QPointer<QWidget>, StyleType> m_registeredWidgets;
 
 public:
-    static QString getStyleSheet(StyleType type, Theme theme = LIGHT);
+    static QString getStyleSheet(StyleType type, Theme theme);
     
     // Widget registration for theme updates
     static void registrate(QWidget *widget, StyleType type);
     static void deregistrate(QWidget *widget);
-    static void apply(QWidget *widget, StyleType type, Theme theme = LIGHT, bool registrate = true);
+    static void apply(QWidget *widget, StyleType type, Theme theme = qconfig->theme(), bool registrate = true);
 
     static void updateAllStyleSheets(Theme theme);
 };

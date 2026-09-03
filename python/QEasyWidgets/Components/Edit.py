@@ -178,12 +178,13 @@ class LineEditBase(QLineEdit):
         StyleSheetBase.Edit.deregistrate(self)
 
     def setStyleSheet(self, styleSheet: str) -> None:
+        self._rawStyleSheet = styleSheet
         alertStyle = 'LineEditBase {border-color: red;}' if self.isAlerted else ''
         super().setStyleSheet(styleSheet + alertStyle)
 
     def alert(self, enable: bool, content: Optional[str] = None) -> None:
         self.isAlerted = enable
-        #StyleSheetBase.Edit.apply(self)
+        self.setStyleSheet(getattr(self, '_rawStyleSheet', ''))
         self.showToolTip(content) if enable else self.hideToolTip()
 
 ##############################################################################################################################

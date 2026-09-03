@@ -1,5 +1,6 @@
 #include "Theme.h"
 #include "Signals.h"
+#include "Config.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -17,51 +18,54 @@ Theme detectSystemTheme() {
         // Windows 10/11 theme detection via registry
         QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
         int appsUseLightTheme = settings.value("AppsUseLightTheme", 1).toInt();
-        return (appsUseLightTheme == 0) ? DARK : LIGHT;
+        return (appsUseLightTheme == 0) ? Theme::Dark : Theme::Light;
     #elif defined(Q_OS_MACOS)
         // macOS theme detection would go here
         // For now, use palette-based detection
         QPalette palette = QApplication::palette();
-        return (palette.color(QPalette::Window).lightness() < 128) ? DARK : LIGHT;
+        return (palette.color(QPalette::Window).lightness() < 128) ? Theme::Dark : Theme::Light;
     #else
         // Linux and other platforms - use palette-based detection
         if (QApplication::instance()) {
             QPalette palette = QApplication::palette();
-            return (palette.color(QPalette::Window).lightness() < 128) ? DARK : LIGHT;
+            return (palette.color(QPalette::Window).lightness() < 128) ? Theme::Dark : Theme::Light;
         }
-        return LIGHT;
+        return Theme::Light;
     #endif
 }
 
 
-// Static variable to store current theme
-static Theme g_currentTheme = detectSystemTheme();
-
-
 Theme currentTheme() {
-    return g_currentTheme;
+    return qconfig->theme();
 }
 
 
 void setCurrentTheme(Theme theme) {
-    if (g_currentTheme != theme) {
-        g_currentTheme = theme;
-        // Emit global theme change signal
-        if (componentsSignals) {
-            emit componentsSignals->setTheme(ThemeString(theme));
-        }
-    }
+    qconfig->setTheme(theme);
 }
 
 
 bool isDarkTheme() {
-    return g_currentTheme == DARK;
+    return currentTheme() == Theme::Dark;
 }
 
 
 QColor currentColor() {
     return isDarkTheme() ? getThemeColor(ThemeColor::Dark) : getThemeColor(ThemeColor::Light);
 }
+
+
+// Bridge qconfig to componentsSignals
+static bool bridgeSignals() {
+    QObject::connect(qconfig, &QConfig::themeChanged, [](Theme theme) {
+        if (componentsSignals) {
+            emit componentsSignals->setTheme(ThemeString(theme));
+        }
+    });
+    return true;
+}
+
+static bool g_signalsBridged = bridgeSignals();
 
 
 BackgroundColorAnimationBase::BackgroundColorAnimationBase(QWidget *widget)
@@ -89,8 +93,6 @@ BackgroundColorAnimationBase::BackgroundColorAnimationBase(QWidget *widget)
 
 QColor BackgroundColorAnimationBase::backgroundColor() const {
     if (m_widget) {
-        // Get current background color from widget
-        // This is a simplified implementation
         return m_widget->palette().color(QPalette::Window);
     }
     return QColor();
@@ -191,7 +193,6 @@ TextColorAnimationBase::TextColorAnimationBase(QWidget *widget)
 
 QColor TextColorAnimationBase::textColor() const {
     if (m_widget) {
-        // Get current text color from widget
         return m_widget->palette().color(QPalette::WindowText);
     }
     return QColor();

@@ -12,12 +12,12 @@ CustomSignals::CustomSignals(QObject *parent)
     
     // Connect theme change signal
     connect(this, &CustomSignals::setTheme, this, [](const QString &themeStr) {
-        if (themeStr == "light" || themeStr == ThemeString(LIGHT)) {
-            setCurrentTheme(LIGHT);
-        } else if (themeStr == "dark" || themeStr == ThemeString(DARK)) {
-            setCurrentTheme(DARK);
-        } else if (themeStr == "auto" || themeStr == ThemeString(AUTO)) {
-            setCurrentTheme(detectSystemTheme());
+        if (themeStr == "light" || themeStr == ThemeString(Theme::Light)) {
+            setCurrentTheme(Theme::Light);
+        } else if (themeStr == "dark" || themeStr == ThemeString(Theme::Dark)) {
+            setCurrentTheme(Theme::Dark);
+        } else if (themeStr == "auto" || themeStr == ThemeString(Theme::Auto)) {
+            setCurrentTheme(Theme::Auto);
         }
     });
 }
